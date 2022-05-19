@@ -204,8 +204,8 @@ final class NutritionLabelValueTests: XCTestCase {
         ("320 kJ", NutritionLabelValue(amount: 320, unit: .kj)),
         
 /// Need to extract percent first
-("0% Total Carbohydrates 9g %", NutritionLabelValue(amount: 9, unit: .g)),
-("0% Total Carbohydrate 20g 7%", NutritionLabelValue(amount: 20, unit: .g)),
+0% Total Carbohydrates 9g %
+0% Total Carbohydrate 20g 7%
 
 /// 4 energy values
 384kJ/91kcal 284kJ/67 kcal
