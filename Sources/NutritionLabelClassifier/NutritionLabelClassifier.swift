@@ -19,8 +19,8 @@ public struct NutritionLabelClassifier {
     //MARK: - Sort these
     
     public static func dataFrameOfValues(from boxes: [Box]) -> DataFrame? {
-        let dataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: boxes)
-        let columnHeaders = NutritionLabelClassifier.columnHeaders(from: boxes, using: dataFrame)
+        let dataFrame = dataFrameOfNutrients(from: boxes)
+        let columnHeaders = columnHeaders(from: boxes, using: dataFrame)
         if let header1 = columnHeaders.0 {
             if let header2 = columnHeaders.1 {
                 /// Column1 AND Column2
@@ -67,8 +67,8 @@ public struct NutritionLabelClassifier {
             return (nil, nil)
         }
         
-        let header1 = columnHeader(for: dataFrame, withColumnName: "col1", in: boxes)
-        let header2 = columnHeader(for: dataFrame, withColumnName: "col2", in: boxes)
+        let header1 = columnHeader(for: dataFrame, withColumnName: "values1", in: boxes)
+        let header2 = columnHeader(for: dataFrame, withColumnName: "values2", in: boxes)
         return (header1, header2)
     }
     
@@ -77,17 +77,18 @@ public struct NutritionLabelClassifier {
         var processedBoxes: [Box] = []
         var dataFrame = DataFrame()
         
-        var labels: [String] = []
+        var attributes: [NutritionLabelAttribute] = []
         var column1Boxes: [Box?] = []
         var column2Boxes: [Box?] = []
 
         for box in boxes {
             guard !processedBoxes.contains(box),
-                  box.isValueBasedClass
+                  box.isValueBasedClass,
+                  let attribute = box.attribute
             else { continue }
             
             if box.containsValue {
-                labels.append(box.string)
+                attributes.append(attribute)
                 column1Boxes.append(box)
                 processedBoxes.append(box)
                 
@@ -104,14 +105,14 @@ public struct NutritionLabelClassifier {
                        !processedBoxes.contains(inlineValueBox) else {
                         continue
                     }
-                    labels.append(box.string)
+                    attributes.append(attribute)
                     column1Boxes.append(nil)
                     column2Boxes.append(inlineValueBox)
                     processedBoxes.append(inlineValueBox)
                     continue
                 }
                 
-                labels.append(box.string)
+                attributes.append(attribute)
                 column1Boxes.append(inlineValueBox)
                 processedBoxes.append(inlineValueBox)
                 
@@ -126,9 +127,9 @@ public struct NutritionLabelClassifier {
             }
         }
         
-        let labelColumn = Column(name: "label", contents: labels)
-        let column1Id = ColumnID("col1", Box?.self)
-        let column2Id = ColumnID("col2", Box?.self)
+        let labelColumn = Column(name: "attributes", contents: attributes)
+        let column1Id = ColumnID("values1", Box?.self)
+        let column2Id = ColumnID("values2", Box?.self)
         let column1 = Column(column1Id, contents: column1Boxes)
         let column2 = Column(column2Id, contents: column2Boxes)
 

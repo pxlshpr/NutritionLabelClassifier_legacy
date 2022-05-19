@@ -3,11 +3,11 @@ import VisionSugar
 
 extension Box {
     var isValueBasedClass: Bool {
-        classifierClass?.isValueBased ?? false
+        attribute?.isValueBased ?? false
     }
 
-    var classifierClass: NLClassifierClass? {
-        for classifierClass in NLClassifierClass.allCases {
+    var attribute: NutritionLabelAttribute? {
+        for classifierClass in NutritionLabelAttribute.allCases {
             guard let regex = classifierClass.regex else { continue }
             if string.matchesRegex(regex) {
                 return classifierClass

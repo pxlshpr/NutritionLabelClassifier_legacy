@@ -1,45 +1,51 @@
 import Foundation
 
-enum NLClassifierClass: CaseIterable {
+enum NutritionLabelAttribute: CaseIterable {
     case servingSizeVolume
     case servingSizeWeight
     case servingSizeDescriptive
     case servingsPerContainer
+    
     case energy
-    case macroProtein
-    case macroCarbs
-    case macroFat
-    case microCholesterol
-    case microSaturatedFat
-    case microTransFat
-    case microDietaryFibre
-    case microSodium
-    case microCalcium
-    case microSugar
+    
+    case protein
+    
+    case carbohydrate
+    case dietaryFibre
+
+    case fat
+    case saturatedFat
+    case transFat
+    case cholesterol
+    
+    case sodium
+    case calcium
+    case sugar
     
     var regex: String? {
         switch self {
         case .energy:
             return #"energy"#
-        case .macroProtein:
+            
+        case .protein:
             return #"protein"#
-        case .macroCarbs:
+        case .carbohydrate:
             return #"carb.*"#
-        case .macroFat:
+        case .fat:
             return #"fat"#
-        case .microCholesterol:
+        case .cholesterol:
             return #"cholesterol"#
-        case .microSaturatedFat:
+        case .saturatedFat:
             return #"saturated"#
-        case .microTransFat:
+        case .transFat:
             return #"trans"#
-        case .microDietaryFibre:
+        case .dietaryFibre:
             return #"dietary fibre"#
-        case .microSodium:
+        case .sodium:
             return #"(sodium|salt)"#
-        case .microSugar:
+        case .sugar:
             return #"sugar"#
-        case .microCalcium:
+        case .calcium:
             return #"calcium"#
         default:
             return nil
