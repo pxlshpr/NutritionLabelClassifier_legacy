@@ -11,7 +11,7 @@ struct NutritionLabelValue {
         }
         self.amount = amount
         if groups.count == 3 {
-            guard let unit = NutritionLabelUnit(rawValue: groups[2]) else {
+            guard let unit = NutritionLabelUnit(rawValue: groups[2].lowercased()) else {
                 return nil
             }
             self.unit = unit
@@ -26,7 +26,7 @@ struct NutritionLabelValue {
     }
     
     struct Regex {
-        static let pattern = #"^([0-9.]+)[ ]*(g|mg|mcg)*$"#
+        static let pattern = #"^([0-9.]+)[ ]*(\#(NutritionLabelUnit.allCases.map { $0.rawValue }.joined(separator: "|")))*$"#
     }
 }
 
@@ -37,8 +37,11 @@ extension NutritionLabelValue: Equatable {
     }
 }
 
-enum NutritionLabelUnit: String {
+enum NutritionLabelUnit: String, CaseIterable {
     case g
+    case ug /// alternative symbol for mcg
     case mg
+    case kj
     case mcg
+    case kcal
 }

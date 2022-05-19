@@ -8,11 +8,11 @@ extension NutritionLabelClassifier {
         
         let dataFrame = dataFrameOfNutrients(from: recognizedTexts)
         
-        print(dataFrame)
+//        print(dataFrame)
         
         let columnHeaderRecognizedTexts = columnHeadersRecognizedTexts(from: recognizedTexts, using: dataFrame)
         
-        print("columnHeaderRecognizedTexts:")
+//        print("columnHeaderRecognizedTexts:")
         
         if let header1 = columnHeaderRecognizedTexts.0 {
             if let header2 = columnHeaderRecognizedTexts.1 {
