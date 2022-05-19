@@ -6,10 +6,17 @@ extension NutritionLabelClassifier {
     
     public static func features(from recognizedTexts: [RecognizedText]) -> DataFrame? {
         let dataFrame = dataFrameOfNutrients(from: recognizedTexts)
-        let columnHeaderTexts = columnHeadersRecognizedTexts(from: recognizedTexts, using: dataFrame)
-        
-        if let header1 = columnHeaderTexts.0 {
-            if let header2 = columnHeaderTexts.1 {
+        let columnHeaderRecognizedTexts = columnHeadersRecognizedTexts(from: recognizedTexts, using: dataFrame)
+        print("columnHeaderRecognizedTexts:")
+        if let left = columnHeaderRecognizedTexts.0 {
+            print(left.string)
+        }
+        if let right = columnHeaderRecognizedTexts.1 {
+            print(right.string)
+        }
+
+        if let header1 = columnHeaderRecognizedTexts.0 {
+            if let header2 = columnHeaderRecognizedTexts.1 {
                 /// Column1 AND Column2
                 if header1.id == header2.id {
                     //TODO: Figure out which side is 100g by parsing the string
@@ -25,7 +32,7 @@ extension NutritionLabelClassifier {
                 /// Column1 but no Column2
 //                print("Handle case where: We have Column1 but no Column2")
             }
-        } else if let header2 = columnHeaderTexts.1 {
+        } else if let header2 = columnHeaderRecognizedTexts.1 {
             /// Column2 but no Column1
 //            print("Handle case where: We have Column2 but no Column1")
         }
