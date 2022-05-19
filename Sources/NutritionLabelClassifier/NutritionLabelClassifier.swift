@@ -25,13 +25,16 @@ public struct NutritionLabelClassifier {
     
     static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: NutritionLabelColumnHeader?, header2: NutritionLabelColumnHeader?) {
         if let rightColumn = string.firstCapturedGroup(using: Regex.twoColumnHeadersWithPer100OnLeft) {
-            return (.per100g, .per(serving: rightColumn))
+            return (.per100g, .perServing(serving: rightColumn))
         }
         return (nil, nil)
     }
     
     static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> NutritionLabelColumnHeader? {
-        return nil
+        guard let recognizedText = recognizedText else {
+            return nil
+        }
+        return NutritionLabelColumnHeader(string: recognizedText.string)
     }
     
     static func columnHeaderRecognizedText(for dataFrame: DataFrame, withColumnName columnName: String, in recognizedTexts: [RecognizedText]) -> RecognizedText? {

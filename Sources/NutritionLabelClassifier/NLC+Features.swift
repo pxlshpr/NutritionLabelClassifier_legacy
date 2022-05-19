@@ -5,16 +5,15 @@ import TabularData
 extension NutritionLabelClassifier {
     
     public static func features(from recognizedTexts: [RecognizedText]) -> DataFrame? {
+        
         let dataFrame = dataFrameOfNutrients(from: recognizedTexts)
+        
+        print(dataFrame)
+        
         let columnHeaderRecognizedTexts = columnHeadersRecognizedTexts(from: recognizedTexts, using: dataFrame)
+        
         print("columnHeaderRecognizedTexts:")
-        if let left = columnHeaderRecognizedTexts.0 {
-            print(left.string)
-        }
-        if let right = columnHeaderRecognizedTexts.1 {
-            print(right.string)
-        }
-
+        
         if let header1 = columnHeaderRecognizedTexts.0 {
             if let header2 = columnHeaderRecognizedTexts.1 {
                 /// Column1 AND Column2

@@ -6,29 +6,34 @@ import TabularData
 final class NutritionLabelColumnHeaderTests: XCTestCase {
 
     let testCases: [(input: String, header: NutritionLabelColumnHeader?)] = [
-        ("Per 100 g", nil),
-        ("Per 100g", nil),
-        ("100g", nil),
-        ("Per 100g", nil),
+        /// per100g
+        ("Per 100 g", .per100g),
+        ("Per 100g", .per100g),
+        ("100g", .per100g),
+        ("Per 100g", .per100g),
 
-        ("Per serving", nil),
-        ("Per Serving", nil),
-        ("Per serving", nil),
-        ("PER SERVE", nil),
-        ("Amount per serving", nil),
-        ("Amount/Serving", nil),
-        ("%DV* Amount/Serving", nil),
+        /// perServing(nil)
+        ("Per serving", .perServing(serving: nil)),
+        ("Per Serving", .perServing(serving: nil)),
+        ("Per serving", .perServing(serving: nil)),
+        ("PER SERVE", .perServing(serving: nil)),
+        ("Amount per serving", .perServing(serving: nil)),
+        ("Amount/Serving", .perServing(serving: nil)),
+        ("%DV* Amount/Serving", .perServing(serving: nil)),
+        ("trition Amount Per Serving %Daily Value* Amount Per Serving", .perServing(serving: nil)),
+        ("Nutrition Facts Amount/Serving %DV* Amount/Serving", .perServing(serving: nil)),
 
-        ("Per 1 pot", nil),
-        ("Serving size: 130g (1 cup)", nil),
-        ("SERVING SIZE: 150g", nil),
+        /// perServing
+        ("Per 1 pot", .perServing(serving: "1 pot")),
+        ("Serving size: 130g (1 cup)", .perServing(serving: "130g (1 cup)")),
+        ("SERVING SIZE: 150g", .perServing(serving: "150g")),
 
-        ("PER 100g 74g (2 tubes)", nil),
-        ("INFORMATION Per 120g Per 100g", nil),
-        ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", nil),
-
-        ("trition Amount Per Serving %Daily Value* Amount Per Serving", nil),
-        ("Nutrition Facts Amount/Serving %DV* Amount/Serving", nil)
+        /// perServingAnd100g
+        ("INFORMATION Per 120g Per 100g", .perServingAnd100g(serving: "120g")),
+        
+        /// per100gAndPerServing
+        ("PER 100g 74g (2 tubes)", .per100gAndPerServing(serving: "74g (2 tubes)")),
+        ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100gAndPerServing(serving: "serving (125 g)")),
     ]
     
     func testColumnHeaders() throws {
