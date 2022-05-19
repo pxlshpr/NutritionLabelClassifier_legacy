@@ -1,6 +1,6 @@
 import Foundation
 
-enum NutritionLabelAttribute: CaseIterable {
+enum NutritionLabelAttribute: String, CaseIterable {
     case servingSizeVolume
     case servingSizeWeight
     case servingSizeDescriptive

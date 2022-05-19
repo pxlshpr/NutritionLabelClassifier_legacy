@@ -1,6 +1,7 @@
 import XCTest
 import SwiftSugar
 import TabularData
+import VisionSugar
 
 @testable import NutritionLabelClassifier
 
@@ -43,13 +44,66 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...15 {
-            guard let dataFrame = dataFrameForTestCase(testCase) else {
-                XCTFail("Couldn't read file for Test Case \(testCase)")
+        for testCase in 1...1 {
+            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
+                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
                 return
             }
-            print("DataFrame for Test Case: \(testCase)")
-            print(dataFrame)
+
+            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
+            print("🧬 Nutrients for Test Case: \(testCase)")
+            print(nutrientsDataFrame)
+            
+            var processedNutrients: [NutritionLabelAttribute: (recognizedText1: RecognizedText?, recognizedText2: RecognizedText?)] = [:]
+            for row in nutrientsDataFrame.rows {
+                guard let attribute = row["attribute"] as? NutritionLabelAttribute,
+                      let recognizedText1 = row["recognizedText1"] as? RecognizedText?,
+                      let recognizedText2 = row["recognizedText2"] as? RecognizedText?
+                else {
+                    XCTFail("Failed to get a parsed nutrient for \(testCase)")
+                    return
+                }
+                
+                processedNutrients[attribute] = (recognizedText1, recognizedText2)
+            }
+            
+            guard let expectedNutrientsDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
+                XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
+                return
+            }
+            print(expectedNutrientsDataFrame)
+            var expectedNutrients: [NutritionLabelAttribute: (string1: String?, string2: String?)] = [:]
+            for row in expectedNutrientsDataFrame.rows {
+                guard let attributeName = row["attributeString"] as? String,
+                      let attribute = NutritionLabelAttribute(rawValue: attributeName),
+                      let value1 = row["recognizedText1String"] as? String?,
+                      let value2 = row["recognizedText2String"] as? String?
+                else {
+                    XCTFail("Failed to read an expected nutrient for \(testCase)")
+                    return
+                }
+                expectedNutrients[attribute] = (value1, value2)
+            }
+            
+            
+            for attribute in expectedNutrients.keys {
+                guard let recognizedTexts = processedNutrients[attribute] else {
+                    XCTFail("Missing Attribute: \(attribute) for Test Case: \(testCase)")
+                    return
+                }
+                
+                XCTAssertEqual(recognizedTexts.recognizedText1?.string, expectedNutrients[attribute]?.string1)
+                XCTAssertEqual(recognizedTexts.recognizedText2?.string, expectedNutrients[attribute]?.string2)
+            }
         }
-    }    
+    }
+    
+    //MARK: - Helpers
+    func recognizedTextsForTestCase(_ testCase: Int) -> [RecognizedText]? {
+        guard let dataFrame = dataFrameForTestCase(testCase) else {
+            XCTFail("Couldn't read file for Test Case \(testCase)")
+            return nil
+        }
+        return dataFrame.recognizedTexts
+    }
 }

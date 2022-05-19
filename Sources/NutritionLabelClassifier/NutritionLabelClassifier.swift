@@ -60,8 +60,8 @@ public struct NutritionLabelClassifier {
             return (nil, nil)
         }
         
-        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value1", in: recognizedTexts)
-        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value2", in: recognizedTexts)
+        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "recognizedText1", in: recognizedTexts)
+        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "recognizedText2", in: recognizedTexts)
         
         return (columnHeader(fromRecognizedText: header1),
                 columnHeader(fromRecognizedText: header2))
@@ -73,8 +73,8 @@ public struct NutritionLabelClassifier {
             return (nil, nil)
         }
         
-        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value1", in: recognizedTexts)
-        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value2", in: recognizedTexts)
+        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "recognizedTex1", in: recognizedTexts)
+        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "recognizedTex2", in: recognizedTexts)
         return (header1, header2)
     }
     
@@ -134,8 +134,8 @@ public struct NutritionLabelClassifier {
         }
         
         let labelColumn = Column(name: "attribute", contents: attributes)
-        let column1Id = ColumnID("value1", RecognizedText?.self)
-        let column2Id = ColumnID("value2", RecognizedText?.self)
+        let column1Id = ColumnID("recognizedText1", RecognizedText?.self)
+        let column2Id = ColumnID("recognizedText2", RecognizedText?.self)
 
         dataFrame.append(column: labelColumn)
         dataFrame.append(column: Column(column1Id, contents: column1))

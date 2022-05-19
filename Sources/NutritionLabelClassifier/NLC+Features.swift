@@ -22,9 +22,9 @@ extension NutritionLabelClassifier {
 //                    print("Handle case where: header1.id == header2.id")
                 } else {
                     if header1.string.matchesRegex(#"100[ ]*g"#) {
-                        return dataFrame.selecting(columnNames: "attribute", "value1")
+                        return dataFrame.selecting(columnNames: "attribute", "recognizedText1")
                     } else if header2.string.matchesRegex(#"100[ ]*g"#) {
-                        return dataFrame.selecting(columnNames: "attribute", "value2")
+                        return dataFrame.selecting(columnNames: "attribute", "recognizedText2")
                     }
                 }
             } else {

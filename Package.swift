@@ -47,7 +47,8 @@ let package = Package(
                 .process("Test Data/12.csv"),
                 .process("Test Data/13.csv"),
                 .process("Test Data/14.csv"),
-                .process("Test Data/15.csv")
+                .process("Test Data/15.csv"),
+                .process("Test Data/1-nutrients.csv")
             ]
         ),
     ]
