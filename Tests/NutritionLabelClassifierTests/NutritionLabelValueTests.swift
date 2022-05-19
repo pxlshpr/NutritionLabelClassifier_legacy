@@ -203,33 +203,33 @@ final class NutritionLabelValueTests: XCTestCase {
         ("256 kJ", NutritionLabelValue(amount: 256, unit: .kj)),
         ("320 kJ", NutritionLabelValue(amount: 320, unit: .kj)),
         
-/// Current pattern
-^(?:[^0-9.:]*(?: |\()|^)([0-9.:]+)[ ]*(\#(units))+(?: .*|\)?$)$
+        /// Need to extract percent first
+        ("0% Total Carbohydrates 9g %", NutritionLabelValue(amount: 9, unit: .g)),
+        ("0% Total Carbohydrate 20g 7%", NutritionLabelValue(amount: 20, unit: .g)),
         
-/// Need to extract percent first
-0% Total Carbohydrates 9g %
-0% Total Carbohydrate 20g 7%
+        /// invalids
+        ("CALCIUM (20% RI* PER 100g))", nil), /// invalidated by "PER 100g"
+        ("CALCIUM 20% RI* PER 100g", nil), /// invalidated by "PER 100g"
+        ("Caring Suer: Go7z (170g) Saturated Fat", nil), /// invalidated by '7' in text before value
+        ("Serving Size: Something (170g) Saturated Fat", nil), /// invalidated by semi-colon before value
+        ("Serving Size Something (170g) Saturated Fat", nil), /// invalidated by extra-large value
 
-/// 4 energy values
-384kJ/91kcal 284kJ/67 kcal
-(117 kcal (491 kJ| 90 kcal (378 kJ)
-94 kcal (395 kJ) 75 kcal (315 kJ)
-113 kcal (475 kJ) 90 kcal (378 kJ)
+        /// both energy values
+        ("396kJ/94kcal", NutritionLabelValue(amount: 396, unit: .kj)),
+        ("495 kJ/118kcal", NutritionLabelValue(amount: 495, unit: .kj)),
 
-/// both energy values
-396kJ/94kcal
-495 kJ/118kcal
+        /// 4 energy values
+//        ("384kJ/91kcal 284kJ/67 kcal", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("(117 kcal (491 kJ| 90 kcal (378 kJ)", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("94 kcal (395 kJ) 75 kcal (315 kJ)", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("113 kcal (475 kJ) 90 kcal (378 kJ)", NutritionLabelValue(amount: 0, unit: .kj)),
 
-// multiples
-Energy 116kcal 96kcal
-Vit. D 0mcg 0% Calcium 58mg 4%
-I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%
-Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g
-223mg 186mg
-
-// invalids
-CALCIUM (20% RI* PER 100g))
-Caring Suer: Go7z (170g) Saturated Fat
+        /// multiples
+//        ("Energy 116kcal 96kcal", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("Vit. D 0mcg 0% Calcium 58mg 4%", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g", NutritionLabelValue(amount: 0, unit: .kj)),
+//        ("223mg 186mg", NutritionLabelValue(amount: 0, unit: .kj)),
     ]
     
     func testColumnHeaders() throws {
