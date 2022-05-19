@@ -36,13 +36,13 @@ enum NutritionLabelAttribute: CaseIterable {
             return #"dietary fibre"#
 
         case .fat:
-            return #"fat"#
+            return Regex.fat
         case .saturatedFat:
-            return #"saturated"#
+            return Regex.saturatedFat
         case .transFat:
-            return #"trans"#
+            return Regex.transFat
         case .cholesterol:
-            return #"cholesterol"#
+            return Regex.cholesterol
             
         case .sodium:
             return #"(sodium|salt)"#
@@ -63,5 +63,12 @@ enum NutritionLabelAttribute: CaseIterable {
         default:
             return true
         }
+    }
+    
+    struct Regex {
+        static let fat = #"^(?=fat)(?!\#(saturatedFat))(?!\#(transFat)).*$"#
+        static let saturatedFat = #"saturated"#
+        static let transFat = #"trans"#
+        static let cholesterol = #"cholesterol"#
     }
 }
