@@ -89,12 +89,24 @@ public struct NutritionLabelClassifier {
 
         for recognizedText in recognizedTexts {
             guard !processed.contains(recognizedText),
-                  recognizedText.isValueBasedClass,
-                  let attribute = recognizedText.attribute
-            else { continue }
+                  recognizedText.isValueBasedClass else {
+                print("Ignoring: \(recognizedText)")
+                continue
+            }
+            
+            //TODO: Rename isValueBasedClass to isValueBasedAttribute
+            
+            /// if the recognized text contains more than 1 value-based attribute
+            /// Separate them out into an array
+            /// For each element of the array, run the following code—making sure we allow the *final* array element to have an inline value that's not within the same box (whereas the rest should have it within the string itself)
+            
+            guard let attribute = recognizedText.attribute else {
+                print("Couldn't get attribute for: \(recognizedText)")
+                continue
+            }
             
             if recognizedText.containsValue {
-                print(recognizedText.string)
+//                print(recognizedText.string)
                 attributes.append(attribute)
                 column1.append(recognizedText)
                 processed.append(recognizedText)
@@ -107,6 +119,11 @@ public struct NutritionLabelClassifier {
                 }
             } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
 
+                /// Check if we have the special case of 4 energy values, and if so, split them into two separate values that gets treated as each one lying in a different column
+
+                /// Also check if we have 2 values, and if so, determine that we're spanning both columns and process them and append them at the same time, continuing afterwards
+                
+                //TODO: Comment why we're doing this
                 guard !processed.contains(inlineValue) else {
                     guard let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
                        !processed.contains(inlineValue) else {
@@ -117,7 +134,7 @@ public struct NutritionLabelClassifier {
                     column2.append(inlineValue)
                     processed.append(inlineValue)
                     
-                    print(inlineValue.string)
+//                    print(inlineValue.string)
 
                     continue
                 }
@@ -126,12 +143,12 @@ public struct NutritionLabelClassifier {
                 column1.append(inlineValue)
                 processed.append(inlineValue)
 
-                print(inlineValue.string)
+//                print(inlineValue.string)
 
                 if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
                    !processed.contains(inlineValue)
                 {
-                    print(inlineValue.string)
+//                    print(inlineValue.string)
                     column2.append(inlineValue)
                     processed.append(inlineValue)
                 } else {
