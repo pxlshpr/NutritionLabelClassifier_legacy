@@ -29,24 +29,28 @@ enum NutritionLabelAttribute: CaseIterable {
             
         case .protein:
             return #"protein"#
+            
         case .carbohydrate:
             return #"carb.*"#
+        case .dietaryFibre:
+            return #"dietary fibre"#
+
         case .fat:
             return #"fat"#
-        case .cholesterol:
-            return #"cholesterol"#
         case .saturatedFat:
             return #"saturated"#
         case .transFat:
             return #"trans"#
-        case .dietaryFibre:
-            return #"dietary fibre"#
+        case .cholesterol:
+            return #"cholesterol"#
+            
         case .sodium:
             return #"(sodium|salt)"#
         case .sugar:
             return #"sugar"#
         case .calcium:
             return #"calcium"#
+            
         default:
             return nil
         }

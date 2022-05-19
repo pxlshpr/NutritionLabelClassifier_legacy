@@ -77,7 +77,7 @@ public struct NutritionLabelClassifier {
         var processedBoxes: [Box] = []
         var dataFrame = DataFrame()
         
-        var attributes: [String] = []
+        var attributes: [NutritionLabelAttribute] = []
         var column1Boxes: [Box?] = []
         var column2Boxes: [Box?] = []
 
@@ -88,8 +88,7 @@ public struct NutritionLabelClassifier {
             else { continue }
             
             if box.containsValue {
-//                attributes.append(attribute)
-                attributes.append(box.string)
+                attributes.append(attribute)
                 column1Boxes.append(box)
                 processedBoxes.append(box)
                 
@@ -106,16 +105,14 @@ public struct NutritionLabelClassifier {
                        !processedBoxes.contains(inlineValueBox) else {
                         continue
                     }
-//                    attributes.append(attribute)
-                    attributes.append(box.string)
+                    attributes.append(attribute)
                     column1Boxes.append(nil)
                     column2Boxes.append(inlineValueBox)
                     processedBoxes.append(inlineValueBox)
                     continue
                 }
                 
-//                attributes.append(attribute)
-                attributes.append(box.string)
+                attributes.append(attribute)
                 column1Boxes.append(inlineValueBox)
                 processedBoxes.append(inlineValueBox)
                 
