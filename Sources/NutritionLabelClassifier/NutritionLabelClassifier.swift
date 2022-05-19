@@ -30,104 +30,102 @@ public struct NutritionLabelClassifier {
         return (nil, nil)
     }
     
-    static func columnHeaderFromBox(_ box: RecognizedText?) -> NutritionLabelColumnHeader? {
+    static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> NutritionLabelColumnHeader? {
         return nil
     }
     
-    static func columnHeaderBox(for dataFrame: DataFrame, withColumnName columnName: String, in boxes: [RecognizedText]) -> RecognizedText? {
-        let columnBoxes: [RecognizedText] = dataFrame.rows.compactMap({
+    static func columnHeaderRecognizedText(for dataFrame: DataFrame, withColumnName columnName: String, in recognizedTexts: [RecognizedText]) -> RecognizedText? {
+        let column: [RecognizedText] = dataFrame.rows.compactMap({
             ($0[columnName] as? RecognizedText)
         })
         
-        guard let smallestBox = columnBoxes.sorted(by: { $0.rect.width < $1.rect.width}).first else {
+        guard let smallest = column.sorted(by: { $0.rect.width < $1.rect.width}).first else {
             return nil
         }
         
-//        for box in columnBoxes {
-            let precedingBoxes = boxes.boxesOnSameColumn(as: smallestBox, preceding: true)
-            for precedingBox in precedingBoxes {
-                if precedingBox.string.matchesRegex(Regex.isColumnHeader) {
-                    return precedingBox
-                }
+        let preceding = recognizedTexts.filterSameColumn(as: smallest, preceding: true)
+        for recognizedText in preceding {
+            if recognizedText.string.matchesRegex(Regex.isColumnHeader) {
+                return recognizedText
             }
-//        }
+        }
         return nil
     }
 
-    static func columnHeaders(from boxes: [RecognizedText], using dataFrame: DataFrame) -> (NutritionLabelColumnHeader?, NutritionLabelColumnHeader?) {
+    static func columnHeaders(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (NutritionLabelColumnHeader?, NutritionLabelColumnHeader?) {
         guard dataFrame.columns.count == 3 else {
             return (nil, nil)
         }
         
-        let header1Box = columnHeaderBox(for: dataFrame, withColumnName: "value1", in: boxes)
-        let header2Box = columnHeaderBox(for: dataFrame, withColumnName: "value2", in: boxes)
+        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value1", in: recognizedTexts)
+        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value2", in: recognizedTexts)
         
-        return (columnHeaderFromBox(header1Box),
-                columnHeaderFromBox(header2Box))
+        return (columnHeader(fromRecognizedText: header1),
+                columnHeader(fromRecognizedText: header2))
     }
     
     //TODO: Remove this
-    static func columnHeadersBoxes(from boxes: [RecognizedText], using dataFrame: DataFrame) -> (RecognizedText?, RecognizedText?) {
+    static func columnHeadersRecognizedTexts(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (RecognizedText?, RecognizedText?) {
         guard dataFrame.columns.count == 3 else {
             return (nil, nil)
         }
         
-        let header1 = columnHeaderBox(for: dataFrame, withColumnName: "value1", in: boxes)
-        let header2 = columnHeaderBox(for: dataFrame, withColumnName: "value2", in: boxes)
+        let header1 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value1", in: recognizedTexts)
+        let header2 = columnHeaderRecognizedText(for: dataFrame, withColumnName: "value2", in: recognizedTexts)
         return (header1, header2)
     }
     
-    static func dataFrameOfNutrients(from boxes: [RecognizedText]) -> DataFrame {
+    static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
         
-        var processedBoxes: [RecognizedText] = []
+        var processed: [RecognizedText] = []
         var dataFrame = DataFrame()
         
         var attributes: [NutritionLabelAttribute] = []
-        var column1Boxes: [RecognizedText?] = []
-        var column2Boxes: [RecognizedText?] = []
+        var column1: [RecognizedText?] = []
+        var column2: [RecognizedText?] = []
 
-        for box in boxes {
-            guard !processedBoxes.contains(box),
-                  box.isValueBasedClass,
-                  let attribute = box.attribute
+        for recognizedText in recognizedTexts {
+            guard !processed.contains(recognizedText),
+                  recognizedText.isValueBasedClass,
+                  let attribute = recognizedText.attribute
             else { continue }
             
-            if box.containsValue {
+            if recognizedText.containsValue {
                 attributes.append(attribute)
-                column1Boxes.append(box)
-                processedBoxes.append(box)
+                column1.append(recognizedText)
+                processed.append(recognizedText)
                 
-                if let inlineValueBox = boxes.valueBoxOnSameLine(as: box), !processedBoxes.contains(inlineValueBox) {
-                    column2Boxes.append(inlineValueBox)
-                    processedBoxes.append(inlineValueBox)
+                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText), !processed.contains(inlineValue) {
+                    column2.append(inlineValue)
+                    processed.append(inlineValue)
                 } else {
-                    column2Boxes.append(nil)
+                    column2.append(nil)
                 }
-            } else if let inlineValueBox = boxes.valueBoxOnSameLine(as: box) {
+            } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
                 
-                guard !processedBoxes.contains(inlineValueBox) else {
-                    guard let inlineValueBox = boxes.valueBoxOnSameLine(as: box, inSecondColumn: true),
-                       !processedBoxes.contains(inlineValueBox) else {
+                guard !processed.contains(inlineValue) else {
+                    guard let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
+                       !processed.contains(inlineValue) else {
                         continue
                     }
                     attributes.append(attribute)
-                    column1Boxes.append(nil)
-                    column2Boxes.append(inlineValueBox)
-                    processedBoxes.append(inlineValueBox)
+                    column1.append(nil)
+                    column2.append(inlineValue)
+                    processed.append(inlineValue)
                     continue
                 }
                 
                 attributes.append(attribute)
-                column1Boxes.append(inlineValueBox)
-                processedBoxes.append(inlineValueBox)
+                column1.append(inlineValue)
+                processed.append(inlineValue)
                 
-                if let inlineValueBox = boxes.valueBoxOnSameLine(as: box, inSecondColumn: true),
-                   !processedBoxes.contains(inlineValueBox)
+                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
+                   !processed.contains(inlineValue)
                 {
-                    column2Boxes.append(inlineValueBox)
-                    processedBoxes.append(inlineValueBox)
+                    column2.append(inlineValue)
+                    processed.append(inlineValue)
                 } else {
-                    column2Boxes.append(nil)
+                    column2.append(nil)
                 }
             }
         }
@@ -135,12 +133,10 @@ public struct NutritionLabelClassifier {
         let labelColumn = Column(name: "attribute", contents: attributes)
         let column1Id = ColumnID("value1", RecognizedText?.self)
         let column2Id = ColumnID("value2", RecognizedText?.self)
-        let column1 = Column(column1Id, contents: column1Boxes)
-        let column2 = Column(column2Id, contents: column2Boxes)
 
-           dataFrame.append(column: labelColumn)
-        dataFrame.append(column: column1)
-        dataFrame.append(column: column2)
+        dataFrame.append(column: labelColumn)
+        dataFrame.append(column: Column(column1Id, contents: column1))
+        dataFrame.append(column: Column(column2Id, contents: column2))
         return dataFrame
     }
 }

@@ -44,65 +44,65 @@ extension Array where Element == RecognizedText {
         map { $0.string }.joined(separator: ", ")
     }
     
-    func boxesOnSameColumn(as box: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
-        var sameColumnBoxes: [RecognizedText] = []
-        var discardedBoxes: [RecognizedText] = []
+    func filterSameColumn(as recognizedText: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
+        var column: [RecognizedText] = []
+        var discarded: [RecognizedText] = []
         let candidates = filter {
-            $0.isInSameColumnAs(box)
-            && (preceding ? $0.rect.maxY < box.rect.maxY : $0.rect.minY > box.rect.minY)
+            $0.isInSameColumnAs(recognizedText)
+            && (preceding ? $0.rect.maxY < recognizedText.rect.maxY : $0.rect.minY > recognizedText.rect.minY)
         }.sorted {
             $0.rect.minY < $1.rect.minY
         }
 
-        /// Deal with multiple boxes we may have grabbed from the same row due to them both overlapping with `box` by choosing the one that intersects with it the most
+        /// Deal with multiple recognizedTexts we may have grabbed from the same row due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
         for candidate in candidates {
 
-            guard !discardedBoxes.contains(candidate) else {
+            guard !discarded.contains(candidate) else {
                 continue
             }
-            let sameRowBoxes = candidates.filter {
+            let row = candidates.filter {
                 $0.isInSameRowAs(candidate)
             }
-            guard sameRowBoxes.count > 1, let first = sameRowBoxes.first else {
-                sameColumnBoxes.append(candidate)
+            guard row.count > 1, let first = row.first else {
+                column.append(candidate)
                 continue
             }
             
-            var closestBox = first
-            for sameRowBox in sameRowBoxes {
-                /// first normalize the y values of both rects, `sameRowBox`, `closestBox` to `box` in new temporary variables, by assigning both the same y values (`origin.y` and `size.height`)
-                let sameRowBoxYNormalizedRect = sameRowBox.rect.rectWithYValues(of: box.rect)
-                let closestBoxYNormalizedRect = closestBox.rect.rectWithYValues(of: box.rect)
+            var closest = first
+            for rowElement in row {
+                /// first normalize the y values of both rects, `rowElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same y values (`origin.y` and `size.height`)
+                let yNormalizedRect = rowElement.rect.rectWithYValues(of: recognizedText.rect)
+                let closestYNormalizedRect = closest.rect.rectWithYValues(of: recognizedText.rect)
 
-                let sameRowBoxIntersection = sameRowBoxYNormalizedRect.intersection(box.rect)
-                let closestBoxIntersection = closestBoxYNormalizedRect.intersection(box.rect)
+                let intersection = yNormalizedRect.intersection(recognizedText.rect)
+                let closestIntersection = closestYNormalizedRect.intersection(recognizedText.rect)
 
-                let sameRowBoxIntersectionRatio = sameRowBoxIntersection.width / sameRowBox.rect.width
-                let closestBoxIntersectionRatio = closestBoxIntersection.width / closestBox.rect.width
+                let intersectionRatio = intersection.width / rowElement.rect.width
+                let closestIntersectionRatio = closestIntersection.width / closest.rect.width
 
-                if sameRowBoxIntersectionRatio > closestBoxIntersectionRatio {
-                    closestBox = sameRowBox
+                if intersectionRatio > closestIntersectionRatio {
+                    closest = rowElement
                 }
                 
-                discardedBoxes.append(sameRowBox)
+                discarded.append(rowElement)
             }
             
-            sameColumnBoxes.append(closestBox)
+            column.append(closest)
             
         }
         
-        return sameColumnBoxes
+        return column
     }
     
-    func boxesOnSameLine(as box: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
+    func filterSameRow(as recognizedText: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
 //        log.verbose(" ")
 //        log.verbose("******")
-//        log.verbose("Finding boxesOnSameLine as: \(box.string)")
-        var sameLineBoxes: [RecognizedText] = []
-        var discardedBoxes: [RecognizedText] = []
+//        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
+        var row: [RecognizedText] = []
+        var discarded: [RecognizedText] = []
         let candidates = filter {
-            $0.isInSameRowAs(box)
-            && (preceding ? $0.rect.maxX < box.rect.minX : $0.rect.minX > box.rect.maxX)
+            $0.isInSameRowAs(recognizedText)
+            && (preceding ? $0.rect.maxX < recognizedText.rect.minX : $0.rect.minX > recognizedText.rect.maxX)
         }.sorted {
             $0.rect.minX < $1.rect.minX
         }
@@ -110,100 +110,91 @@ extension Array where Element == RecognizedText {
 //        log.verbose("candidates are:")
 //        log.verbose("\(candidates.map { $0.string })")
 
-        /// Deal with multiple boxes we may have grabbed from the same column due to them both overlapping with `box` by choosing the one that intersects with it the most
+        /// Deal with multiple recognizedText we may have grabbed from the same column due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
         for candidate in candidates {
 
-//            log.verbose("  finding boxes in same column as: \(candidate.string)")
+//            log.verbose("  finding recognizedTexts in same column as: \(candidate.string)")
 
-            guard !discardedBoxes.contains(candidate) else {
-//                log.verbose("  this box has been discarded, so ignoring it")
+            guard !discarded.contains(candidate) else {
+//                log.verbose("  this recognizedText has been discarded, so ignoring it")
                 continue
             }
-            let sameColumnBoxes = candidates.filter {
+            let column = candidates.filter {
                 $0.isInSameColumnAs(candidate)
             }
-            guard sameColumnBoxes.count > 1, let first = sameColumnBoxes.first else {
-//                log.verbose("  no boxes in same column, so adding this to the final array and continuing")
-                sameLineBoxes.append(candidate)
+            guard column.count > 1, let first = column.first else {
+//                log.verbose("  no recognizedTexts in same column, so adding this to the final array and continuing")
+                row.append(candidate)
                 continue
             }
             
-//            log.verbose("  found these boxes in the same column:")
-//            log.verbose("  \(sameColumnBoxes.map { $0.string })")
+//            log.verbose("  found these recognizedTexts in the same column:")
+//            log.verbose("  \(column.map { $0.string })")
 
-//            log.verbose("  setting closestBox as \(first.string)")
-            var closestBox = first
-//            var sameColumnBoxesToDiscard: [RecognizedText] = []
-            for sameColumnBox in sameColumnBoxes {
-//                log.verbose("    checking if \(sameColumnBox.string) is a closer candidate")
-                /// first normalize the x values of both rects, `sameColumnBox`, `closestBox` to `box` in new temporary variables, by assigning both the same x values (`origin.x` and `size.width`)
-                let sameColumnBoxXNormalizedRect = sameColumnBox.rect.rectWithXValues(of: box.rect)
-                let closestBoxXNormalizedRect = closestBox.rect.rectWithXValues(of: box.rect)
+//            log.verbose("  setting closest as \(first.string)")
+            var closest = first
+            for columnElement in column {
+//                log.verbose("    checking if \(columnElement.string) is a closer candidate")
+                /// first normalize the x values of both rects, `columnElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same x values (`origin.x` and `size.width`)
+                let xNormalizedRect = columnElement.rect.rectWithXValues(of: recognizedText.rect)
+                let closestXNormalizedRect = closest.rect.rectWithXValues(of: recognizedText.rect)
 
-//                log.verbose("    sameColumnBoxXNormalizedRect is: \(sameColumnBoxXNormalizedRect)")
-//                log.verbose("    closestBoxXNormalizedRect is: \(closestBoxXNormalizedRect)")
+//                log.verbose("    xNormalizedRect is: \(xNormalizedRect)")
+//                log.verbose("    closestXNormalizedRect is: \(closestXNormalizedRect)")
 
-                let sameColumnBoxIntersection = sameColumnBoxXNormalizedRect.intersection(box.rect)
-                let closestBoxIntersection = closestBoxXNormalizedRect.intersection(box.rect)
-//                log.verbose("    sameColumnBoxIntersection is: \(sameColumnBoxIntersection)")
-//                log.verbose("    closestBoxIntersection is: \(closestBoxIntersection)")
+                let intersection = xNormalizedRect.intersection(recognizedText.rect)
+                let closestIntersection = closestXNormalizedRect.intersection(recognizedText.rect)
+//                log.verbose("    intersection is: \(intersection)")
+//                log.verbose("    closestIntersection is: \(closestIntersection)")
 
-//                log.verbose("    Checking if sameColumnBoxIntersection.height(\(sameColumnBoxXNormalizedRect.intersection(box.rect).height)) > closestBoxIntersection.height(\(closestBoxXNormalizedRect.intersection(box.rect).height))")
-                /// now compare these intersection of both the x-normalized rects with `box` itself, and return whichever intersection rect has a larger height (indicating which one is more 'in line' with `box`)
-                if sameColumnBoxIntersection.height > closestBoxIntersection.height {
-//                    log.verbose("    It is greater, so setting closest box as: \(sameColumnBox.string)")
-                    closestBox = sameColumnBox
+//                log.verbose("    Checking if intersection.height(\(intersection.height)) > closestIntersection.height(\(closestIntersection.height))")
+                /// now compare these intersection of both the x-normalized rects with `recognizedText` itself, and return whichever intersection rect has a larger height (indicating which one is more 'in line' with `recognizedText`)
+                if intersection.height > closestIntersection.height {
+//                    log.verbose("    It is greater, so setting closest as: \(sameColumnElement.string)")
+                    closest = columnElement
                 } else {
-//                    log.verbose("    It isn't greater, so leaving closest box as it was")
+//                    log.verbose("    It isn't greater, so leaving closest as it was")
                 }
                 
-//                log.verbose("    Adding \(sameColumnBox.string) to the discarded boxes pile")
-//                sameColumnBoxesToDiscard.append(sameColumnBox)
-                discardedBoxes.append(sameColumnBox)
+//                log.verbose("    Adding \(columnElement.string) to the discarded pile")
+                discarded.append(columnElement)
             }
             
-            /// Check the potential boxes to discard
-//            for sameColumnBoxToDiscard in sameColumnBoxesToDiscard {
-//                /// If lining it up with the `closestBox` would intersect it, then do in fact discard it—otherwise leave it
-//                if sameColumnBoxToDiscard.rect.rectWithYValues(of: closestBox.rect).intersects(closestBox.rect) {
-//                    discardedBoxes.append(sameColumnBoxToDiscard)
-//                }
-//            }
             
-//            log.verbose("  Now that we've gone through all the \(sameColumnBoxes.count) sameColumnBoxes, we're appending the final closestBox: \(closestBox.string) to sameLineBoxes")
-            sameLineBoxes.append(closestBox)
+//            log.verbose("  Now that we've gone through all the \(column.count) columnElements, we're appending the final closest: \(closest.string) to row")
+            row.append(closest)
             
         }
         
-//        log.verbose("Finally, we have sameLineBoxes as:")
-//        log.verbose("\(sameLineBoxes.map { $0.string })")
+//        log.verbose("Finally, we have row as:")
+//        log.verbose("\(row.map { $0.string })")
         
-        return sameLineBoxes
+        return row
     }
     
-    func nextBoxOnSameLine(as box: RecognizedText) -> RecognizedText? {
-        boxesOnSameLine(as: box).first
+    func nextRecognizedTextOnSameLine(as recognizedText: RecognizedText) -> RecognizedText? {
+        filterSameRow(as: recognizedText).first
     }
     
-    func valueBoxOnSameLine(as box: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
+    func valueOnSameLine(as recognizedText: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
         /// Set this bool to true if we're looking for the second value so that the first value gets ignored
         var ignoreNextValue = inSecondColumn
-        var returnNilIfNextBoxDoesNotContainValue = false
-        let boxesOnSameLine = boxesOnSameLine(as: box)
-        for box in boxesOnSameLine {
-            if box.containsValue {
+        var returnNilIfNextRecognizedTextDoesNotContainValue = false
+        let recognizedTextsOnSameLine = filterSameRow(as: recognizedText)
+        for recognizedText in recognizedTextsOnSameLine {
+            if recognizedText.containsValue {
                 /// Keep looking if we're after the second column
                 guard !ignoreNextValue else {
                     /// Reset this so that we actually grab the next value
                     ignoreNextValue = false
                     continue
                 }
-                return box
-            } else if returnNilIfNextBoxDoesNotContainValue {
+                return recognizedText
+            } else if returnNilIfNextRecognizedTextDoesNotContainValue {
                 return nil
             }
-            if box.containsPercentage {
-                returnNilIfNextBoxDoesNotContainValue = true
+            if recognizedText.containsPercentage {
+                returnNilIfNextRecognizedTextDoesNotContainValue = true
             } else {
                 return nil
             }
