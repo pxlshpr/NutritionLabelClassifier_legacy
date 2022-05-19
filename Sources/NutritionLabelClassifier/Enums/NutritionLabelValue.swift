@@ -5,8 +5,10 @@ struct NutritionLabelValue {
     let unit: NutritionLabelUnit?
     
     init?(string: String) {
-        let groups = string.capturedGroups(using: Regex.pattern, allowCapturingEntireString: true)
-        guard groups.count > 1, let amount = Double(groups[1]) else {
+        let groups = string.capturedGroups(using: Regex.standardPattern, allowCapturingEntireString: true)
+        guard groups.count > 1,
+              let amount = Double(groups[1].replacingOccurrences(of: ":", with: "."))
+        else {
             return nil
         }
         self.amount = amount
@@ -26,7 +28,9 @@ struct NutritionLabelValue {
     }
     
     struct Regex {
-        static let pattern = #"^([0-9.]+)[ ]*(\#(NutritionLabelUnit.allCases.map { $0.rawValue }.joined(separator: "|")))*$"#
+        static let units = NutritionLabelUnit.allCases.map { $0.rawValue }.joined(separator: "|")
+//        static let standardPattern = #"^(?:[^0-9.:]* |\(|^)([0-9.:]+)[ ]*(\#(units))*$"#
+        static let standardPattern = #"^(?:[^0-9.:]*(?: |\()|^)([0-9.:]+)[ ]*(\#(units))+(?: .*|\)?$)$"#
     }
 }
 

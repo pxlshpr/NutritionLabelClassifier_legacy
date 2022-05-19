@@ -6,14 +6,6 @@ import TabularData
 final class NutritionLabelValueTests: XCTestCase {
     
     let testCases: [(input: String, value: NutritionLabelValue?)] = [
-        ("9.0", NutritionLabelValue(amount: 9)),
-        ("9.0", NutritionLabelValue(amount: 9)),
-        ("9", NutritionLabelValue(amount: 9)),
-        ("9", NutritionLabelValue(amount: 9)),
-        ("0.01", NutritionLabelValue(amount: 0.01)),
-        ("0.01", NutritionLabelValue(amount: 0.01)),
-        (".01", NutritionLabelValue(amount: 0.01)),
-        
         ("9.0 g", NutritionLabelValue(amount: 9, unit: .g)),
         ("9.0g", NutritionLabelValue(amount: 9, unit: .g)),
         ("9 g", NutritionLabelValue(amount: 9, unit: .g)),
@@ -54,6 +46,9 @@ final class NutritionLabelValueTests: XCTestCase {
         ("0.a01mcg", nil),
         ("a.01mcg", nil),
         
+        //MARK: - Test Cases from Test Images 1-15
+        
+        /// Standard
         ("12.1 g", NutritionLabelValue(amount: 12.1, unit: .g)),
         ("9.0 g", NutritionLabelValue(amount: 9, unit: .g)),
         ("10.9 g", NutritionLabelValue(amount: 10.9, unit: .g)),
@@ -167,6 +162,68 @@ final class NutritionLabelValueTests: XCTestCase {
         ("0.2 g", NutritionLabelValue(amount: 0.2, unit: .g)),
         ("0.3g", NutritionLabelValue(amount: 0.3, unit: .g)),
         
+        /// To be corrected
+        ("17:8 g", NutritionLabelValue(amount: 17.8, unit: .g)),
+        ("0:1 mg", NutritionLabelValue(amount: 0.1, unit: .mg)),
+        
+        /// To be extracted from end
+        ("Trans Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Cholesterol 0mg", NutritionLabelValue(amount: 0, unit: .mg)),
+        ("Sodium 65mg", NutritionLabelValue(amount: 65, unit: .mg)),
+        ("Saturated Fat 13g", NutritionLabelValue(amount: 13, unit: .g)),
+        ("Trans Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Cholesterol 5mg", NutritionLabelValue(amount: 5, unit: .mg)),
+        ("Total Carbohydrate 16g", NutritionLabelValue(amount: 16, unit: .g)),
+        ("Total Sugars 14g", NutritionLabelValue(amount: 14, unit: .g)),
+        ("Protein 2g", NutritionLabelValue(amount: 2, unit: .g)),
+        ("Saturated Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Trans Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Cholesterol 5mg", NutritionLabelValue(amount: 5, unit: .mg)),
+        ("Sodium 50mg", NutritionLabelValue(amount: 50, unit: .mg)),
+        ("Trans Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Sodium 65mg", NutritionLabelValue(amount: 65, unit: .mg)),
+        ("(0.2 g", NutritionLabelValue(amount: 0.2, unit: .g)),
+        ("Saturated Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Trans Fat 0g", NutritionLabelValue(amount: 0, unit: .g)),
+        ("Cholesterol 0mg", NutritionLabelValue(amount: 0, unit: .mg)),
+        ("Sodium 105mg", NutritionLabelValue(amount: 105, unit: .mg)),
+        
+        /// Extract from start or middle
+        ("186mg 23% RDI*", NutritionLabelValue(amount: 186, unit: .mg)),
+        ("Includes 12g Added Sugars 24%", NutritionLabelValue(amount: 12, unit: .g)),
+        ("9.5g 14%", NutritionLabelValue(amount: 9.5, unit: .g)),
+        ("213mg 27% RDI*", NutritionLabelValue(amount: 213, unit: .mg)),
+        ("(0.2 g)", NutritionLabelValue(amount: 0.2, unit: .g)),
+        ("Calcium (% RDA) 128 mg (16%)", NutritionLabelValue(amount: 128, unit: .mg)),
+//        ("0% Total Carbohydrates 9g %", NutritionLabelValue(amount: 9, unit: .g)),
+//        ("0% Total Carbohydrate 20g 7%", NutritionLabelValue(amount: 20, unit: .g)),
+        
+        
+        //384kJ/91kcal 284kJ/67 kcal
+        //(117 kcal (491 kJ| 90 kcal (378 kJ)
+        //94 kcal (395 kJ) 75 kcal (315 kJ)
+        //113 kcal (475 kJ) 90 kcal (378 kJ)
+
+        //396kJ/94kcal
+        //495 kJ/118kcal
+
+        //819kJ
+        //546kJ
+        //553kJ
+        //8400kJ
+        //256 kJ
+        //320 kJ
+
+        // multiples
+        //Energy 116kcal 96kcal
+        //Vit. D 0mcg 0% Calcium 58mg 4%
+        //I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%
+        //Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g
+        //223mg 186mg
+
+        // invalids
+        //CALCIUM (20% RI* PER 100g))
+        //Caring Suer: Go7z (170g) Saturated Fat
     ]
     
     func testColumnHeaders() throws {
