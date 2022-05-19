@@ -4,20 +4,36 @@ import TabularData
 @testable import NutritionLabelClassifier
 
 final class NutritionLabelColumnHeaderTests: XCTestCase {
-    
-    let testCasesPer100 = [
-        "per 100 g",
-        "Per 100"
+
+    let testCases: [(input: String, header: NutritionLabelColumnHeader?)] = [
+        ("Per 100 g", nil),
+        ("Per 100g", nil),
+        ("100g", nil),
+        ("Per 100g", nil),
+
+        ("Per serving", nil),
+        ("Per Serving", nil),
+        ("Per serving", nil),
+        ("PER SERVE", nil),
+        ("Amount per serving", nil),
+        ("Amount/Serving", nil),
+        ("%DV* Amount/Serving", nil),
+
+        ("Per 1 pot", nil),
+        ("Serving size: 130g (1 cup)", nil),
+        ("SERVING SIZE: 150g", nil),
+
+        ("PER 100g 74g (2 tubes)", nil),
+        ("INFORMATION Per 120g Per 100g", nil),
+        ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", nil),
+
+        ("trition Amount Per Serving %Daily Value* Amount Per Serving", nil),
+        ("Nutrition Facts Amount/Serving %DV* Amount/Serving", nil)
     ]
     
-    func testPer100Headers() throws {
-        for testCase in 1...15 {
-            guard let dataFrame = dataFrameForTestCase(testCase) else {
-                XCTFail("Couldn't read file for Test Case \(testCase)")
-                return
-            }
-            print("DataFrame for Test Case: \(testCase)")
-            print(dataFrame)
+    func testColumnHeaders() throws {
+        for testCase in testCases {
+            XCTAssertEqual(NutritionLabelColumnHeader(string: testCase.input), testCase.header)
         }
     }
 }

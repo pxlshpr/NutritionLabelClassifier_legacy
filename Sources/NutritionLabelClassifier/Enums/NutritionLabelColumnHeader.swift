@@ -5,6 +5,8 @@ enum NutritionLabelColumnHeader {
     case per(serving: String)
     
     init?(string: String) {
+        return nil
+        
         if string.matchesRegex(Regex.per100) {
             self = .per100g
         } else if let serving = string.firstCapturedGroup(using: Regex.perServing) {
