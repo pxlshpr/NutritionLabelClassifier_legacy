@@ -195,35 +195,38 @@ final class NutritionLabelValueTests: XCTestCase {
         ("213mg 27% RDI*", NutritionLabelValue(amount: 213, unit: .mg)),
         ("(0.2 g)", NutritionLabelValue(amount: 0.2, unit: .g)),
         ("Calcium (% RDA) 128 mg (16%)", NutritionLabelValue(amount: 128, unit: .mg)),
-//        ("0% Total Carbohydrates 9g %", NutritionLabelValue(amount: 9, unit: .g)),
-//        ("0% Total Carbohydrate 20g 7%", NutritionLabelValue(amount: 20, unit: .g)),
         
+        ("819kJ", NutritionLabelValue(amount: 819, unit: .kj)),
+        ("546kJ", NutritionLabelValue(amount: 546, unit: .kj)),
+        ("553kJ", NutritionLabelValue(amount: 553, unit: .kj)),
+        ("8400kJ", NutritionLabelValue(amount: 8400, unit: .kj)),
+        ("256 kJ", NutritionLabelValue(amount: 256, unit: .kj)),
+        ("320 kJ", NutritionLabelValue(amount: 320, unit: .kj)),
         
-        //384kJ/91kcal 284kJ/67 kcal
-        //(117 kcal (491 kJ| 90 kcal (378 kJ)
-        //94 kcal (395 kJ) 75 kcal (315 kJ)
-        //113 kcal (475 kJ) 90 kcal (378 kJ)
+/// Need to extract percent first
+("0% Total Carbohydrates 9g %", NutritionLabelValue(amount: 9, unit: .g)),
+("0% Total Carbohydrate 20g 7%", NutritionLabelValue(amount: 20, unit: .g)),
 
-        //396kJ/94kcal
-        //495 kJ/118kcal
+/// 4 energy values
+384kJ/91kcal 284kJ/67 kcal
+(117 kcal (491 kJ| 90 kcal (378 kJ)
+94 kcal (395 kJ) 75 kcal (315 kJ)
+113 kcal (475 kJ) 90 kcal (378 kJ)
 
-        //819kJ
-        //546kJ
-        //553kJ
-        //8400kJ
-        //256 kJ
-        //320 kJ
+/// both energy values
+396kJ/94kcal
+495 kJ/118kcal
 
-        // multiples
-        //Energy 116kcal 96kcal
-        //Vit. D 0mcg 0% Calcium 58mg 4%
-        //I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%
-        //Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g
-        //223mg 186mg
+// multiples
+Energy 116kcal 96kcal
+Vit. D 0mcg 0% Calcium 58mg 4%
+I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%
+Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g
+223mg 186mg
 
-        // invalids
-        //CALCIUM (20% RI* PER 100g))
-        //Caring Suer: Go7z (170g) Saturated Fat
+// invalids
+CALCIUM (20% RI* PER 100g))
+Caring Suer: Go7z (170g) Saturated Fat
     ]
     
     func testColumnHeaders() throws {
