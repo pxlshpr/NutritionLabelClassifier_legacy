@@ -4,9 +4,9 @@ import TabularData
 
 extension NutritionLabelClassifier {
     
-    public static func features(from boxes: [Box]) -> DataFrame? {
+    public static func features(from boxes: [RecognizedText]) -> DataFrame? {
         let dataFrame = dataFrameOfNutrients(from: boxes)
-        let columnHeaders = columnHeaders(from: boxes, using: dataFrame)
+        let columnHeaders = columnHeadersBoxes(from: boxes, using: dataFrame)
         
         if let header1 = columnHeaders.0 {
             if let header2 = columnHeaders.1 {

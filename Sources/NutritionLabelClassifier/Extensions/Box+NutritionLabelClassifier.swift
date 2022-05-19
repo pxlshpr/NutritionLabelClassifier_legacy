@@ -1,7 +1,20 @@
 import SwiftUI
 import VisionSugar
 
-extension Box {
+//TODO: Move this to SwiftSugar
+extension CGRect {
+    func rectWithXValues(of rect: CGRect) -> CGRect {
+        CGRect(x: rect.origin.x, y: origin.y,
+               width: rect.size.width, height: size.height)
+    }
+    
+    func rectWithYValues(of rect: CGRect) -> CGRect {
+        CGRect(x: origin.x, y: rect.origin.y,
+               width: size.width, height: rect.size.height)
+    }
+}
+
+extension RecognizedText {
     var isValueBasedClass: Bool {
         attribute?.isValueBased ?? false
     }
@@ -25,28 +38,15 @@ extension Box {
     }
 }
 
-extension CGRect {
-    func rectWithXValues(of rect: CGRect) -> CGRect {
-        CGRect(x: rect.origin.x, y: origin.y,
-               width: rect.size.width, height: size.height)
-    }
-    
-    func rectWithYValues(of rect: CGRect) -> CGRect {
-        CGRect(x: origin.x, y: rect.origin.y,
-               width: size.width, height: rect.size.height)
-    }
-
-}
-
-extension Array where Element == Box {
+extension Array where Element == RecognizedText {
 
     var description: String {
         map { $0.string }.joined(separator: ", ")
     }
     
-    func boxesOnSameColumn(as box: Box, preceding: Bool = false) -> [Box] {
-        var sameColumnBoxes: [Box] = []
-        var discardedBoxes: [Box] = []
+    func boxesOnSameColumn(as box: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
+        var sameColumnBoxes: [RecognizedText] = []
+        var discardedBoxes: [RecognizedText] = []
         let candidates = filter {
             $0.isInSameColumnAs(box)
             && (preceding ? $0.rect.maxY < box.rect.maxY : $0.rect.minY > box.rect.minY)
@@ -94,12 +94,12 @@ extension Array where Element == Box {
         return sameColumnBoxes
     }
     
-    func boxesOnSameLine(as box: Box, preceding: Bool = false) -> [Box] {
+    func boxesOnSameLine(as box: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
 //        log.verbose(" ")
 //        log.verbose("******")
 //        log.verbose("Finding boxesOnSameLine as: \(box.string)")
-        var sameLineBoxes: [Box] = []
-        var discardedBoxes: [Box] = []
+        var sameLineBoxes: [RecognizedText] = []
+        var discardedBoxes: [RecognizedText] = []
         let candidates = filter {
             $0.isInSameRowAs(box)
             && (preceding ? $0.rect.maxX < box.rect.minX : $0.rect.minX > box.rect.maxX)
@@ -133,7 +133,7 @@ extension Array where Element == Box {
 
 //            log.verbose("  setting closestBox as \(first.string)")
             var closestBox = first
-//            var sameColumnBoxesToDiscard: [Box] = []
+//            var sameColumnBoxesToDiscard: [RecognizedText] = []
             for sameColumnBox in sameColumnBoxes {
 //                log.verbose("    checking if \(sameColumnBox.string) is a closer candidate")
                 /// first normalize the x values of both rects, `sameColumnBox`, `closestBox` to `box` in new temporary variables, by assigning both the same x values (`origin.x` and `size.width`)
@@ -181,11 +181,11 @@ extension Array where Element == Box {
         return sameLineBoxes
     }
     
-    func nextBoxOnSameLine(as box: Box) -> Box? {
+    func nextBoxOnSameLine(as box: RecognizedText) -> RecognizedText? {
         boxesOnSameLine(as: box).first
     }
     
-    func valueBoxOnSameLine(as box: Box, inSecondColumn: Bool = false) -> Box? {
+    func valueBoxOnSameLine(as box: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
         /// Set this bool to true if we're looking for the second value so that the first value gets ignored
         var ignoreNextValue = inSecondColumn
         var returnNilIfNextBoxDoesNotContainValue = false
