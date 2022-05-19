@@ -203,6 +203,9 @@ final class NutritionLabelValueTests: XCTestCase {
         ("256 kJ", NutritionLabelValue(amount: 256, unit: .kj)),
         ("320 kJ", NutritionLabelValue(amount: 320, unit: .kj)),
         
+/// Current pattern
+^(?:[^0-9.:]*(?: |\()|^)([0-9.:]+)[ ]*(\#(units))+(?: .*|\)?$)$
+        
 /// Need to extract percent first
 0% Total Carbohydrates 9g %
 0% Total Carbohydrate 20g 7%
