@@ -28,9 +28,9 @@ public struct NutritionLabelClassifier {
                     //TODO: Figure out which side is 100g
                 } else {
                     if header1.string.matchesRegex(#"100[ ]*g"#) {
-                        return dataFrame.selecting(columnNames: "label", "col1")
+                        return dataFrame.selecting(columnNames: "attribute", "value1")
                     } else if header2.string.matchesRegex(#"100[ ]*g"#) {
-                        return dataFrame.selecting(columnNames: "label", "col2")
+                        return dataFrame.selecting(columnNames: "attribute", "value2")
                     }
                 }
             } else {
@@ -67,8 +67,8 @@ public struct NutritionLabelClassifier {
             return (nil, nil)
         }
         
-        let header1 = columnHeader(for: dataFrame, withColumnName: "values1", in: boxes)
-        let header2 = columnHeader(for: dataFrame, withColumnName: "values2", in: boxes)
+        let header1 = columnHeader(for: dataFrame, withColumnName: "value1", in: boxes)
+        let header2 = columnHeader(for: dataFrame, withColumnName: "value2", in: boxes)
         return (header1, header2)
     }
     
@@ -127,16 +127,15 @@ public struct NutritionLabelClassifier {
             }
         }
         
-        let labelColumn = Column(name: "attributes", contents: attributes)
-        let column1Id = ColumnID("values1", Box?.self)
-        let column2Id = ColumnID("values2", Box?.self)
+        let labelColumn = Column(name: "attribute", contents: attributes)
+        let column1Id = ColumnID("value1", Box?.self)
+        let column2Id = ColumnID("value2", Box?.self)
         let column1 = Column(column1Id, contents: column1Boxes)
         let column2 = Column(column2Id, contents: column2Boxes)
 
            dataFrame.append(column: labelColumn)
         dataFrame.append(column: column1)
         dataFrame.append(column: column2)
-        print(dataFrame)
         return dataFrame
     }
 }
