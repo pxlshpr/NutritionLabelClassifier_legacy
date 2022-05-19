@@ -84,6 +84,8 @@ public struct NutritionLabelClassifier {
         var dataFrame = DataFrame()
         
         var attributes: [NutritionLabelAttribute] = []
+        
+        //TODO: Store arrays of NutritionLabelValue instead
         var column1: [RecognizedText?] = []
         var column2: [RecognizedText?] = []
 
@@ -104,7 +106,8 @@ public struct NutritionLabelClassifier {
                 print("Couldn't get attribute for: \(recognizedText)")
                 continue
             }
-            
+
+            //TODO: Make sure we're using the array of units instead of harcoding them in containsValue
             if recognizedText.containsValue {
 //                print(recognizedText.string)
                 attributes.append(attribute)
