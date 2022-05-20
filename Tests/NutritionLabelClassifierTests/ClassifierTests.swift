@@ -51,8 +51,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
             }
 
             let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
-//            print("🧬 Nutrients for Test Case: \(testCase)")
-//            print(nutrientsDataFrame)
+            print("🧬 Nutrients for Test Case: \(testCase)")
+            print(nutrientsDataFrame)
             continue
             
             var processedNutrients: [Attribute: (recognizedText1: RecognizedText?, recognizedText2: RecognizedText?)] = [:]

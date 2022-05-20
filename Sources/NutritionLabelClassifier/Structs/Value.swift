@@ -57,3 +57,13 @@ extension Value: Hashable {
         hasher.combine(unit)
     }
 }
+
+extension Value: CustomStringConvertible {
+    var description: String {
+        if let unit = unit {
+            return "\(amount) \(unit.rawValue)"
+        } else {
+            return "\(amount)"
+        }
+    }
+}

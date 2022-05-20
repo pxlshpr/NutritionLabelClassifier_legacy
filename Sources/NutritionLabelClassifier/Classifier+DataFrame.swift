@@ -1,140 +1,133 @@
 import SwiftSugar
 import TabularData
 import VisionSugar
+import CoreText
 
 extension NutritionLabelClassifier {
+    typealias Row = (attribute: Attribute, value1: Value?, value2: Value?)
+
+    static func extractAttribute(_ attribute: Attribute, from recognizedTexts: [RecognizedText]) -> Row {
+        return (attribute, nil, nil)
+    }
+    
+    static func processArtefacts(of string: String) -> (rows: [Row], rowBeingExtracted: Row?) {
+        
+        var rows: [Row] = []
+        var attributeBeingExtracted: Attribute? = nil
+        var value1BeingExtracted: Value? = nil
+        
+        for artefact in string.artefacts {
+            if let attribute = artefact as? Attribute {
+                attributeBeingExtracted = attribute
+            } else if let value = artefact as? Value, let unit = value.unit, let attribute = attributeBeingExtracted {
+                if let value1 = value1BeingExtracted, let unit1 = value1.unit, unit == unit1 {
+                    rows.append((attribute, value1, value))
+                    attributeBeingExtracted = nil
+                    value1BeingExtracted = nil
+                } else {
+                    guard attribute.supportsUnit(unit) else {
+                        continue
+                    }
+                    value1BeingExtracted = value
+                }
+            }
+        }
+        
+        if let attributeBeingExtracted = attributeBeingExtracted {
+            return (rows, (attributeBeingExtracted, value1BeingExtracted, nil))
+        } else {
+            return (rows, nil)
+        }
+        /// Get the artefacts
+        /// For each artefact
+        ///     If it is an `Attribute`
+        ///         save it as the `attributeBeingExtracted`
+        ///     If it is a `Value`,
+        ///         If we have a `attributeBeingExtracted`
+        ///             If we don't have `value1` and its a supported unit
+        ///                 Save it as `value1`
+        ///             Else (we have `value1)`
+        ///                 If its the same unit as `value1`
+        ///                     Set the row with (`attributeBeingExtracted, value1, value2)`
+        ///                     Reset `attributeBeingExtracted` and `value1`
+        /// If we have `attributeBeingExtracted`, call the extraction function with it
+    }
+    
+    static func shouldContinueAfterExtracting(_ row: inout Row, from string: String) -> Bool {
+        
+        for artefact in string.artefacts {
+            if let value = artefact as? Value, let unit = value.unit {
+                if let value1 = row.value1 {
+                    guard let unit1 = value1.unit, unit == unit1 else {
+                        continue
+                    }
+                    row.value2 = value
+                    /// Send `false` for algorithm to stop searching inline texts once we have completed the row
+                    return false
+                } else if row.attribute.supportsUnit(unit) {
+                    row.value1 = value
+                }
+            } else if let _ = artefact as? Attribute {
+                /// Send `false` for algorithm to stop searching inline texts once we hit another `Attribute`
+                return false
+            }
+        }
+        /// Send `true` for algorithm to keep searching inline texts if we haven't hit another `Attribute` or completed the `Row`
+        return true
+        
+        ///         For each of its artefacts
+        ///             If it is a `Value`
+        ///                 If we don't have `value1` and its a supported unit
+        ///                     Save it as `value1`
+        ///                 Else (we have `value1)`
+        ///                     If its the same unit as `value1`
+        ///                         Set the row with (`attributeBeingExtracted, value1, value2)`
+        ///                         Reset `attributeBeingExtracted` and `value1`
+        ///             Else if it is (another) `Attribute`
+        ///                 return false
+    }
     
     static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
         
-        var rows: [(Attribute, Value?, Value?)] = []
+        var rows: [Row] = []
 
         for recognizedText in recognizedTexts {
             
-            /// Get the artefacts
-            /// For each artefact
-            ///     If it is an `Attribute`
-            ///         save it as the `attributeBeingExtracted`
-            ///     If it is a `Value`,
-            ///         If we have a `attributeBeingExtracted`
-            ///             If we don't have `value1` and its a supported unit
-            ///                 Save it as `value1`
-            ///             Else (we have `value1)`
-            ///                 If its the same unit as `value1`
-            ///                     Set the row with (`attributeBeingExtracted, value1, value2)`
-            ///                     Reset `attributeBeingExtracted` and `value1`
-            ///                     continue to the next `recognizedText`
-
-            /// If we have an `attributeBeingExtracted`
-            ///     Get the inline recognized texts
-            ///     For each one in order
-            ///         Get the artefacts
-            ///             If it is a `Value`
-            ///                 If we don't have `value1` and its a supported unit
-            ///                     Save it as `value1`
-            ///                 Else (we have `value1)`
-            ///                     If its the same unit as `value1`
-            ///                         Set the row with (`attributeBeingExtracted, value1, value2)`
-            ///                         Reset `attributeBeingExtracted` and `value1`
-            ///                         continue to the next `recognizedText`
-            ///             Else If it is an `Attribute`
-            ///                 If we've already got `value1` extracted
-            ///                     Set the row with (`attributeBeingExtracted, value1, nil)`
+            let result = processArtefacts(of: recognizedText.string)
             
+            /// Process any attributes that were extracted
+            for row in result.rows {
+                rows.append(row)
+            }
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-//            guard let attribute = Attribute(fromString: recognizedText.string) else {
-//                print("↪️ \(recognizedText) is NOT an attribute, so skipping it")
-//                continue
-//            }
-//
-//    //            /// if the recognized text contains more than 1 value-based attribute
-//    //            if recognizedText.containsMultipleValueBasedAttributes {
-//    //
-//    //            }
-//            /// Separate them out into an array
-//            /// For each element of the array, run the following code—making sure we allow the *final* array element to have an inline value that's not within the same box (whereas the rest should have it within the string itself)
-//
-//    //            print("(\"\(recognizedText)\", [.\(attribute)]),")
-//    //            print(recognizedText)
-//    //            continue
-//
-//            //TODO: Make sure we're using the array of units instead of harcoding them in containsValue
-//            if recognizedText.containsValue {
-//    //                print(recognizedText.string)
-//                attributes.append(attribute)
-//                values1.append(recognizedText)
-//                processed.append(recognizedText)
-//
-//                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText), !processed.contains(inlineValue) {
-//                    values2.append(inlineValue)
-//                    processed.append(inlineValue)
-//                } else {
-//                    values2.append(nil)
-//                }
-//            } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
-//
-//                /// Check if we have the special case of 4 energy values, and if so, split them into two separate values that gets treated as each one lying in a different column
-//
-//                /// Also check if we have 2 values, and if so, determine that we're spanning both columns and process them and append them at the same time, continuing afterwards
-//
-//                //TODO: Comment why we're doing this
-//                guard !processed.contains(inlineValue) else {
-//                    guard let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
-//                       !processed.contains(inlineValue) else {
-//                        continue
-//                    }
-//                    attributes.append(attribute)
-//                    values1.append(nil)
-//                    values2.append(inlineValue)
-//                    processed.append(inlineValue)
-//
-//    //                    print(inlineValue.string)
-//
-//                    continue
-//                }
-//
-//                attributes.append(attribute)
-//                values1.append(inlineValue)
-//                processed.append(inlineValue)
-//
-//    //                print(inlineValue.string)
-//
-//                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
-//                   !processed.contains(inlineValue)
-//                {
-//    //                    print(inlineValue.string)
-//                    values2.append(inlineValue)
-//                    processed.append(inlineValue)
-//                } else {
-//                    values2.append(nil)
-//                }
-//            }
+            /// Now do an inline search for any attribute that is still being extracted
+            if let row = result.rowBeingExtracted {
+                
+                var rowBeingExtracted = row
+                
+                let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText)
+                for inlineText in inlineTexts {
+                    if !shouldContinueAfterExtracting(&rowBeingExtracted, from: inlineText.string) {
+                        rows.append(rowBeingExtracted)
+                        break
+                    }
+                }
+                
+                /// After going through all inline texts and not completing the row, add this (possibly incomplete one)
+                rows.append(rowBeingExtracted)
+            }
         }
         
         var dataFrame = DataFrame()
-
-//        let labelColumn = Column(name: "attribute", contents: attributes)
+        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attribute })
+        let value1Column = Column(name: "value1", contents: rows.map { $0.value1 })
+        let value2Column = Column(name: "value2", contents: rows.map { $0.value2 })
 //        let column1Id = ColumnID("values1", Value?.self)
 //        let column2Id = ColumnID("values2", Value?.self)
 //
-//        dataFrame.append(column: labelColumn)
-//        dataFrame.append(column: Column(column1Id, contents: values1))
-//        dataFrame.append(column: Column(column2Id, contents: values2))
+        dataFrame.append(column: labelColumn)
+        dataFrame.append(column: value1Column)
+        dataFrame.append(column: value2Column)
         return dataFrame
     }
 }
