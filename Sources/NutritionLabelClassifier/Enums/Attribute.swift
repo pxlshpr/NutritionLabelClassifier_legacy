@@ -50,9 +50,9 @@ enum Attribute: String, CaseIterable {
             return [.kcal, .kj]
         case .protein, .carbohydrate, .fat:
             return [.g]
-        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol:
-            return [.g, .mg, .mcg, .p]
-        case .salt, .sodium, .calcium, .sugar, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
+        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar:
+            return [.g, .mg, .mcg]
+        case .salt, .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
             return [.g, .mg, .mcg, .p]
 //        case .servingSizeVolume:
 //        case .servingSizeWeight:

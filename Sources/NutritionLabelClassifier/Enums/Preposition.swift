@@ -1,8 +1,11 @@
 import Foundation
 
 enum Preposition: String, CaseIterable {
-    case per
+    case referenceIntakePer
+    case referenceIntake
+    case requiredDietaryIntake
     case includes
+    case per
     
     var regex: String {
         switch self {
@@ -10,6 +13,29 @@ enum Preposition: String, CaseIterable {
             return #"(^| )per( |$)"#
         case .includes:
             return #"(^| )include(s|)( |$)"#
+        case .referenceIntake:
+            return #"(^| )ri(\*|)( |$)"#
+        case .referenceIntakePer:
+            return #"(^| )ri(\*|)( (per( |$))|$)"#
+        case .requiredDietaryIntake:
+            return #"(^| )rd(i|a)( |$)"#
+        }
+    }
+    
+    var containsPer: Bool {
+        switch self {
+        case .per, .referenceIntakePer:
+            return true
+        default:
+            return false
+        }
+    }
+    var invalidatesPreviousValueArtefact: Bool {
+        switch self {
+        case .referenceIntake, .referenceIntakePer, .requiredDietaryIntake:
+            return true
+        default:
+            return false
         }
     }
     

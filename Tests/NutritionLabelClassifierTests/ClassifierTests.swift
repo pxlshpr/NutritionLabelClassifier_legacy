@@ -44,7 +44,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 4...4 {
+        for testCase in 1...5 {
             guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
                 XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
                 return
@@ -66,6 +66,9 @@ final class NutritionLabelClassifierTests: XCTestCase {
                 processedNutrients[attribute] = (value1, value2)
             }
             
+            print("🧬 Nutrients for Test Case: \(testCase)")
+            print(nutrientsDataFrame)
+
             /// Extract `expectedNutrients` from data frame
             guard let expectedNutrientsDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
                 XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
@@ -113,10 +116,6 @@ final class NutritionLabelClassifierTests: XCTestCase {
                 XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1)
                 XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2)
             }
-            
-            print("🧬 Nutrients for Test Case: \(testCase)")
-            print(nutrientsDataFrame)
-            continue
         }
     }
     

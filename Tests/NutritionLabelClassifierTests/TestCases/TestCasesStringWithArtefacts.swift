@@ -67,7 +67,7 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [AnyHashable])] =
     ("Sodium 105mg", [a(.sodium), v(105, .mg)]),
     ("of which sodium", [a(.sodium)]),
 
-    ("CALCIUM (20% RI* PER 100g))", [a(.calcium), v(20, .p), p(.per), v(100, .g)]),
+    ("CALCIUM (20% RI* PER 100g))", [a(.calcium), v(20, .p), p(.referenceIntakePer), v(100, .g)]),
     ("CALCIUM", [a(.calcium)]),
     ("Calcium", [a(.calcium)]),
     ("Calcium (% RDA) 128 mg (16%)", [a(.calcium), v(128, .mg), v(16, .p)]),
@@ -98,8 +98,7 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [AnyHashable])] =
     ("At least 2% lower in saturated fat compared to regular yoghurt",
      [v(2, .p), a(.saturatedFat)]),
 
-    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER",
-     [a(.sugar), v(4.2, .p)]),
+    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER", [a(.sugar), v(4.2, .p)]),
 
     ("CARAMELISED SUGAR, MILK MINERALS LIVE", [a(.sugar)]),
     ("INGREDIENTS: Milk Chocolate [sugar,", [a(.sugar)]),
@@ -122,7 +121,7 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [AnyHashable])] =
     ("Potas. 60mg 2%", [a(.potassium), v(60, .mg), v(2, .p)]),
     ("of which saturates", [a(.saturatedFat)]),
     ("FIBRE", [a(.dietaryFibre)]),
-    ("VITAMIN D (68% RI* PER 100g)", [a(.vitaminD), v(68, .p), p(.per), v(100, .g)]),
+    ("VITAMIN D (68% RI* PER 100g)", [a(.vitaminD), v(68, .p), p(.referenceIntakePer), v(100, .g)]),
     ("131 Cal", [v(131, .kcal)]),
     ("196Cal", [v(196, .kcal)]),
     ("Dietary Fiber less than 1g", [a(.dietaryFibre), v(1, .g)]),

@@ -96,7 +96,7 @@ let testCasesStringsWithFeatures: [(input: String, features: [Feature])] = [
 
     //MARK: - Ingredients (Ignore if needed)
     ("At least 2% lower in saturated fat compared to regular yoghurt", []),
-    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER", [f(.sugar, 4.2, .p)]),
+    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER", []),
 
     ("CARAMELISED SUGAR, MILK MINERALS LIVE", []),
     ("INGREDIENTS: Milk Chocolate [sugar,", []),

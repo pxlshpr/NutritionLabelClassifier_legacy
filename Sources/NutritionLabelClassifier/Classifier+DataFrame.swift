@@ -16,10 +16,17 @@ extension NutritionLabelClassifier {
         var attributeBeingExtracted: Attribute? = nil
         var value1BeingExtracted: Value? = nil
         
-        var ignoreNextValueDueToPerPreposition = true
+        var ignoreNextValueDueToPerPreposition = false
         
-        for artefact in string.artefacts {
+        let artefacts = string.artefacts
+        for i in artefacts.indices {
+            let artefact = artefacts[i]
             if let attribute = artefact as? Attribute {
+                /// if we're in the process of extracting a value, save it as a row
+                if let attributeBeingExtracted = attributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
+                    rows.append((attributeBeingExtracted, valueBeingExtracted, nil))
+                    value1BeingExtracted = nil
+                }
                 attributeBeingExtracted = attribute
             } else if let value = artefact as? Value, let unit = value.unit, let attribute = attributeBeingExtracted {
                 guard !ignoreNextValueDueToPerPreposition else {
@@ -32,13 +39,21 @@ extension NutritionLabelClassifier {
                     attributeBeingExtracted = nil
                     value1BeingExtracted = nil
                 } else {
-                    guard attribute.supportsUnit(unit) else {
+                    /// Before setting this as the first value, check that the attribute supports the unit, and that we don't have the RI (required intake) preposition immediately following it
+                    var nextArtefactInvalidatesValue = false
+                    if i < artefacts.count - 1,
+                       let nextArtefactAsPreposition = artefacts[i+1] as? Preposition,
+                       nextArtefactAsPreposition.invalidatesPreviousValueArtefact
+                    {
+                        nextArtefactInvalidatesValue = true
+                    }
+                    guard attribute.supportsUnit(unit), !nextArtefactInvalidatesValue else {
                         continue
                     }
                     value1BeingExtracted = value
                 }
             } else if let preposition = artefact as? Preposition {
-                if preposition == .per {
+                if preposition.containsPer {
                     ignoreNextValueDueToPerPreposition = true
                 }
             }
