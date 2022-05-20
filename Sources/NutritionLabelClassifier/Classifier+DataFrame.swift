@@ -16,10 +16,17 @@ extension NutritionLabelClassifier {
         var attributeBeingExtracted: Attribute? = nil
         var value1BeingExtracted: Value? = nil
         
+        var ignoreNextValueDueToPerPreposition = true
+        
         for artefact in string.artefacts {
             if let attribute = artefact as? Attribute {
                 attributeBeingExtracted = attribute
             } else if let value = artefact as? Value, let unit = value.unit, let attribute = attributeBeingExtracted {
+                guard !ignoreNextValueDueToPerPreposition else {
+                    ignoreNextValueDueToPerPreposition = false
+                    continue
+                }
+                
                 if let value1 = value1BeingExtracted, let unit1 = value1.unit, unit == unit1 {
                     rows.append((attribute, value1, value))
                     attributeBeingExtracted = nil
@@ -29,6 +36,10 @@ extension NutritionLabelClassifier {
                         continue
                     }
                     value1BeingExtracted = value
+                }
+            } else if let preposition = artefact as? Preposition {
+                if preposition == .per {
+                    ignoreNextValueDueToPerPreposition = true
                 }
             }
         }
@@ -104,11 +115,9 @@ extension NutritionLabelClassifier {
             if let row = result.rowBeingExtracted {
                 
                 var rowBeingExtracted = row
-                
                 let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText)
                 for inlineText in inlineTexts {
                     if !shouldContinueAfterExtracting(&rowBeingExtracted, from: inlineText.string) {
-                        rows.append(rowBeingExtracted)
                         break
                     }
                 }
