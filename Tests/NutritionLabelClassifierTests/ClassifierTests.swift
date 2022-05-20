@@ -15,7 +15,7 @@ let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Doub
     ("113 kcal (475 kJ) 90 kcal (378 kJ)", [113, 90], [475, 378]),
 ]
 
-let testCasesForColumnSpanningHeader: [(input: String, header1: NutritionLabelColumnHeader?, header2: NutritionLabelColumnHeader?)] = [
+let testCasesForColumnSpanningHeader: [(input: String, header1: ColumnHeader?, header2: ColumnHeader?)] = [
     ("PER 100g 74g (2 tubes)", .per100g, .perServing(serving: "74g (2 tubes)")),
     ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100g, .perServing(serving: "serving (125 g)"))
 ]
@@ -55,9 +55,9 @@ final class NutritionLabelClassifierTests: XCTestCase {
 //            print(nutrientsDataFrame)
             continue
             
-            var processedNutrients: [NutritionLabelAttribute: (recognizedText1: RecognizedText?, recognizedText2: RecognizedText?)] = [:]
+            var processedNutrients: [Attribute: (recognizedText1: RecognizedText?, recognizedText2: RecognizedText?)] = [:]
             for row in nutrientsDataFrame.rows {
-                guard let attribute = row["attribute"] as? NutritionLabelAttribute,
+                guard let attribute = row["attribute"] as? Attribute,
                       let recognizedText1 = row["recognizedText1"] as? RecognizedText?,
                       let recognizedText2 = row["recognizedText2"] as? RecognizedText?
                 else {
@@ -73,10 +73,10 @@ final class NutritionLabelClassifierTests: XCTestCase {
                 return
             }
 //            print(expectedNutrientsDataFrame)
-            var expectedNutrients: [NutritionLabelAttribute: (string1: String?, string2: String?)] = [:]
+            var expectedNutrients: [Attribute: (string1: String?, string2: String?)] = [:]
             for row in expectedNutrientsDataFrame.rows {
                 guard let attributeName = row["attributeString"] as? String,
-                      let attribute = NutritionLabelAttribute(rawValue: attributeName),
+                      let attribute = Attribute(rawValue: attributeName),
                       let value1 = row["recognizedText1String"] as? String?,
                       let value2 = row["recognizedText2String"] as? String?
                 else {

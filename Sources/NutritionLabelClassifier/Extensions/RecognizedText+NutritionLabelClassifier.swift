@@ -14,30 +14,6 @@ extension CGRect {
     }
 }
 
-extension RecognizedText {
-    var isValueBasedClass: Bool {
-        attribute?.isValueBased ?? false
-    }
-
-    var attribute: NutritionLabelAttribute? {
-        for classifierClass in NutritionLabelAttribute.allCases {
-            guard let regex = classifierClass.regex else { continue }
-            if string.matchesRegex(regex) {
-                return classifierClass
-            }
-        }
-        return nil
-    }
-    
-    var containsValue: Bool {
-        string.matchesRegex(#"[0-9]+[.,]*[0-9]*[ ]*(mg|ug|g|kj|kcal)"#)
-    }
-    
-    var containsPercentage: Bool {
-        string.matchesRegex(#"[0-9]+[.,]*[0-9]*[ ]*%"#)
-    }
-}
-
 extension Array where Element == RecognizedText {
 
     var description: String {

@@ -23,18 +23,18 @@ public struct NutritionLabelClassifier {
     
     //MARK: - Sort these
     
-    static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: NutritionLabelColumnHeader?, header2: NutritionLabelColumnHeader?) {
+    static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: ColumnHeader?, header2: ColumnHeader?) {
         if let rightColumn = string.firstCapturedGroup(using: Regex.twoColumnHeadersWithPer100OnLeft) {
             return (.per100g, .perServing(serving: rightColumn))
         }
         return (nil, nil)
     }
     
-    static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> NutritionLabelColumnHeader? {
+    static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> ColumnHeader? {
         guard let recognizedText = recognizedText else {
             return nil
         }
-        return NutritionLabelColumnHeader(string: recognizedText.string)
+        return ColumnHeader(string: recognizedText.string)
     }
     
     static func columnHeaderRecognizedText(for dataFrame: DataFrame, withColumnName columnName: String, in recognizedTexts: [RecognizedText]) -> RecognizedText? {
@@ -55,7 +55,7 @@ public struct NutritionLabelClassifier {
         return nil
     }
 
-    static func columnHeaders(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (NutritionLabelColumnHeader?, NutritionLabelColumnHeader?) {
+    static func columnHeaders(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (ColumnHeader?, ColumnHeader?) {
         guard dataFrame.columns.count == 3 else {
             return (nil, nil)
         }
@@ -83,22 +83,28 @@ public struct NutritionLabelClassifier {
         var processed: [RecognizedText] = []
         var dataFrame = DataFrame()
         
-        var attributes: [NutritionLabelAttribute] = []
+        var attributes: [Attribute] = []
         
-        //TODO: Store arrays of NutritionLabelValue instead
-        var column1: [RecognizedText?] = []
-        var column2: [RecognizedText?] = []
+        var values1: [RecognizedText?] = []
+        var values2: [RecognizedText?] = []
 
         for recognizedText in recognizedTexts {
-            guard !processed.contains(recognizedText),
-                  recognizedText.isValueBasedClass else {
-                print("Ignoring: \(recognizedText)")
+            
+            guard !processed.contains(recognizedText) else {
+//                print("↪️ \(recognizedText) has been processed, so skipping it")
                 continue
             }
             
-            //TODO: Rename isValueBasedClass to isValueBasedAttribute
+            guard recognizedText.isValueBasedAttribute else {
+//                print("↪️ \(recognizedText) is NOT a value-based attribute, so skipping it")
+                print(recognizedText)
+                continue
+            }
             
-            /// if the recognized text contains more than 1 value-based attribute
+//            /// if the recognized text contains more than 1 value-based attribute
+//            if recognizedText.containsMultipleValueBasedAttributes {
+//
+//            }
             /// Separate them out into an array
             /// For each element of the array, run the following code—making sure we allow the *final* array element to have an inline value that's not within the same box (whereas the rest should have it within the string itself)
             
@@ -106,19 +112,22 @@ public struct NutritionLabelClassifier {
                 print("Couldn't get attribute for: \(recognizedText)")
                 continue
             }
+//            print("(\"\(recognizedText)\", [.\(attribute)]),")
+//            print(recognizedText)
+//            continue
 
             //TODO: Make sure we're using the array of units instead of harcoding them in containsValue
-            if recognizedText.containsValue {
+        if recognizedText.containsValue {
 //                print(recognizedText.string)
                 attributes.append(attribute)
-                column1.append(recognizedText)
+                values1.append(recognizedText)
                 processed.append(recognizedText)
                 
                 if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText), !processed.contains(inlineValue) {
-                    column2.append(inlineValue)
+                    values2.append(inlineValue)
                     processed.append(inlineValue)
                 } else {
-                    column2.append(nil)
+                    values2.append(nil)
                 }
             } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
 
@@ -133,8 +142,8 @@ public struct NutritionLabelClassifier {
                         continue
                     }
                     attributes.append(attribute)
-                    column1.append(nil)
-                    column2.append(inlineValue)
+                    values1.append(nil)
+                    values2.append(inlineValue)
                     processed.append(inlineValue)
                     
 //                    print(inlineValue.string)
@@ -143,7 +152,7 @@ public struct NutritionLabelClassifier {
                 }
                 
                 attributes.append(attribute)
-                column1.append(inlineValue)
+                values1.append(inlineValue)
                 processed.append(inlineValue)
 
 //                print(inlineValue.string)
@@ -152,10 +161,10 @@ public struct NutritionLabelClassifier {
                    !processed.contains(inlineValue)
                 {
 //                    print(inlineValue.string)
-                    column2.append(inlineValue)
+                    values2.append(inlineValue)
                     processed.append(inlineValue)
                 } else {
-                    column2.append(nil)
+                    values2.append(nil)
                 }
             }
         }
@@ -165,8 +174,8 @@ public struct NutritionLabelClassifier {
         let column2Id = ColumnID("recognizedText2", RecognizedText?.self)
 
         dataFrame.append(column: labelColumn)
-        dataFrame.append(column: Column(column1Id, contents: column1))
-        dataFrame.append(column: Column(column2Id, contents: column2))
+        dataFrame.append(column: Column(column1Id, contents: values1))
+        dataFrame.append(column: Column(column2Id, contents: values2))
         return dataFrame
     }
     
@@ -175,13 +184,13 @@ public struct NutritionLabelClassifier {
         var processed: [RecognizedText] = []
         var dataFrame = DataFrame()
         
-        var attributes: [NutritionLabelAttribute] = []
+        var attributes: [Attribute] = []
         var column1: [RecognizedText?] = []
         var column2: [RecognizedText?] = []
 
         for recognizedText in recognizedTexts {
             guard !processed.contains(recognizedText),
-                  recognizedText.isValueBasedClass,
+                  recognizedText.isValueBasedAttribute,
                   let attribute = recognizedText.attribute
             else { continue }
             

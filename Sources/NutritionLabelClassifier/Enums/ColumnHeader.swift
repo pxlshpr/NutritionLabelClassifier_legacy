@@ -1,6 +1,6 @@
 import Foundation
 
-enum NutritionLabelColumnHeader {
+enum ColumnHeader {
     case per100g
     case perServing(serving: String?)
     case per100gAndPerServing(serving: String?)
@@ -23,7 +23,7 @@ enum NutritionLabelColumnHeader {
     }
 }
 
-extension NutritionLabelColumnHeader {
+extension ColumnHeader {
     struct Regex {
         static let per100 = #"^(per |)100[ ]*g$"#
         static let perServing = #"^(?=^.*(amount|)[ ]*(per |\/)serv(ing|e).*$)(?!^.*100[ ]*g.*$).*$"#
@@ -33,8 +33,8 @@ extension NutritionLabelColumnHeader {
    }
 }
 
-extension NutritionLabelColumnHeader: Equatable {
-    static func ==(lhs: NutritionLabelColumnHeader, rhs: NutritionLabelColumnHeader) -> Bool {
+extension ColumnHeader: Equatable {
+    static func ==(lhs: ColumnHeader, rhs: ColumnHeader) -> Bool {
         switch (lhs, rhs) {
         case (.per100g, .per100g):
             return true

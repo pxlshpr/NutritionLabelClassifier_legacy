@@ -1,6 +1,8 @@
 import XCTest
 import TabularData
 
+@testable import NutritionLabelClassifier
+
 enum TestCaseFileType {
     case input
     case expectedNutrients
@@ -25,4 +27,22 @@ func dataFrameForTestCase(_ testCase: Int, testCaseFileType: TestCaseFileType = 
     }
     let url = URL(fileURLWithPath: path)
     return DataFrame.read(from: url)
+}
+
+func f(_ attribute: Attribute, _ a: Double? = nil, _ u: NutritionUnit? = nil) -> Feature {
+    let value: Value?
+    if let amount = a {
+        value = Value(amount: amount, unit: u)
+    } else {
+        value = nil
+    }
+    return Feature(attribute: attribute, value: value)
+}
+
+func v(_ amount: Double, _ unit: NutritionUnit? = nil) -> Value {
+    Value(amount: amount, unit: unit)
+}
+
+func a(_ attribute: Attribute) -> Attribute {
+    attribute
 }
