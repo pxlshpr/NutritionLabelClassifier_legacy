@@ -70,7 +70,7 @@ extension Array where Element == RecognizedText {
         return column
     }
     
-    func filterSameRow(as recognizedText: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
+    func filterSameRow(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [RecognizedText] {
 //        log.verbose(" ")
 //        log.verbose("******")
 //        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
@@ -78,6 +78,7 @@ extension Array where Element == RecognizedText {
         var discarded: [RecognizedText] = []
         let candidates = filter {
             $0.isInSameRowAs(recognizedText)
+            && !textsToIgnore.contains($0)
             && (preceding ? $0.rect.maxX < recognizedText.rect.minX : $0.rect.minX > recognizedText.rect.maxX)
         }.sorted {
             $0.rect.minX < $1.rect.minX

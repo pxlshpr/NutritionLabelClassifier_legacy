@@ -44,7 +44,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...3 {
+        for testCase in 4...4 {
             guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
                 XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
                 return
@@ -78,7 +78,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
                       let value1String = row["value1String"] as? String?,
                       let value2String = row["value2String"] as? String?
                 else {
-                    XCTFail("Failed to read an expected nutrient for \(testCase)")
+                    XCTFail("Failed to read an expected nutrient for \(row) in Test Case: \(testCase)")
                     return
                 }
                 

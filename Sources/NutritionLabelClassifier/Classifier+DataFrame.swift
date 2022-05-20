@@ -64,8 +64,9 @@ extension NutritionLabelClassifier {
         /// If we have `attributeBeingExtracted`, call the extraction function with it
     }
     
-    static func shouldContinueAfterExtracting(_ row: inout Row, from string: String) -> Bool {
+    static func extract(_ row: inout Row, from string: String) -> (didExtract: Bool, shouldContinue: Bool) {
         
+        var didExtract = false
         for artefact in string.artefacts {
             if let value = artefact as? Value, let unit = value.unit {
                 if let value1 = row.value1 {
@@ -73,18 +74,20 @@ extension NutritionLabelClassifier {
                         continue
                     }
                     row.value2 = value
+                    didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the row
-                    return false
+                    return (didExtract: didExtract, shouldContinue: false)
                 } else if row.attribute.supportsUnit(unit) {
                     row.value1 = value
+                    didExtract = true
                 }
             } else if let _ = artefact as? Attribute {
                 /// Send `false` for algorithm to stop searching inline texts once we hit another `Attribute`
-                return false
+                return (didExtract: didExtract, shouldContinue: false)
             }
         }
         /// Send `true` for algorithm to keep searching inline texts if we haven't hit another `Attribute` or completed the `Row`
-        return true
+        return (didExtract: didExtract, shouldContinue: true)
         
         ///         For each of its artefacts
         ///             If it is a `Value`
@@ -101,6 +104,9 @@ extension NutritionLabelClassifier {
     static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
         
         var rows: [Row] = []
+        
+        /// Holds onto those that are single `Value`s that have already been used
+        var discarded: [RecognizedText] = []
 
         for recognizedText in recognizedTexts {
             
@@ -115,9 +121,17 @@ extension NutritionLabelClassifier {
             if let row = result.rowBeingExtracted {
                 
                 var rowBeingExtracted = row
-                let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText)
+                let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText, ignoring: discarded)
                 for inlineText in inlineTexts {
-                    if !shouldContinueAfterExtracting(&rowBeingExtracted, from: inlineText.string) {
+                    let result = extract(&rowBeingExtracted, from: inlineText.string)
+                    /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as an inline text again
+                    if result.didExtract,
+                       inlineText.string.artefacts.count == 1,
+                       let _ = inlineText.string.artefacts.first as? Value
+                    {
+                        discarded.append(inlineText)
+                    }
+                    if !result.shouldContinue {
                         break
                     }
                 }
