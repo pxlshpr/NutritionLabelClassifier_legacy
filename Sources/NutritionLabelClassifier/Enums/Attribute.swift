@@ -1,14 +1,5 @@
 import Foundation
 
-enum Preposition: String {
-    case per
-    case includes
-}
-
-extension Preposition: Identifiable {
-    var id: RawValue { rawValue }
-}
-
 enum Attribute: String, CaseIterable {
     case servingSizeVolume
     case servingSizeWeight
@@ -42,6 +33,15 @@ enum Attribute: String, CaseIterable {
     
     func supportsUnit(_ unit: NutritionUnit) -> Bool {
         supportedUnits.contains(unit)
+    }
+    
+    var supportsMultipleColumns: Bool {
+        switch self {
+        case .energy:
+            return true
+        default:
+            return false
+        }
     }
     
     var supportedUnits: [NutritionUnit] {

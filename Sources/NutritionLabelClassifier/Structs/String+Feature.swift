@@ -5,16 +5,29 @@ extension String {
     var features: [Feature] {
         var features: [Feature] = []
         
-        let array = artefacts
-        
         // Set the currentAttribute we're grabbing as nil
         var currentAttribute: Attribute? = nil
-        
-        // For each e
-        for e in array {
-            if let attribute = e as? Attribute {
-                currentAttribute = attribute
-            } else if let value = e as? Value {
+        var currentValueWaitingForAttribute: Value? = nil
+        var shouldHoldNextValueForAttribute = false
+
+        // For each artefact
+        for artefact in artefacts {
+            if let attribute = artefact as? Attribute {
+                /// if we're holding onto a value for the next attribute (due to the `includes` preposition), create the feature and reset the holding variable
+                if let value = currentValueWaitingForAttribute {
+                    features.append(Feature(attribute: attribute, value: value))
+                    currentValueWaitingForAttribute = nil
+                } else {
+                    currentAttribute = attribute
+                }
+            } else if let value = artefact as? Value {
+                /// If we encounter this value after an `includes` preposition, hold onto it, and reset the flag that was used to indicate this
+                guard !shouldHoldNextValueForAttribute else {
+                    currentValueWaitingForAttribute = value
+                    shouldHoldNextValueForAttribute = false
+                    continue
+                }
+                
                 guard let attribute = currentAttribute else {
                     continue
                 }
@@ -23,17 +36,20 @@ extension String {
                         continue
                     }
                 }
+                
                 features.append(Feature(attribute: attribute, value: value))
+                
+                /// Reset `currentAttribute` if it doesn't support multiple columns (currently only energy supports this)
+                if !attribute.supportsMultipleColumns {
+                    currentAttribute = nil
+                }
+            } else if let preposition = artefact as? Preposition {
+                if preposition == .includes {
+                    /// set a flag for the next `Value` to be held onto so that we expect the `Attribute` to come afterwards
+                    shouldHoldNextValueForAttribute = true
+                }
             }
         }
-        // If e is a value
-            // If we have an attribute we're grabbing
-                // Create a feature with the currentAttribute and value
-                // Add it to the array
-            // Else
-                // Discard this value by continuing
-        // Else if e is an attribute
-            // Set the currentAttribute to it
         
         return features
     }

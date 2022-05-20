@@ -25,133 +25,126 @@ let testCasesStringsWithFeatures: [(input: String, features: [Feature])] = [
     ("2% Sugars 18g", [f(.sugar, 18, .g)]),
 
     //TODO: Handle edge case of "Includes" by reading value before it}
-//    ("Includes 12g Added Sugars 24%", [f(.sugar, 12, .g)]),
-//
-//    ("Dietary Fibre", [a(.dietaryFibre)]),
-//
-//    ("FAT, TOTAL", [a(.fat)]),
-//    ("Fat", [a(.fat)]),
-//
-//    ("Saturated Fat", [a(.saturatedFat)]),
-//    ("-SATURATED", [a(.saturatedFat)]),
-//    ("Caring Suer: Go7z (170g) Saturated Fat", [v(170, .g), a(.saturatedFat)]),
-//    ("Saturated Fat 13g", [a(.saturatedFat), v(13, .g)]),
-//    ("Saturated Fat 0g", [a(.saturatedFat), v(0, .g)]),
-//
-//    ("Trans Fat", [a(.transFat)]),
-//    ("Trans Fat 0g", [a(.transFat), v(0, .g)]),
-//
-//    ("Cholesterol", [a(.cholesterol)]),
-//    ("Cholesterol 0mg", [a(.cholesterol), v(0, .mg)]),
-//    ("Cholesterol 5mg", [a(.cholesterol), v(5, .mg)]),
-//
-//    ("PROTEIN", [a(.protein)]),
-//    ("Protein", [a(.protein)]),
-//    ("Protein 2g", [a(.protein), v(2, .g)]),
-//    ("Protein 4", [a(.protein), v(4)]),
-//    ("0% Protein 14g", [v(0, .p), a(.protein), v(14, .g)]),
-//    ("2% Protein 12g", [v(2, .p), a(.protein), v(12, .g)]),
-//    ("3% Protein 15g", [v(3, .p), a(.protein), v(15, .g)]),
-//    ("0% Protein 23g", [v(0, .p), a(.protein), v(23, .g)]),
-//
-//    ("SALT", [a(.salt)]),
-//    ("Salt", [a(.salt)]),
-//    ("Salt Equivalent", [a(.salt)]),
-//    ("(equivalent as salt)", [a(.salt)]),
-//
-//    ("SODIUM", [a(.sodium)]),
-//    ("Sodium", [a(.sodium)]),
-//    ("Sodium 65mg", [a(.sodium), v(65, .mg)]),
-//    ("Sodium 25mq", [a(.sodium), v(25, .mg)]),
-//    ("Sodium 50mg", [a(.sodium), v(50, .mg)]),
-//    ("Sodium 105mg", [a(.sodium), v(105, .mg)]),
-//    ("of which sodium", [a(.sodium)]),
-//
-//    ("CALCIUM (20% RI* PER 100g))", [a(.calcium), v(20, .p), v(100, .g)]),
-//    ("CALCIUM", [a(.calcium)]),
-//    ("Calcium", [a(.calcium)]),
-//    ("Calcium (% RDA) 128 mg (16%)", [a(.calcium), v(128, .mg), v(16, .p)]),
-//
-//    //MARK: - Multiples
-//    ("I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%",
-//     [v(150, .g), a(.saturatedFat), v(0, .g), v(0, .p), a(.carbohydrate), v(15, .g), v(5, .p)]),
-//
-//    ("Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g",
-//     [v(0), a(.cholesterol), v(5, .mg), v(1, .p), a(.sugar), v(7, .g)]),
-//
-//    ("Vitamin A 0% Vitamin C 2% Calcium 20%",
-//     [a(.vitaminA), v(0, .p), a(.vitaminC), v(2, .p), a(.calcium), v(20, .p)]),
-//
-//    ("Vit. D 0mcg 0% Calcium 58mg 4%",
-//     [a(.vitaminD), v(0, .mcg), v(0, .p), a(.calcium), v(58, .mg), v(4, .p)]),
-//
-//    ("based on a 2,000 calorie diet. Vit A 0% • Vit C 0% • Calcium 15% • Iron 0% • Vit D 15%",
-//     [v(2000, .kcal), a(.vitaminA), v(0, .p), a(.vitaminC), v(0, .p), a(.calcium), v(15, .p), a(.iron), v(0, .p), a(.vitaminD), v(15, .p)]),
-//
-//    ("based on a 2,000 calorie diet. Vitamin A 4% - Vitamin C 0% - Calcium 15% - Iron 0% - Vitamin D 15%",
-//     [v(2000, .kcal), a(.vitaminA), v(4, .p), a(.vitaminC), v(0, .p), a(.calcium), v(15, .p), a(.iron), v(0, .p), a(.vitaminD), v(15, .p)]),
-//
-//    ("2000 calorie diet. Vitamin A 0% PRONE ALONE PASTEREONOGAYMAKLIMEANOACINECTRESSERENIOPLIS.LAUSRSLISONER Vitamin C 0% Calcium 30% • Iron",
-//     [v(2000, .kcal), a(.vitaminA), v(0, .p), a(.vitaminC), v(0, .p), a(.calcium), v(30, .p), a(.iron)]),
-//
-//    //MARK: - Ingredients (Ignore if needed)
-//    ("At least 2% lower in saturated fat compared to regular yoghurt",
-//     [v(2, .p), a(.saturatedFat)]),
-//
-//    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER",
-//     [a(.sugar), v(4.2, .p)]),
-//
-//    ("CARAMELISED SUGAR, MILK MINERALS LIVE", [a(.sugar)]),
-//    ("INGREDIENTS: Milk Chocolate [sugar,", [a(.sugar)]),
-//    ("(coconut, palm kernel), sugar, chocolate,", [a(.sugar)]),
-//    ("INGREDIENTS: CULTURED GRADE A NON FAT MILK, WATER, STRAWBERRY, SUGAR, FRUCTOSE, CONTAINS LESS THAN 1%", [v(1, .p)]),
-//
-//    ("(FOR COLOR), SODIUM CITRATE, POTASSIUM SORBATE (TO MAINTAIN FRESHNESS), MALIC ACID, VITAMIN D3.",
-//     [v(3)]),
-//
-//    ("STEVIA LEAF EXTRACT, SEA SALT, VITAMIN D3, SODIUM CITRATE.", [v(3), a(.sodium)]),
-//
-//    ("INGREDIENTS: Low Fat Yogurt, Sugar, Raspherry Purée (2.5%)", [v(2.5, .p)]),
-//    ("yogurt cultures), Strawberry (10%), Sugar AbarAy", [v(10, .p), a(.sugar)]),
-//    ("regulators citric acid, calcium citrate), Flavouring,", [a(.calcium)]),
-//
-//    //MARK: - Unsorted
-//    ("Calories", [a(.energy)]),
-//    ("Dietary Fiber 0g", [a(.dietaryFibre), v(0, .g)]),
-//    ("Iron 0mg 0%", [a(.iron), v(0, .mg), v(0, .p)]),
-//    ("Potas. 60mg 2%", [a(.potassium), v(60, .mg), v(2, .p)]),
-//    ("of which saturates", [a(.saturatedFat)]),
-//    ("FIBRE", [a(.dietaryFibre)]),
-//    ("VITAMIN D (68% RI* PER 100g)", [a(.vitaminD), v(68, .p), v(100, .g)]),
-//    ("131 Cal", [v(131, .kcal)]),
-//    ("196Cal", [v(196, .kcal)]),
-//    ("Dietary Fiber less than 1g", [a(.dietaryFibre), v(1, .g)]),
-//    ("(calories 140", [a(.energy), v(140)]),
-//    ("200 calorie diel.", [v(200, .kcal)]),
-//    ("Iron 0%", [a(.iron), v(0, .p)]),
-//    ("Calories 120", [a(.energy), v(120)]),
-//    ("of which saturates", [a(.saturatedFat)]),
-//    ("Fibre", [a(.dietaryFibre)]),
-//    ("0% Dietary Fiber 0g", [v(0, .p), a(.dietaryFibre), v(0, .g)]),
-//    ("mono-unsaturates", [a(.monounsaturatedFat)]),
-//    ("polyunsaturates", [a(.polyunsaturatedFat)]),
-//    ("Calories 140", [a(.energy), v(140)]),
-//
-//    ("<0.1 g", [v(0.1, .g)]),
-//    ("120 mg", [v(120, .mg)]),
-//    ("3.4 ug", [v(3.4, .mcg)]),
-//    ("0.19", [v(0.19)]),
-//    ("2", [v(2)]),
-//    ("0%", [v(0, .p)]),
-//    ("11%", [v(11, .p)]),
-//    ("0mg", [v(0, .mg)]),
-//    ("0.1 g", [v(0.1, .g)]),
-//    ("133kcal", [v(133, .kcal)]),
-//    ("2000 kcal", [v(2000, .kcal)]),
-//    ("5.9g 30%", [v(5.9, .g), v(30, .p)]),
-//    ("0.5g", [v(0.5, .g)]),
-//    ("746kJ", [v(746, .kj)]),
-//    ("210 mg", [v(210, .mg)]),
+    ("Includes 12g Added Sugars 24%", [f(.sugar, 12, .g)]),
+
+    ("Dietary Fibre", []),
+
+    ("FAT, TOTAL", []),
+    ("Fat", []),
+
+    ("Saturated Fat", []),
+    ("-SATURATED", []),
+    ("Caring Suer: Go7z (170g) Saturated Fat", []),
+    ("Saturated Fat 13g", [f(.saturatedFat, 13, .g)]),
+    ("Saturated Fat 0g", [f(.saturatedFat, 0, .g)]),
+
+    ("Trans Fat", []),
+    ("Trans Fat 0g", [f(.transFat, 0, .g)]),
+
+    ("Cholesterol", []),
+    ("Cholesterol 0mg", [f(.cholesterol, 0, .mg)]),
+    ("Cholesterol 5mg", [f(.cholesterol, 5, .mg)]),
+
+    ("PROTEIN", []),
+    ("Protein", []),
+    ("Protein 2g", [f(.protein, 2, .g)]),
+    ("Protein 4", [f(.protein, 4)]),
+    ("0% Protein 14g", [f(.protein, 14, .g)]),
+    ("2% Protein 12g", [f(.protein, 12, .g)]),
+    ("3% Protein 15g", [f(.protein, 15, .g)]),
+    ("0% Protein 23g", [f(.protein, 23, .g)]),
+
+    ("SALT", []),
+    ("Salt", []),
+    ("Salt Equivalent", []),
+    ("(equivalent as salt)", []),
+
+    ("SODIUM", []),
+    ("Sodium", []),
+    ("Sodium 65mg", [f(.sodium, 65, .mg)]),
+    ("Sodium 25mq", [f(.sodium, 25, .mg)]),
+    ("Sodium 50mg", [f(.sodium, 50, .mg)]),
+    ("Sodium 105mg", [f(.sodium, 105, .mg)]),
+    ("of which sodium", []),
+
+    ("CALCIUM (20% RI* PER 100g))", [f(.calcium, 20, .p)]),
+    ("CALCIUM", []),
+    ("Calcium", []),
+    ("Calcium (% RDA) 128 mg (16%)", [f(.calcium, 128, .mg)]),
+
+    //MARK: - Multiples
+    ("I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%",
+     [f(.saturatedFat, 0, .g), f(.carbohydrate, 15, .g)]),
+
+    ("Calories from Fat 0 Cholesterol <5mg 1% Sugars 7g",
+     [f(.cholesterol, 5, .mg), f(.sugar, 7, .g)]),
+
+    ("Vitamin A 0% Vitamin C 2% Calcium 20%",
+     [f(.vitaminA, 0, .p), f(.vitaminC, 2, .p), f(.calcium, 20, .p)]),
+
+    ("Vit. D 0mcg 0% Calcium 58mg 4%",
+     [f(.vitaminD, 0, .mcg), f(.calcium, 58, .mg)]),
+
+    ("based on a 2,000 calorie diet. Vit A 0% • Vit C 0% • Calcium 15% • Iron 0% • Vit D 15%",
+     [f(.vitaminA, 0, .p), f(.vitaminC, 0, .p), f(.calcium, 15, .p), f(.iron, 0, .p), f(.vitaminD, 15, .p)]),
+
+    ("based on a 2,000 calorie diet. Vitamin A 4% - Vitamin C 0% - Calcium 15% - Iron 0% - Vitamin D 15%",
+     [f(.vitaminA, 4, .p), f(.vitaminC, 0, .p), f(.calcium, 15, .p), f(.iron, 0, .p), f(.vitaminD, 15, .p)]),
+
+    ("2000 calorie diet. Vitamin A 0% PRONE ALONE PASTEREONOGAYMAKLIMEANOACINECTRESSERENIOPLIS.LAUSRSLISONER Vitamin C 0% Calcium 30% • Iron",
+     [f(.vitaminA, 0, .p), f(.vitaminC, 0, .p), f(.calcium, 30, .p)]),
+
+    //MARK: - Ingredients (Ignore if needed)
+    ("At least 2% lower in saturated fat compared to regular yoghurt", []),
+    ("SUGAR, YELLOW/BOX HONEY (4.2%), THICKENER", [f(.sugar, 4.2, .p)]),
+
+    ("CARAMELISED SUGAR, MILK MINERALS LIVE", []),
+    ("INGREDIENTS: Milk Chocolate [sugar,", []),
+    ("(coconut, palm kernel), sugar, chocolate,", []),
+    ("INGREDIENTS: CULTURED GRADE A NON FAT MILK, WATER, STRAWBERRY, SUGAR, FRUCTOSE, CONTAINS LESS THAN 1%", []),
+    ("(FOR COLOR), SODIUM CITRATE, POTASSIUM SORBATE (TO MAINTAIN FRESHNESS), MALIC ACID, VITAMIN D3.", []),
+    ("STEVIA LEAF EXTRACT, SEA SALT, VITAMIN D3, SODIUM CITRATE.", []),
+    ("INGREDIENTS: Low Fat Yogurt, Sugar, Raspherry Purée (2.5%)", []),
+    ("yogurt cultures), Strawberry (10%), Sugar AbarAy", []),
+    ("regulators citric acid, calcium citrate), Flavouring,", []),
+
+    //MARK: - Unsorted
+    ("Calories", []),
+    ("Dietary Fiber 0g", [f(.dietaryFibre, 0, .g)]),
+    ("Iron 0mg 0%", [f(.iron, 0, .mg)]),
+    ("Potas. 60mg 2%", [f(.potassium, 60, .mg)]),
+    ("of which saturates", []),
+    ("FIBRE", []),
+    ("VITAMIN D (68% RI* PER 100g)", [f(.vitaminD, 68, .p)]),
+    ("131 Cal", []),
+    ("196Cal", []),
+    ("Dietary Fiber less than 1g", [f(.dietaryFibre, 1, .g)]),
+    ("(calories 140", [f(.energy, 140)]),
+    ("200 calorie diel.", []),
+    ("Iron 0%", [f(.iron, 0, .p)]),
+    ("Calories 120", [f(.energy, 120)]),
+    ("of which saturates", []),
+    ("Fibre", []),
+    ("0% Dietary Fiber 0g", [f(.dietaryFibre, 0, .g)]),
+    ("mono-unsaturates", []),
+    ("polyunsaturates", []),
+    ("Calories 140", [f(.energy, 140)]),
+
+    ("<0.1 g", []),
+    ("120 mg", []),
+    ("3.4 ug", []),
+    ("0.19", []),
+    ("2", []),
+    ("0%", []),
+    ("11%", []),
+    ("0mg", []),
+    ("0.1 g", []),
+    ("133kcal", []),
+    ("2000 kcal", []),
+    ("5.9g 30%", []),
+    ("0.5g", []),
+    ("746kJ", []),
+    ("210 mg", []),
 
 //    ("168ma", [v()]),
 //    ("trace", [v()]),

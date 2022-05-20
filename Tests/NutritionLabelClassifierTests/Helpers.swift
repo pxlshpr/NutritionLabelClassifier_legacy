@@ -39,6 +39,10 @@ func f(_ attribute: Attribute, _ a: Double? = nil, _ u: NutritionUnit? = nil) ->
     return Feature(attribute: attribute, value: value)
 }
 
+func p(_ preposition: Preposition) -> Preposition {
+    preposition
+}
+
 func v(_ amount: Double, _ unit: NutritionUnit? = nil) -> Value {
     Value(amount: amount, unit: unit)
 }

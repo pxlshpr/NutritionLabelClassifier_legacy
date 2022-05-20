@@ -17,10 +17,10 @@ extension String {
 
             /// Otherwise, get the string component up to and including the next numeral
             } else if let substring = string.substringUpToFirstNumeral {
-                
-                /// Check if that matches any attributes
-                if let attribute = Attribute(fromString: substring) {
-                    /// If it does, extract it from the string and add its corresponding `Attribute` to the array
+                /// Check if it matches any prepositions or attributes (currently picks prepositions over attributes for the entire substring)
+                if let preposition = Preposition(fromString: substring) {
+                    array.append(preposition)
+                } else if let attribute = Attribute(fromString: substring) {
                     array.append(attribute)
                 }
                 string = string.replacingFirstOccurrence(of: substring, with: "").trimmingWhitespaces
