@@ -152,9 +152,11 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [AnyHashable])] =
     ("746kJ", [v(746, .kj)]),
     ("210 mg", [v(210, .mg)]),
 
+    /// Edge cases
+    ("0.1 c", [v(0.1, .g)]), /// For when vision misreads a 'g' as 'c'
+
 //    ("168ma", [v()]),
 //    ("trace", [v()]),
-//    ("0.1 c", [v()]),
 //    ("497k1", [v()]),
 
 //    Servings per package:

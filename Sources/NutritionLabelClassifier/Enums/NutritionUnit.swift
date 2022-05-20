@@ -1,13 +1,13 @@
 import Foundation
 
 enum NutritionUnit: String, CaseIterable {
-    case g
     case mg //TODO: Recognize `mq` as a typo
     case kj
     case mcg //TODO: Recognize `ug` as an alternative and remove it
     case kcal
     case p = "%" /// percent
-    
+    case g
+
     init?(string: String) {
         for unit in Self.allCases {
             if unit.possibleUnits.contains(string) {
@@ -38,7 +38,7 @@ enum NutritionUnit: String, CaseIterable {
     var possibleUnits: [String] {
         switch self {
         case .g:
-            return ["g"]
+            return ["g", "c"]
         case .mg:
             return ["mg", "mq"]
         case .kj:
@@ -46,7 +46,7 @@ enum NutritionUnit: String, CaseIterable {
         case .mcg:
             return ["mcg", "ug"]
         case .kcal:
-            return ["kcal", "cal"]
+            return ["kcal", "cal", "calorie"]
         case .p:
             return ["%"]
         }

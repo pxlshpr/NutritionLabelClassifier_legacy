@@ -32,11 +32,11 @@ struct Value {
     }
     
     struct Regex {
-        static let units = NutritionUnit.allUnits.map { "[ ]*\($0)" }.joined(separator: "|")
+        static let units = NutritionUnit.allUnits.map { #"[ ]*\#($0)"# }.joined(separator: "|")
         static let number = #"[0-9]+[0-9.:,]*"#
-        static let atStartOfString = #"^(\#(number)(?:(?:\#(units))|[ ]|$))"#
+        static let atStartOfString = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
 //        static let atStartOfString = #"^(\#(number)[ ]*(\#(units))?)"#
-        static let fromString = #"^(\#(number))(?:(\#(units))|[ ]|$)"#
+        static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |$)"#
         
         //TODO: Remove this
         static let standardPattern =
