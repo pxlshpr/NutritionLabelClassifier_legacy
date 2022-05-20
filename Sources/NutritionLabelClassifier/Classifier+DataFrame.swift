@@ -123,6 +123,9 @@ extension NutritionLabelClassifier {
                 }
                 
                 /// After going through all inline texts and not completing the row, add this (possibly incomplete one)
+                guard rowBeingExtracted.value1 != nil || rowBeingExtracted.value2 != nil else {
+                    continue
+                }
                 rows.append(rowBeingExtracted)
             }
         }

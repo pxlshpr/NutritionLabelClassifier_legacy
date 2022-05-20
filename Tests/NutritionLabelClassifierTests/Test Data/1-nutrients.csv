@@ -1,5 +1,10 @@
-attributeString,recognizedText1String,recognizedText2String
-carbohydrate,12.1 g,9.0 g
-sugar,10.9 g,8.1 g
-protein,3.7 g,2.7 g
-sodium,0.15 g,0.11 g
+attributeString,value1String,value2String
+energy,384kj,284kj
+fat,2.7g,2.0g
+saturatedFat,1.8g,1.3g
+carbohydrate,12.1g,9.0g
+sugar,10.9g,8.1g
+protein,3.7g,2.7g
+salt,0.15g,0.11g
+calcium,162mg,120mg
+vitaminD,3.4mcg,2.5mcg

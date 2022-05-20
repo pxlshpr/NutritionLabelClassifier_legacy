@@ -51,51 +51,72 @@ final class NutritionLabelClassifierTests: XCTestCase {
             }
 
             let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
-            print("🧬 Nutrients for Test Case: \(testCase)")
-            print(nutrientsDataFrame)
-            continue
             
-            var processedNutrients: [Attribute: (recognizedText1: RecognizedText?, recognizedText2: RecognizedText?)] = [:]
+            /// Extract `processedNutrients` from data frame
+            var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in nutrientsDataFrame.rows {
                 guard let attribute = row["attribute"] as? Attribute,
-                      let recognizedText1 = row["recognizedText1"] as? RecognizedText?,
-                      let recognizedText2 = row["recognizedText2"] as? RecognizedText?
+                      let value1 = row["value1"] as? Value?,
+                      let value2 = row["value2"] as? Value?
                 else {
-                    XCTFail("Failed to get a parsed nutrient for \(testCase)")
+                    XCTFail("Failed to get a processed nutrient for \(testCase)")
                     return
                 }
                 
-                processedNutrients[attribute] = (recognizedText1, recognizedText2)
+                processedNutrients[attribute] = (value1, value2)
             }
             
+            /// Extract `expectedNutrients` from data frame
             guard let expectedNutrientsDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
                 XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
                 return
             }
-//            print(expectedNutrientsDataFrame)
-            var expectedNutrients: [Attribute: (string1: String?, string2: String?)] = [:]
+            var expectedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in expectedNutrientsDataFrame.rows {
                 guard let attributeName = row["attributeString"] as? String,
                       let attribute = Attribute(rawValue: attributeName),
-                      let value1 = row["recognizedText1String"] as? String?,
-                      let value2 = row["recognizedText2String"] as? String?
+                      let value1String = row["value1String"] as? String?,
+                      let value2String = row["value2String"] as? String?
                 else {
                     XCTFail("Failed to read an expected nutrient for \(testCase)")
                     return
                 }
+                
+                var value1: Value? = nil
+                if let value1String = value1String {
+                    guard let value = Value(fromString: value1String) else {
+                        XCTFail("Failed to convert value1String: \(value1String) for \(testCase)")
+                        return
+                    }
+                    value1 = value
+                }
+                
+                var value2: Value? = nil
+                if let value2String = value2String {
+                    guard let value = Value(fromString: value2String) else {
+                        XCTFail("Failed to convert value2String: \(value2String) for \(testCase)")
+                        return
+                    }
+                    value2 = value
+                }
+
+                
                 expectedNutrients[attribute] = (value1, value2)
             }
             
-            
             for attribute in expectedNutrients.keys {
-                guard let recognizedTexts = processedNutrients[attribute] else {
+                guard let values = processedNutrients[attribute] else {
                     XCTFail("Missing Attribute: \(attribute) for Test Case: \(testCase)")
                     return
                 }
                 
-                XCTAssertEqual(recognizedTexts.recognizedText1?.string, expectedNutrients[attribute]?.string1)
-                XCTAssertEqual(recognizedTexts.recognizedText2?.string, expectedNutrients[attribute]?.string2)
+                XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1)
+                XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2)
             }
+            
+            print("🧬 Nutrients for Test Case: \(testCase)")
+            print(nutrientsDataFrame)
+            continue
         }
     }
     
