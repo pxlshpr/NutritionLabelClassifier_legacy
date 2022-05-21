@@ -5,6 +5,18 @@ struct Value {
     let unit: NutritionUnit?
     
     init?(fromString string: String) {
+        
+        /// Special cases
+        if string.trimmingWhitespaces.lowercased() == "nil" {
+            self.amount = 0
+            self.unit = .g
+            return
+        } else if string.trimmingWhitespaces.lowercased() == "trace" {
+            self.amount = 0.05
+            self.unit = .g
+            return
+        }
+        
         let groups = string.capturedGroups(using: Regex.fromString, allowCapturingEntireString: true)
         guard groups.count > 1,
               let amount = Double(

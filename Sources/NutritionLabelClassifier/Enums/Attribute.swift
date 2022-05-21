@@ -14,6 +14,7 @@ enum Attribute: String, CaseIterable {
     case dietaryFibre
     case gluten
     case sugar
+    case starch
     
     case fat
     case saturatedFat
@@ -36,7 +37,7 @@ enum Attribute: String, CaseIterable {
         switch self {
         case .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol:
             return .fat
-        case .dietaryFibre, .gluten, .sugar:
+        case .dietaryFibre, .gluten, .sugar, .starch:
             return .carbohydrate
         case .sodium:
             return .salt
@@ -63,7 +64,7 @@ enum Attribute: String, CaseIterable {
             return [.kcal, .kj]
         case .protein, .carbohydrate, .fat:
             return [.g]
-        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten:
+        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten, .starch:
             return [.g, .mg, .mcg]
         case .salt, .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
             return [.g, .mg, .mcg, .p]
@@ -90,6 +91,8 @@ enum Attribute: String, CaseIterable {
             return #"(dietary |)fib(re|er)"#
         case .gluten:
             return #"gluten"#
+        case .starch:
+            return #"starch"#
 
         case .fat:
             return Regex.fat
