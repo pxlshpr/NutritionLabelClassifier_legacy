@@ -1,6 +1,7 @@
 import Foundation
+import VisionSugar
 
-extension String {
+extension RecognizedText {
 
     var features: [Feature] {
         var features: [Feature] = []
@@ -12,7 +13,7 @@ extension String {
 
         // For each artefact
         for artefact in artefacts {
-            if let attribute = artefact as? Attribute {
+            if let attribute = artefact.attribute {
                 /// if we're holding onto a value for the next attribute (due to the `includes` preposition), create the feature and reset the holding variable
                 if let value = currentValueWaitingForAttribute {
                     features.append(Feature(attribute: attribute, value: value))
@@ -20,7 +21,7 @@ extension String {
                 } else {
                     currentAttribute = attribute
                 }
-            } else if let value = artefact as? Value {
+            } else if let value = artefact.value {
                 /// If we encounter this value after an `includes` preposition, hold onto it, and reset the flag that was used to indicate this
                 guard !shouldHoldNextValueForAttribute else {
                     currentValueWaitingForAttribute = value
@@ -43,7 +44,7 @@ extension String {
                 if !attribute.supportsMultipleColumns {
                     currentAttribute = nil
                 }
-            } else if let preposition = artefact as? Preposition {
+            } else if let preposition = artefact.preposition {
                 if preposition == .includes {
                     /// set a flag for the next `Value` to be held onto so that we expect the `Attribute` to come afterwards
                     shouldHoldNextValueForAttribute = true

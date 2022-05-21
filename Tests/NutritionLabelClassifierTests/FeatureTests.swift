@@ -1,5 +1,6 @@
 import XCTest
 import TabularData
+import VisionSugar
 
 @testable import NutritionLabelClassifier
 
@@ -7,13 +8,15 @@ final class FeatureTests: XCTestCase {
 
     func testArtefacts() throws {
         testCasesStringsWithArtefacts.forEach {
-            XCTAssertEqual($0.input.artefacts, $0.artefacts)
+            let dummyRecognizedText = RecognizedText(id: defaultUUID, rectString: "", candidates: [$0.input])
+            XCTAssertEqual(dummyRecognizedText.artefacts, $0.artefacts)
         }
     }
 
     func testFeatures() throws {
         testCasesStringsWithFeatures.forEach {
-            XCTAssertEqual($0.input.features, $0.features)
+            let dummyRecognizedText = RecognizedText(id: defaultUUID, rectString: "", candidates: [$0.input])
+            XCTAssertEqual(dummyRecognizedText.features, $0.features)
         }
     }
 }

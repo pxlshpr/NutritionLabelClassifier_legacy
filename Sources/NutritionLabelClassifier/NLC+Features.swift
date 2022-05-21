@@ -31,7 +31,7 @@ extension NutritionLabelClassifier {
                 /// Column1 but no Column2
 //                print("Handle case where: We have Column1 but no Column2")
             }
-        } else if let header2 = columnHeaderRecognizedTexts.1 {
+        } else if let _ = columnHeaderRecognizedTexts.1 {
             /// Column2 but no Column1
 //            print("Handle case where: We have Column2 but no Column1")
         }

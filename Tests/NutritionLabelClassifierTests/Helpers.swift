@@ -3,6 +3,8 @@ import TabularData
 
 @testable import NutritionLabelClassifier
 
+let defaultUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+
 enum TestCaseFileType {
     case input
     case expectedNutrients
@@ -49,4 +51,16 @@ func v(_ amount: Double, _ unit: NutritionUnit? = nil) -> Value {
 
 func a(_ attribute: Attribute) -> Attribute {
     attribute
+}
+
+func ap(_ preposition: Preposition) -> Artefact {
+    Artefact(preposition: preposition, observationId: defaultUUID)
+}
+
+func av(_ amount: Double, _ unit: NutritionUnit? = nil) -> Artefact {
+    Artefact(value: Value(amount: amount, unit: unit), observationId: defaultUUID)
+}
+
+func aa(_ attribute: Attribute) -> Artefact {
+    Artefact(attribute: attribute, observationId: defaultUUID)
 }

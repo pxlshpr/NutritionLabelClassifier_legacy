@@ -10,7 +10,7 @@ extension NutritionLabelClassifier {
         return (attribute, nil, nil)
     }
     
-    static func processArtefacts(of string: String) -> (rows: [Row], rowBeingExtracted: Row?) {
+    static func processArtefacts(of recognizedText: RecognizedText) -> (rows: [Row], rowBeingExtracted: Row?) {
         
         var rows: [Row] = []
         var attributeBeingExtracted: Attribute? = nil
@@ -18,17 +18,17 @@ extension NutritionLabelClassifier {
         
         var ignoreNextValueDueToPerPreposition = false
         
-        let artefacts = string.artefacts
+        let artefacts = recognizedText.artefacts
         for i in artefacts.indices {
             let artefact = artefacts[i]
-            if let attribute = artefact as? Attribute {
+            if let attribute = artefact.attribute {
                 /// if we're in the process of extracting a value, save it as a row
                 if let attributeBeingExtracted = attributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
                     rows.append((attributeBeingExtracted, valueBeingExtracted, nil))
                     value1BeingExtracted = nil
                 }
                 attributeBeingExtracted = attribute
-            } else if let value = artefact as? Value, let unit = value.unit, let attribute = attributeBeingExtracted {
+            } else if let value = artefact.value, let unit = value.unit, let attribute = attributeBeingExtracted {
                 guard !ignoreNextValueDueToPerPreposition else {
                     ignoreNextValueDueToPerPreposition = false
                     continue
@@ -48,7 +48,7 @@ extension NutritionLabelClassifier {
                     /// Before setting this as the first value, check that the attribute supports the unit, and that we don't have the RI (required intake) preposition immediately following it
                     var nextArtefactInvalidatesValue = false
                     if i < artefacts.count - 1,
-                       let nextArtefactAsPreposition = artefacts[i+1] as? Preposition,
+                       let nextArtefactAsPreposition = artefacts[i+1].preposition,
                        nextArtefactAsPreposition.invalidatesPreviousValueArtefact
                     {
                         nextArtefactInvalidatesValue = true
@@ -58,7 +58,7 @@ extension NutritionLabelClassifier {
                     }
                     value1BeingExtracted = value
                 }
-            } else if let preposition = artefact as? Preposition {
+            } else if let preposition = artefact.preposition {
                 if preposition.containsPer {
                     ignoreNextValueDueToPerPreposition = true
                 }
@@ -85,11 +85,11 @@ extension NutritionLabelClassifier {
         /// If we have `attributeBeingExtracted`, call the extraction function with it
     }
     
-    static func extract(_ row: inout Row, from string: String) -> (didExtract: Bool, shouldContinue: Bool) {
+    static func extract(_ row: inout Row, from recognizedText: RecognizedText) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
-        for artefact in string.artefacts {
-            if let value = artefact as? Value, let unit = value.unit {
+        for artefact in recognizedText.artefacts {
+            if let value = artefact.value, let unit = value.unit {
                 if let value1 = row.value1 {
                     guard let unit1 = value1.unit, unit == unit1 else {
                         continue
@@ -102,7 +102,7 @@ extension NutritionLabelClassifier {
                     row.value1 = value
                     didExtract = true
                 }
-            } else if let _ = artefact as? Attribute {
+            } else if let _ = artefact.attribute {
                 /// Send `false` for algorithm to stop searching inline texts once we hit another `Attribute`
                 return (didExtract: didExtract, shouldContinue: false)
             }
@@ -131,7 +131,7 @@ extension NutritionLabelClassifier {
 
         for recognizedText in recognizedTexts {
             
-            let result = processArtefacts(of: recognizedText.string)
+            let result = processArtefacts(of: recognizedText)
             
             /// Process any attributes that were extracted
             for row in result.rows {
@@ -144,11 +144,11 @@ extension NutritionLabelClassifier {
                 var rowBeingExtracted = row
                 let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText, ignoring: discarded)
                 for inlineText in inlineTexts {
-                    let result = extract(&rowBeingExtracted, from: inlineText.string)
+                    let result = extract(&rowBeingExtracted, from: inlineText)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as an inline text again
                     if result.didExtract,
-                       inlineText.string.artefacts.count == 1,
-                       let _ = inlineText.string.artefacts.first as? Value
+                       inlineText.artefacts.count == 1,
+                       let _ = inlineText.artefacts.first?.value
                     {
                         discarded.append(inlineText)
                     }
