@@ -13,7 +13,8 @@ enum Attribute: String, CaseIterable {
     case carbohydrate
     case dietaryFibre
     case gluten
-
+    case sugar
+    
     case fat
     case saturatedFat
     case polyunsaturatedFat
@@ -24,7 +25,6 @@ enum Attribute: String, CaseIterable {
     case salt
     case sodium
     case calcium
-    case sugar
     case iron
     case potassium
     
@@ -32,6 +32,18 @@ enum Attribute: String, CaseIterable {
     case vitaminC
     case vitaminD
     
+    var parentAttribute: Attribute? {
+        switch self {
+        case .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol:
+            return .fat
+        case .dietaryFibre, .gluten, .sugar:
+            return .carbohydrate
+        case .sodium:
+            return .salt
+        default:
+            return nil
+        }
+    }
     func supportsUnit(_ unit: NutritionUnit) -> Bool {
         supportedUnits.contains(unit)
     }

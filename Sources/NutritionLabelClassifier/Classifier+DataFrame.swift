@@ -3,8 +3,9 @@ import TabularData
 import VisionSugar
 import CoreText
 
+typealias Row = (attribute: Attribute, value1: Value?, value2: Value?)
+
 extension NutritionLabelClassifier {
-    typealias Row = (attribute: Attribute, value1: Value?, value2: Value?)
 
     static func extractAttribute(_ attribute: Attribute, from recognizedTexts: [RecognizedText]) -> Row {
         return (attribute, nil, nil)
@@ -85,10 +86,10 @@ extension NutritionLabelClassifier {
         /// If we have `attributeBeingExtracted`, call the extraction function with it
     }
     
-    static func extract(_ row: inout Row, from recognizedText: RecognizedText) -> (didExtract: Bool, shouldContinue: Bool) {
+    static func extract(_ row: inout Row, from recognizedText: RecognizedText, extractedRows: [Row]) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
-        for artefact in recognizedText.artefacts {
+        for artefact in recognizedText.getArtefacts(for: row.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
             if let value = artefact.value, let unit = value.unit {
                 if let value1 = row.value1 {
                     guard let unit1 = value1.unit, unit == unit1 else {
@@ -147,7 +148,7 @@ extension NutritionLabelClassifier {
                     
                     guard let inlineText = pickInlineText(fromColumn: column) else { continue }
                     
-                    let result = extract(&rowBeingExtracted, from: inlineText)
+                    let result = extract(&rowBeingExtracted, from: inlineText, extractedRows: rows)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
                     if result.didExtract,
                        inlineText.artefacts.count == 1,
