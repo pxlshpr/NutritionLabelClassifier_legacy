@@ -11,8 +11,15 @@ extension RecognizedText {
         //MARK: - Heuristics for picking other candidates
         
         /// If the first array is a single value, and has no unit, but one of the next candidates has another single value *with a unit*—pick the first one we encounter
-//        if let first = arrays.first, first.count == 1, first.
+        if arrays.count > 1, arrays.first?.count == 1, let value = arrays.first?.first?.value, value.unit == nil {
+            for array in arrays.dropFirst() {
+                if array.count == 1, let value = array.first?.value, value.unit != nil {
+                    return array
+                }
+            }
+        }
         
+        /// Default is to always return the first array if none of the heuristics picked another candidate
         return arrays.first ?? []
     }
     
