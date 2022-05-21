@@ -7,11 +7,12 @@ struct Value {
     init?(fromString string: String) {
         
         /// Special cases
-        if string.trimmingWhitespaces.lowercased() == "nil" {
+        let str = string.trimmingWhitespaces.lowercased()
+        if str == "nil" {
             self.amount = 0
             self.unit = .g
             return
-        } else if string.trimmingWhitespaces.lowercased() == "trace" {
+        } else if str == "trace" {
             self.amount = 0.05
             self.unit = .g
             return
@@ -46,8 +47,8 @@ struct Value {
     struct Regex {
         static let units = NutritionUnit.allUnits.map { #"[ ]*\#($0)"# }.joined(separator: "|")
         static let number = #"[0-9]+[0-9.:,]*"#
-        static let atStartOfString = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
-//        static let atStartOfString = #"^(\#(number)[ ]*(\#(units))?)"#
+        static let atStartOfString = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))|nil(?: |$)|trace(?: |$))"#
+        static let atStartOfString_legacy = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
         static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |$)"#
         
         //TODO: Remove this

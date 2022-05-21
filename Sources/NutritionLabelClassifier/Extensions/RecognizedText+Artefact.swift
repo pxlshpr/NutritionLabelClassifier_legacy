@@ -21,7 +21,7 @@ extension RecognizedText {
         }
         
         /// Default is to always return the first array if none of the heuristics picked another candidate
-        return arrays.first ?? []
+        return arrays.first(where: { $0.count > 0 }) ?? []
     }
     
     func artefacts(for string: String) -> [Artefact] {

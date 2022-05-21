@@ -44,7 +44,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...14 {
+        for testCase in 1...15 {
             guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
                 XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
                 return
@@ -74,6 +74,9 @@ final class NutritionLabelClassifierTests: XCTestCase {
                 XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
                 return
             }
+            print("📃 Expected Nutrients for Test Case: \(testCase)")
+            print(expectedNutrientsDataFrame)
+
             var expectedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in expectedNutrientsDataFrame.rows {
                 guard let attributeName = row["attributeString"] as? String,
@@ -125,6 +128,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
             XCTFail("Couldn't read file for Test Case \(testCase)")
             return nil
         }
+        
         return dataFrame.recognizedTexts
     }
 }
