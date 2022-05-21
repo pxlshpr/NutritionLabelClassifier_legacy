@@ -36,10 +36,11 @@ extension NutritionLabelClassifier {
                 }
                 
                 if let value1 = value1BeingExtracted, let unit1 = value1.unit {
+                    /// If the unit doesn't match the first one we got, ignore this
                     guard unit == unit1 else {
-                        rows.append((attribute, value1, nil))
-                        attributeBeingExtracted = nil
-                        value1BeingExtracted = nil
+//                        rows.append((attribute, value1, nil))
+//                        attributeBeingExtracted = nil
+//                        value1BeingExtracted = nil
                         continue
                     }
                     rows.append((attribute, value1, value))
