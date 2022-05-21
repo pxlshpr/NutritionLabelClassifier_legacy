@@ -59,11 +59,11 @@ extension RecognizedText {
 //MARK: - Heuristic Selections
 extension RecognizedText {
     
-    /** If the first array is a single value, and has no unit, but one of the next candidates has another single value *with a unit*—pick the first one we encounter
+    /** If the first array's first element is a value without a unit, but one of the next candidates has a single value *with a unit*—pick the first one we encounter
      */
     func heuristicSelectionOfValueWithUnit(from arrays: [[Artefact]]) -> [Artefact]? {
         guard arrays.count > 1 else { return nil }
-        guard arrays.first?.count == 1, let value = arrays.first?.first?.value, value.unit == nil else {
+        guard let value = arrays.first?.first?.value, value.unit == nil else {
             return nil
         }
         for array in arrays.dropFirst() {
