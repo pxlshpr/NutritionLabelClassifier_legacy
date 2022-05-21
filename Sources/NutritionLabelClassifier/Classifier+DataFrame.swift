@@ -124,7 +124,7 @@ extension NutritionLabelClassifier {
         ///                 return false
     }
     
-    static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
+    public static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
         
         var rows: [Row] = []
         
