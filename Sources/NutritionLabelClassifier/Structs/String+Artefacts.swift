@@ -1,12 +1,18 @@
 import Foundation
+import VisionSugar
 
+extension RecognizedText {
+    var artefacts: [AnyHashable] {
+        string.artefacts
+    }
+}
 extension String {
 
     var artefacts: [AnyHashable] {
-        
+
         var array: [AnyHashable] = []
         var string = self
-        
+
         while string.count > 0 {
             /// First check if we have a value at the start of the string
             if let valueSubstring = string.valueSubstringAtStart,
