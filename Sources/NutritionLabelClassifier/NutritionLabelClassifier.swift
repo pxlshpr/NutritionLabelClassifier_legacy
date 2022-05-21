@@ -78,68 +78,68 @@ public struct NutritionLabelClassifier {
         return (header1, header2)
     }
 
-    static func dataFrameOfNutrients_legacy(from recognizedTexts: [RecognizedText]) -> DataFrame {
-        
-        var processed: [RecognizedText] = []
-        var dataFrame = DataFrame()
-        
-        var attributes: [Attribute] = []
-        var column1: [RecognizedText?] = []
-        var column2: [RecognizedText?] = []
-
-        for recognizedText in recognizedTexts {
-            guard !processed.contains(recognizedText),
-                  recognizedText.isValueBasedAttribute,
-                  let attribute = recognizedText.attribute
-            else { continue }
-            
-            if recognizedText.containsValue {
-                attributes.append(attribute)
-                column1.append(recognizedText)
-                processed.append(recognizedText)
-                
-                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText), !processed.contains(inlineValue) {
-                    column2.append(inlineValue)
-                    processed.append(inlineValue)
-                } else {
-                    column2.append(nil)
-                }
-            } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
-                
-                guard !processed.contains(inlineValue) else {
-                    guard let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
-                       !processed.contains(inlineValue) else {
-                        continue
-                    }
-                    attributes.append(attribute)
-                    column1.append(nil)
-                    column2.append(inlineValue)
-                    processed.append(inlineValue)
-                    continue
-                }
-                
-                attributes.append(attribute)
-                column1.append(inlineValue)
-                processed.append(inlineValue)
-                
-                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
-                   !processed.contains(inlineValue)
-                {
-                    column2.append(inlineValue)
-                    processed.append(inlineValue)
-                } else {
-                    column2.append(nil)
-                }
-            }
-        }
-        
-        let labelColumn = Column(name: "attribute", contents: attributes)
-        let column1Id = ColumnID("recognizedText1", RecognizedText?.self)
-        let column2Id = ColumnID("recognizedText2", RecognizedText?.self)
-
-        dataFrame.append(column: labelColumn)
-        dataFrame.append(column: Column(column1Id, contents: column1))
-        dataFrame.append(column: Column(column2Id, contents: column2))
-        return dataFrame
-    }
+//    static func dataFrameOfNutrients_legacy(from recognizedTexts: [RecognizedText]) -> DataFrame {
+//        
+//        var processed: [RecognizedText] = []
+//        var dataFrame = DataFrame()
+//        
+//        var attributes: [Attribute] = []
+//        var column1: [RecognizedText?] = []
+//        var column2: [RecognizedText?] = []
+//
+//        for recognizedText in recognizedTexts {
+//            guard !processed.contains(recognizedText),
+//                  recognizedText.isValueBasedAttribute,
+//                  let attribute = recognizedText.attribute
+//            else { continue }
+//            
+//            if recognizedText.containsValue {
+//                attributes.append(attribute)
+//                column1.append(recognizedText)
+//                processed.append(recognizedText)
+//                
+//                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText), !processed.contains(inlineValue) {
+//                    column2.append(inlineValue)
+//                    processed.append(inlineValue)
+//                } else {
+//                    column2.append(nil)
+//                }
+//            } else if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText) {
+//                
+//                guard !processed.contains(inlineValue) else {
+//                    guard let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
+//                       !processed.contains(inlineValue) else {
+//                        continue
+//                    }
+//                    attributes.append(attribute)
+//                    column1.append(nil)
+//                    column2.append(inlineValue)
+//                    processed.append(inlineValue)
+//                    continue
+//                }
+//                
+//                attributes.append(attribute)
+//                column1.append(inlineValue)
+//                processed.append(inlineValue)
+//                
+//                if let inlineValue = recognizedTexts.valueOnSameLine(as: recognizedText, inSecondColumn: true),
+//                   !processed.contains(inlineValue)
+//                {
+//                    column2.append(inlineValue)
+//                    processed.append(inlineValue)
+//                } else {
+//                    column2.append(nil)
+//                }
+//            }
+//        }
+//        
+//        let labelColumn = Column(name: "attribute", contents: attributes)
+//        let column1Id = ColumnID("recognizedText1", RecognizedText?.self)
+//        let column2Id = ColumnID("recognizedText2", RecognizedText?.self)
+//
+//        dataFrame.append(column: labelColumn)
+//        dataFrame.append(column: Column(column1Id, contents: column1))
+//        dataFrame.append(column: Column(column2Id, contents: column2))
+//        return dataFrame
+//    }
 }

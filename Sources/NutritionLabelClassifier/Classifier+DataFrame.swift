@@ -142,10 +142,13 @@ extension NutritionLabelClassifier {
             if let row = result.rowBeingExtracted {
                 
                 var rowBeingExtracted = row
-                let inlineTexts = recognizedTexts.filterSameRow(as: recognizedText, ignoring: discarded)
-                for inlineText in inlineTexts {
+                let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
+                for column in inlineTextColumns {
+                    
+                    guard let inlineText = pickInlineText(fromColumn: column) else { continue }
+                    
                     let result = extract(&rowBeingExtracted, from: inlineText)
-                    /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as an inline text again
+                    /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
                     if result.didExtract,
                        inlineText.artefacts.count == 1,
                        let _ = inlineText.artefacts.first?.value
@@ -176,5 +179,17 @@ extension NutritionLabelClassifier {
         dataFrame.append(column: value1Column)
         dataFrame.append(column: value2Column)
         return dataFrame
+    }
+    
+    static func pickInlineText(fromColumn column: [RecognizedText]) -> RecognizedText? {
+        
+        /// **Heuristic** In order to account for slightly curved labels that may pick up both a `kJ` and `kcal` `Value` when looking for energy—always pick the `kJ` one (as its larger in value) regardless of how far away it is from the row (as the curvature can sometimes skew this)
+        if column.contains(where: { Value(fromString: $0.string)?.unit == .kcal }),
+           column.contains(where: { Value(fromString: $0.string)?.unit == .kj }) {
+            return column.first(where: { Value(fromString: $0.string)?.unit == .kj })
+        }
+        
+        /// As the defaul fall-back, return the first text (ie. the one closest to the row we're extracted)
+        return column.first
     }
 }

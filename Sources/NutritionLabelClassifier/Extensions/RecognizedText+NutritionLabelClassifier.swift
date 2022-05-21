@@ -70,11 +70,15 @@ extension Array where Element == RecognizedText {
         return column
     }
     
-    func filterSameRow(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [RecognizedText] {
+    /** Returns an array of the inline `recognizedText`s to the one we specify, in the direction indicating by `preceding`—whilst ignoring those provided.
+     
+        The return array is 2-dimensional, where each element is another array of elements that appear in the same column as one another, in order of how much they intersect with the source `recognizedText`. These arrays are in the order of the how far away from the `recognizedText` they are.
+     */
+    func inlineTextColumns(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [[RecognizedText]] {
 //        log.verbose(" ")
 //        log.verbose("******")
 //        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
-        var row: [RecognizedText] = []
+        var row: [[RecognizedText]] = []
         var discarded: [RecognizedText] = []
         let candidates = filter {
             $0.isInSameRowAs(recognizedText)
@@ -101,7 +105,7 @@ extension Array where Element == RecognizedText {
             }
             guard column.count > 1, let first = column.first else {
 //                log.verbose("  no recognizedTexts in same column, so adding this to the final array and continuing")
-                row.append(candidate)
+                row.append([candidate])
                 continue
             }
             
@@ -109,38 +113,48 @@ extension Array where Element == RecognizedText {
 //            log.verbose("  \(column.map { $0.string })")
 
 //            log.verbose("  setting closest as \(first.string)")
-            var closest = first
+//            var closest = first
+            
+            var columnElementsAndIntersections: [(recognizedText: RecognizedText, intersection: CGRect)] = []
             for columnElement in column {
 //                log.verbose("    checking if \(columnElement.string) is a closer candidate")
                 /// first normalize the x values of both rects, `columnElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same x values (`origin.x` and `size.width`)
                 let xNormalizedRect = columnElement.rect.rectWithXValues(of: recognizedText.rect)
-                let closestXNormalizedRect = closest.rect.rectWithXValues(of: recognizedText.rect)
+//                let closestXNormalizedRect = closest.rect.rectWithXValues(of: recognizedText.rect)
 
 //                log.verbose("    xNormalizedRect is: \(xNormalizedRect)")
 //                log.verbose("    closestXNormalizedRect is: \(closestXNormalizedRect)")
 
                 let intersection = xNormalizedRect.intersection(recognizedText.rect)
-                let closestIntersection = closestXNormalizedRect.intersection(recognizedText.rect)
+//                let closestIntersection = closestXNormalizedRect.intersection(recognizedText.rect)
 //                log.verbose("    intersection is: \(intersection)")
 //                log.verbose("    closestIntersection is: \(closestIntersection)")
 
 //                log.verbose("    Checking if intersection.height(\(intersection.height)) > closestIntersection.height(\(closestIntersection.height))")
                 /// now compare these intersection of both the x-normalized rects with `recognizedText` itself, and return whichever intersection rect has a larger height (indicating which one is more 'in line' with `recognizedText`)
-                if intersection.height > closestIntersection.height {
+//                if intersection.height > closestIntersection.height {
 //                    log.verbose("    It is greater, so setting closest as: \(sameColumnElement.string)")
-                    closest = columnElement
-                } else {
+//                    closest = columnElement
+//                } else {
 //                    log.verbose("    It isn't greater, so leaving closest as it was")
-                }
+//                }
                 
 //                log.verbose("    Adding \(columnElement.string) to the discarded pile")
+                columnElementsAndIntersections.append(
+                    (columnElement, intersection)
+                )
                 discarded.append(columnElement)
             }
             
             
 //            log.verbose("  Now that we've gone through all the \(column.count) columnElements, we're appending the final closest: \(closest.string) to row")
-            row.append(closest)
             
+            
+            /// Now order the `columnElementsAndIntersections` in decreasing order of `intersection.height` — which indicates how far away from the source `recognizedText` they are
+            columnElementsAndIntersections.sort { $0.intersection.height > $1.intersection.height }
+            
+            /// Now that its sorted, map the recognized texts into an array and provide that in the result array
+            row.append(columnElementsAndIntersections.map { $0.recognizedText })
         }
         
 //        log.verbose("Finally, we have row as:")
@@ -149,33 +163,29 @@ extension Array where Element == RecognizedText {
         return row
     }
     
-    func nextRecognizedTextOnSameLine(as recognizedText: RecognizedText) -> RecognizedText? {
-        filterSameRow(as: recognizedText).first
-    }
-    
-    func valueOnSameLine(as recognizedText: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
-        /// Set this bool to true if we're looking for the second value so that the first value gets ignored
-        var ignoreNextValue = inSecondColumn
-        var returnNilIfNextRecognizedTextDoesNotContainValue = false
-        let recognizedTextsOnSameLine = filterSameRow(as: recognizedText)
-        for recognizedText in recognizedTextsOnSameLine {
-            if recognizedText.containsValue {
-                /// Keep looking if we're after the second column
-                guard !ignoreNextValue else {
-                    /// Reset this so that we actually grab the next value
-                    ignoreNextValue = false
-                    continue
-                }
-                return recognizedText
-            } else if returnNilIfNextRecognizedTextDoesNotContainValue {
-                return nil
-            }
-            if recognizedText.containsPercentage {
-                returnNilIfNextRecognizedTextDoesNotContainValue = true
-            } else {
-                return nil
-            }
-        }
-        return nil
-    }
+//    func valueOnSameLine(as recognizedText: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
+//        /// Set this bool to true if we're looking for the second value so that the first value gets ignored
+//        var ignoreNextValue = inSecondColumn
+//        var returnNilIfNextRecognizedTextDoesNotContainValue = false
+//        let recognizedTextsOnSameLine = filterSameRow(as: recognizedText)
+//        for recognizedText in recognizedTextsOnSameLine {
+//            if recognizedText.containsValue {
+//                /// Keep looking if we're after the second column
+//                guard !ignoreNextValue else {
+//                    /// Reset this so that we actually grab the next value
+//                    ignoreNextValue = false
+//                    continue
+//                }
+//                return recognizedText
+//            } else if returnNilIfNextRecognizedTextDoesNotContainValue {
+//                return nil
+//            }
+//            if recognizedText.containsPercentage {
+//                returnNilIfNextRecognizedTextDoesNotContainValue = true
+//            } else {
+//                return nil
+//            }
+//        }
+//        return nil
+//    }
 }
