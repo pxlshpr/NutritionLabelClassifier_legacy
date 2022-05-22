@@ -218,6 +218,13 @@ extension NutritionLabelClassifier {
             /// Now do an inline search for any attribute that is still being extracted
             if let row = result.rowBeingExtracted {
                 
+                /// If we have a value1 for this row, make sure we add the recognized text it was added from to the discarded list before checking the inline ones
+                if let value1Id = row.value1?.observationId,
+                    let recognizedTextForValue1 = recognizedTexts.first(where: { $0.id == value1Id })
+                {
+                    discarded.append(recognizedTextForValue1)
+                }
+                
                 /// Skip attributes that have already been added
                 guard !rows.contains(where: { $0.attribute == row.attribute }) else {
                     continue
