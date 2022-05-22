@@ -14,7 +14,23 @@ extension NutritionLabelClassifier {
 //        return (attribute, nil, nil)
 //    }
 
-    static func processArtefacts(_ artefacts: [Artefact], forObservationWithId id: UUID) -> ProcessArtefactsResult {
+    static func haveTwoInlineValues(for recognizedText: RecognizedText, in recognizedTexts: [RecognizedText], forAttribute attribute: Attribute, ignoring discarded: [RecognizedText]) -> Bool {
+        let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
+        var inlineValueCount = 0
+        for column in inlineTextColumns {
+            guard let inlineText = pickInlineText(fromColumn: column, for: attribute) else { continue }
+            if inlineText.artefacts.contains(where: { $0.value != nil }) {
+                inlineValueCount += 1
+            }
+        }
+        return inlineValueCount > 1
+    }
+    
+    static func processArtefacts(of recognizedText: RecognizedText, from recognizedTexts: [RecognizedText], ignoring discarded: [RecognizedText]) -> ProcessArtefactsResult {
+        
+        let artefacts = recognizedText.artefacts
+        let id = recognizedText.id
+
         var rows: [Row] = []
         var attributeBeingExtracted: Attribute? = nil
         var value1BeingExtracted: Value? = nil
@@ -32,10 +48,12 @@ extension NutritionLabelClassifier {
                 attributeBeingExtracted = attribute
             } else if let value = artefact.value, let attribute = attributeBeingExtracted {
                 
-                /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
                 var unit = value.unit
                 var value = value
-                if unit == nil {
+                
+                /// **Heuristic** If the value is missing its unit, *and* we don't have two values available inline—assign the attribute's default unit to it
+                if unit == nil, !haveTwoInlineValues(for: recognizedText, in: recognizedTexts, forAttribute: attribute, ignoring: discarded)
+                {
                     guard let defaultUnit = attribute.defaultUnit else {
                         continue
                     }
@@ -105,9 +123,9 @@ extension NutritionLabelClassifier {
         /// If we have `attributeBeingExtracted`, call the extraction function with it
     }
     
-    static func processArtefacts(of recognizedText: RecognizedText) -> ProcessArtefactsResult {
-        processArtefacts(recognizedText.artefacts, forObservationWithId: recognizedText.id)
-    }
+//    static func processArtefacts(of recognizedText: RecognizedText) -> ProcessArtefactsResult {
+//        processArtefacts(recognizedText.artefacts, forObservationWithId: recognizedText.id)
+//    }
 
     static func extract(_ row: inout Row, from recognizedText: RecognizedText, extractedRows: [Row]) -> (didExtract: Bool, shouldContinue: Bool) {
         
@@ -210,7 +228,7 @@ extension NutritionLabelClassifier {
         recognizedText.string.lowercased() == "vitamin"
     }
     
-    private static func processArtefactsOf(_ recognizedText: RecognizedText, byJoiningWithNextInlineRecognizedTextIn recognizedTexts: [RecognizedText], rows: [Row]) ->  ProcessArtefactsResult
+    private static func processArtefactsOf(_ recognizedText: RecognizedText, byJoiningWithNextInlineRecognizedTextIn recognizedTexts: [RecognizedText], rows: [Row], ignoring discarded: [RecognizedText]) ->  ProcessArtefactsResult
     {
         guard let nextRecognizedText = recognizedTexts.inlineTextColumns(as: recognizedText).first?.first else {
             return (rows: rows, rowBeingExtracted: nil)
@@ -219,7 +237,7 @@ extension NutritionLabelClassifier {
             id: nextRecognizedText.id,
             rectString: NSCoder.string(for: nextRecognizedText.rect),
             candidates: ["\(recognizedText.string) \(nextRecognizedText.string)"])
-        return processArtefacts(of: combinedRecognizedText)
+        return processArtefacts(of: combinedRecognizedText, from: recognizedTexts, ignoring: discarded)
     }
     
     private static func extractRowsOfNutrients(from recognizedTexts: [RecognizedText], into rows: inout [Row]) {
@@ -233,9 +251,9 @@ extension NutritionLabelClassifier {
             
             let result: ProcessArtefactsResult
             if heuristicRecognizedTextIsPartOfAttribute(recognizedText, from: recognizedTexts) {
-                result = processArtefactsOf(recognizedText, byJoiningWithNextInlineRecognizedTextIn: recognizedTexts, rows: rows)
+                result = processArtefactsOf(recognizedText, byJoiningWithNextInlineRecognizedTextIn: recognizedTexts, rows: rows, ignoring: discarded)
             } else {
-                result = processArtefacts(of: recognizedText)
+                result = processArtefacts(of: recognizedText, from: recognizedTexts, ignoring: discarded)
             }
             
             /// Process any attributes that were extracted

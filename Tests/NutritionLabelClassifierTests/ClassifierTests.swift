@@ -44,8 +44,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...22 {
-//        for testCase in 22...22 {
+        for testCase in 1...23 {
+//        for testCase in 23...23 {
             
 //            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
 //                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")

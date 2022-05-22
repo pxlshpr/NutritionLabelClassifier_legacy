@@ -9,7 +9,7 @@ final class FeatureTests: XCTestCase {
     func testArtefacts() throws {
         testCasesStringsWithArtefacts.forEach {
             let dummyRecognizedText = RecognizedText(id: defaultUUID, rectString: "", candidates: [$0.input])
-            XCTAssertEqual(dummyRecognizedText.artefacts, $0.artefacts)
+            XCTAssertEqual(dummyRecognizedText.artefacts, $0.artefacts, "\($0.input)")
         }
     }
 

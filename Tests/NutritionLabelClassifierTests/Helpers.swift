@@ -5,7 +5,7 @@ import TabularData
 
 let defaultUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
 
-enum TestCaseFileType {
+enum TestCaseFileType: String {
     case input
     case inputWithoutLanguageCorrection
     case expectedNutrients
@@ -27,7 +27,7 @@ enum TestCaseFileType {
 
 func dataFrameForTestCase(_ testCase: Int, testCaseFileType: TestCaseFileType = .input) -> DataFrame? {
     guard let path = Bundle.module.path(forResource: "\(testCaseFileType.fileName(for: testCase))", ofType: "csv") else {
-        XCTFail("Couldn't get path for \"\(testCase).csv\"")
+        XCTFail("Couldn't get path for \"\(testCaseFileType.fileName(for: testCase))\" for testCaseFileType: \(testCaseFileType.rawValue)")
         return nil
     }
     let url = URL(fileURLWithPath: path)

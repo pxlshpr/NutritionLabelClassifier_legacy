@@ -56,8 +56,9 @@ struct Value {
     struct Regex {
         static let units = NutritionUnit.allUnits.map { #"[ ]*\#($0)"# }.joined(separator: "|")
         static let number = #"[0-9]+[0-9.:,]*"#
-        static let atStartOfString = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))|nil(?: |$)|trace(?: |$))"#
-        static let atStartOfString_legacy = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
+        static let atStartOfString = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$)*(?: |\)|/|$))|nil(?: |$)|trace(?: |$))"#
+        static let atStartOfString_legacy2 = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))|nil(?: |$)|trace(?: |$))"#
+        static let atStartOfString_legacy1 = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
         static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |$)"#
         
         /// Recognizes number in a string using comma as decimal place (matches `39,3` and `2,05` but not `2,000` or `1,2,3`)

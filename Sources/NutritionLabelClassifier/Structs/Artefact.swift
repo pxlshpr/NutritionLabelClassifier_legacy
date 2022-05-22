@@ -36,3 +36,18 @@ extension Artefact: Equatable {
         && lhs.preposition == rhs.preposition
     }
 }
+
+extension Artefact: CustomStringConvertible {
+    public var description: String {
+        if let value = value {
+            return value.description
+        }
+        if let attribute = attribute {
+            return attribute.rawValue
+        }
+        if let preposition = preposition {
+            return preposition.rawValue
+        }
+        return "nil"
+    }
+}
