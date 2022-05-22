@@ -200,7 +200,7 @@ extension NutritionLabelClassifier {
                     let result = extract(&rowBeingExtracted, from: inlineText, extractedRows: rows)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
                     if result.didExtract,
-                       inlineText.artefacts.count == 1,
+                       inlineText.artefacts.count >= 1,
                        let _ = inlineText.artefacts.first?.value
                     {
                         discarded.append(inlineText)

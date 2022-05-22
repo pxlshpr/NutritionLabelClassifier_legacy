@@ -78,15 +78,26 @@ extension Array where Element == RecognizedText {
 //        log.verbose(" ")
 //        log.verbose("******")
 //        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
+        
+        let mininumHeightOverlapThreshold = 0.05
+    
         var row: [[RecognizedText]] = []
         var discarded: [RecognizedText] = []
         let candidates = filter {
             $0.isInSameRowAs(recognizedText)
             && !textsToIgnore.contains($0)
             && (preceding ? $0.rect.maxX < recognizedText.rect.minX : $0.rect.minX > recognizedText.rect.maxX)
+            
+            /// Filter out texts that overlap the recognized text by at least the minimum threshold
+            && $0.rect.rectWithXValues(of: recognizedText.rect).intersection(recognizedText.rect).height/recognizedText.rect.height >= mininumHeightOverlapThreshold
+            
+            /// Filter out empty `recognizedText`s
+            && $0.candidates.filter { !$0.isEmpty }.count > 0
         }.sorted {
             $0.rect.minX < $1.rect.minX
+//            && $0.rect.minY < $1.rect.minY
         }
+        
 
 //        log.verbose("candidates are:")
 //        log.verbose("\(candidates.map { $0.string })")

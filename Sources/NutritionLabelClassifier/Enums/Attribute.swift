@@ -120,7 +120,7 @@ enum Attribute: String, CaseIterable {
         case .calcium:
             return #"calcium"#
         case .iron:
-            return #"iron"#
+            return #"(^| )iron"#
         case .potassium:
             return #"potas"#
             
