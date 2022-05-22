@@ -19,13 +19,22 @@ struct Value {
         }
         
         let groups = string.capturedGroups(using: Regex.fromString, allowCapturingEntireString: true)
-        guard groups.count > 1,
-              let amount = Double(
-                groups[1]
-                    .replacingOccurrences(of: ":", with: ".") /// Fix Vision errors of misreading decimal places as ":"
-                    .replacingOccurrences(of: ",", with: "") /// Remove comma separators
-              )
-        else {
+        guard groups.count > 1 else {
+            return nil
+        }
+        
+        var cleanedAmount = groups[1]
+            .replacingOccurrences(of: ":", with: ".") /// Fix Vision errors of misreading decimal places as `:`
+        
+        
+        if cleanedAmount.matchesRegex(Regex.usingCommaAsDecimalPlace) {
+            cleanedAmount = cleanedAmount.replacingOccurrences(of: ",", with: ".")
+        } else {
+            /// It's been used as a thousand separator in that case
+            cleanedAmount = cleanedAmount.replacingOccurrences(of: ",", with: "")
+        }
+        
+        guard let amount = Double(cleanedAmount) else {
             return nil
         }
         self.amount = amount
@@ -50,6 +59,9 @@ struct Value {
         static let atStartOfString = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))|nil(?: |$)|trace(?: |$))"#
         static let atStartOfString_legacy = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
         static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |$)"#
+        
+        /// Recognizes number in a string using comma as decimal place (matches `39,3` and `2,05` but not `2,000` or `1,2,3`)
+        static let usingCommaAsDecimalPlace = #"^[0-9]*,[0-9][0-9]?([^0-9]|$)"#
         
         //TODO: Remove this
         static let standardPattern =
