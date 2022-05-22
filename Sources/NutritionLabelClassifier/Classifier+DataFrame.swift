@@ -2,30 +2,31 @@ import SwiftSugar
 import TabularData
 import VisionSugar
 import CoreText
+import Foundation
 
-typealias Row = (attribute: Attribute, value1: Value?, value2: Value?)
+typealias ValueWithId = (value: Value, observationId: UUID)
+typealias Row = (attribute: Attribute, value1: ValueWithId?, value2: ValueWithId?)
+typealias ProcessArtefactsResult = (rows: [Row], rowBeingExtracted: Row?)
 
 extension NutritionLabelClassifier {
 
-    static func extractAttribute(_ attribute: Attribute, from recognizedTexts: [RecognizedText]) -> Row {
-        return (attribute, nil, nil)
-    }
-    
-    static func processArtefacts(of recognizedText: RecognizedText) -> (rows: [Row], rowBeingExtracted: Row?) {
-        
+//    static func extractAttribute(_ attribute: Attribute, from recognizedTexts: [RecognizedText]) -> Row {
+//        return (attribute, nil, nil)
+//    }
+
+    static func processArtefacts(_ artefacts: [Artefact], forObservationWithId id: UUID) -> ProcessArtefactsResult {
         var rows: [Row] = []
         var attributeBeingExtracted: Attribute? = nil
         var value1BeingExtracted: Value? = nil
         
         var ignoreNextValueDueToPerPreposition = false
         
-        let artefacts = recognizedText.artefacts
         for i in artefacts.indices {
             let artefact = artefacts[i]
             if let attribute = artefact.attribute {
                 /// if we're in the process of extracting a value, save it as a row
                 if let attributeBeingExtracted = attributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
-                    rows.append((attributeBeingExtracted, valueBeingExtracted, nil))
+                    rows.append((attributeBeingExtracted, (valueBeingExtracted, id), nil))
                     value1BeingExtracted = nil
                 }
                 attributeBeingExtracted = attribute
@@ -56,7 +57,7 @@ extension NutritionLabelClassifier {
 //                        value1BeingExtracted = nil
                         continue
                     }
-                    rows.append((attribute, value1, value))
+                    rows.append((attribute, (value1, id), (value, id)))
                     attributeBeingExtracted = nil
                     value1BeingExtracted = nil
                 } else {
@@ -81,7 +82,11 @@ extension NutritionLabelClassifier {
         }
         
         if let attributeBeingExtracted = attributeBeingExtracted {
-            return (rows, (attributeBeingExtracted, value1BeingExtracted, nil))
+            if let value1BeingExtracted = value1BeingExtracted {
+                return (rows, (attributeBeingExtracted, (value1BeingExtracted, id), nil))
+            } else {
+                return (rows, (attributeBeingExtracted, nil, nil))
+            }
         } else {
             return (rows, nil)
         }
@@ -100,21 +105,27 @@ extension NutritionLabelClassifier {
         /// If we have `attributeBeingExtracted`, call the extraction function with it
     }
     
+    static func processArtefacts(of recognizedText: RecognizedText) -> ProcessArtefactsResult {
+        processArtefacts(recognizedText.artefacts, forObservationWithId: recognizedText.id)
+    }
+
     static func extract(_ row: inout Row, from recognizedText: RecognizedText, extractedRows: [Row]) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
         for artefact in recognizedText.getArtefacts(for: row.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
             if let value = artefact.value, let unit = value.unit {
                 if let value1 = row.value1 {
-                    guard let unit1 = value1.unit, unit == unit1 else {
+                    guard let unit1 = value1.value.unit, unit == unit1 else {
                         continue
                     }
-                    row.value2 = value
+                    row.value2 = (value, recognizedText.id)
+//                    row.value2 = value
                     didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the row
                     return (didExtract: didExtract, shouldContinue: false)
                 } else if row.attribute.supportsUnit(unit) {
-                    row.value1 = value
+                    row.value1 = (value, recognizedText.id)
+//                    row.value1 = value
                     didExtract = true
                 }
             } else if let _ = artefact.attribute {
@@ -164,6 +175,22 @@ extension NutritionLabelClassifier {
         return dataFrame
     }
     
+    private static func heuristicRecognizedTextIsPartOfAttribute(_ recognizedText: RecognizedText, from recognizedTexts: [RecognizedText]) -> Bool {
+        recognizedText.string.lowercased() == "vitamin"
+    }
+    
+    private static func processArtefactsOf(_ recognizedText: RecognizedText, byJoiningWithNextInlineRecognizedTextIn recognizedTexts: [RecognizedText], rows: [Row]) ->  ProcessArtefactsResult
+    {
+        guard let nextRecognizedText = recognizedTexts.inlineTextColumns(as: recognizedText).first?.first else {
+            return (rows: rows, rowBeingExtracted: nil)
+        }
+        let combinedRecognizedText = RecognizedText(
+            id: nextRecognizedText.id,
+            rectString: NSCoder.string(for: nextRecognizedText.rect),
+            candidates: ["\(recognizedText.string) \(nextRecognizedText.string)"])
+        return processArtefacts(of: combinedRecognizedText)
+    }
+    
     private static func extractRowsOfNutrients(from recognizedTexts: [RecognizedText], into rows: inout [Row]) {
         
 //        var rows: [Row] = []
@@ -173,7 +200,12 @@ extension NutritionLabelClassifier {
 
         for recognizedText in recognizedTexts {
             
-            let result = processArtefacts(of: recognizedText)
+            let result: ProcessArtefactsResult
+            if heuristicRecognizedTextIsPartOfAttribute(recognizedText, from: recognizedTexts) {
+                result = processArtefactsOf(recognizedText, byJoiningWithNextInlineRecognizedTextIn: recognizedTexts, rows: rows)
+            } else {
+                result = processArtefacts(of: recognizedText)
+            }
             
             /// Process any attributes that were extracted
             for row in result.rows {

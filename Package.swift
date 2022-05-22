@@ -53,6 +53,8 @@ let package = Package(
                 .process("Test Data/Input/18.csv"),
                 .process("Test Data/Input/19.csv"),
                 .process("Test Data/Input/20.csv"),
+                .process("Test Data/Input/21.csv"),
+                .process("Test Data/Input/22.csv"),
                 .process("Test Data/Input/1-without_language_correction.csv"),
                 .process("Test Data/Input/2-without_language_correction.csv"),
                 .process("Test Data/Input/3-without_language_correction.csv"),
@@ -73,6 +75,8 @@ let package = Package(
                 .process("Test Data/Input/18-without_language_correction.csv"),
                 .process("Test Data/Input/19-without_language_correction.csv"),
                 .process("Test Data/Input/20-without_language_correction.csv"),
+                .process("Test Data/Input/21-without_language_correction.csv"),
+                .process("Test Data/Input/22-without_language_correction.csv"),
                 .process("Test Data/Expected/1-nutrients.csv"),
                 .process("Test Data/Expected/2-nutrients.csv"),
                 .process("Test Data/Expected/3-nutrients.csv"),
@@ -92,7 +96,9 @@ let package = Package(
                 .process("Test Data/Expected/17-nutrients.csv"),
                 .process("Test Data/Expected/18-nutrients.csv"),
                 .process("Test Data/Expected/19-nutrients.csv"),
-                .process("Test Data/Expected/20-nutrients.csv")
+                .process("Test Data/Expected/20-nutrients.csv"),
+                .process("Test Data/Expected/21-nutrients.csv"),
+                .process("Test Data/Expected/22-nutrients.csv"),
             ]
         ),
     ]

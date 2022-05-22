@@ -45,7 +45,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
 
     func testClassifier() throws {
         for testCase in 1...20 {
-//        for testCase in 20...20 {
+//        for testCase in 21...21 {
 //            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
 //                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
 //                return
@@ -64,14 +64,14 @@ final class NutritionLabelClassifierTests: XCTestCase {
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in nutrientsDataFrame.rows {
                 guard let attribute = row["attribute"] as? Attribute,
-                      let value1 = row["value1"] as? Value?,
-                      let value2 = row["value2"] as? Value?
+                      let valueWithId1 = row["value1"] as? ValueWithId?,
+                      let valueWithId2 = row["value2"] as? ValueWithId?
                 else {
                     XCTFail("Failed to get a processed nutrient for \(testCase)")
                     return
                 }
                 
-                processedNutrients[attribute] = (value1, value2)
+                processedNutrients[attribute] = (valueWithId1?.value, valueWithId2?.value)
             }
             
             print("🧬 Nutrients for Test Case: \(testCase)")

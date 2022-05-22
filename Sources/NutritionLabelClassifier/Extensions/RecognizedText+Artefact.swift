@@ -93,9 +93,9 @@ extension RecognizedText {
         /// Grab the respective `Value` of the parent `Row` based on what we're currently grabbing (as comparisons across rows make no sense).
         let parentValue: Value?
         if rowBeingExtracted?.value1 != nil {
-            parentValue = parentRow.value2
+            parentValue = parentRow.value2?.value
         } else {
-            parentValue = parentRow.value1
+            parentValue = parentRow.value1?.value
         }
         guard let parentValue = parentValue else { return nil }
 
