@@ -113,7 +113,20 @@ extension NutritionLabelClassifier {
         
         var didExtract = false
         for artefact in recognizedText.getArtefacts(for: row.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
-            if let value = artefact.value, let unit = value.unit {
+            if let value = artefact.value {
+                
+                /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
+                var unit = value.unit
+                var value = value
+                if unit == nil {
+                    guard let defaultUnit = row.attribute.defaultUnit else {
+                        continue
+                    }
+                    value = Value(amount: value.amount, unit: defaultUnit)
+                    unit = defaultUnit
+                }
+                guard let unit = unit else { continue }
+                
                 if let value1 = row.value1 {
                     guard let unit1 = value1.value.unit, unit == unit1 else {
                         continue
@@ -158,9 +171,27 @@ extension NutritionLabelClassifier {
         for recognizedTexts in arrayOfRecognizedTexts {
             extractRowsOfNutrients(from: recognizedTexts, into: &rows)
         }
+
+        /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
+        if rows.percentageOfNilValue2 > 0.5 {
+            rows = rows.clearingValue2
+        }
+
+        /// **Heuristic** If we have two values worth of data and any of the cells are missing where one value is 0, simply copy that across
+        if rows.hasTwoColumnsOfValues {
+            for index in rows.indices {
+                let row = rows[index]
+                if row.value2 == nil, let value1 = row.value1, value1.value.amount == 0 {
+                    rows[index].value2 = value1
+                }
+            }
+        }
+        
+        /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
+        
         return dataFrameOfNutrients(from: rows)
     }
-
+    
     private static func dataFrameOfNutrients(from rows: [Row]) -> DataFrame {
         var dataFrame = DataFrame()
         let labelColumn = Column(name: "attribute", contents: rows.map { $0.attribute })
@@ -234,7 +265,7 @@ extension NutritionLabelClassifier {
                 let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
                 for column in inlineTextColumns {
                     
-                    guard let inlineText = pickInlineText(fromColumn: column) else { continue }
+                    guard let inlineText = pickInlineText(fromColumn: column, for: row.attribute) else { continue }
                     
                     let result = extract(&rowBeingExtracted, from: inlineText, extractedRows: rows)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
@@ -259,7 +290,7 @@ extension NutritionLabelClassifier {
 //        return rows
     }
     
-    static func pickInlineText(fromColumn column: [RecognizedText]) -> RecognizedText? {
+    static func pickInlineText(fromColumn column: [RecognizedText], for attribute: Attribute) -> RecognizedText? {
         
         /// **Heuristic** In order to account for slightly curved labels that may pick up both a `kJ` and `kcal` `Value` when looking for energy—always pick the `kJ` one (as its larger in value) regardless of how far away it is from the row (as the curvature can sometimes skew this)
         if column.contains(where: { Value(fromString: $0.string)?.unit == .kcal }),
@@ -267,7 +298,50 @@ extension NutritionLabelClassifier {
             return column.first(where: { Value(fromString: $0.string)?.unit == .kj })
         }
         
+        /// **Heuristic** Remove any texts that contain no artefacts before returning the closest one, if we have more than 1 in a column (see Test Case 22 for how `Alimentaires` and `1.5 g` fall in the same column, with the former overlapping with `Protein` more, and thus `1.5 g` getting ignored
+        var column = column.filter {
+            $0.artefacts.count > 0
+//            Value(fromString: $0.string) != nil
+        }
+        
+        /// **Heuristic** Remove any values that aren't supported by the attribute we're extracting
+        column = column.filter {
+            if let unit = Value(fromString: $0.string)?.unit {
+                return attribute.supportsUnit(unit)
+            }
+            return true
+        }
+        
         /// As the defaul fall-back, return the first text (ie. the one closest to the row we're extracted)
         return column.first
+    }
+}
+
+extension Array where Element == Row {
+    var hasTwoColumnsOfValues: Bool {
+        for row in self {
+            if row.value2 != nil {
+                return true
+            }
+        }
+        return false
+    }
+    
+    var percentageOfNilValue2: Double {
+        var numberOfNilValue2s = 0.0
+        for row in self {
+            if row.value2 == nil {
+                numberOfNilValue2s += 1
+            }
+        }
+        return numberOfNilValue2s / Double(count)
+    }
+    
+    var clearingValue2: [Row] {
+        var rows = self
+        for index in rows.indices {
+            rows[index].value2 = nil
+        }
+        return rows
     }
 }

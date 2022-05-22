@@ -44,8 +44,9 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...21 {
-//        for testCase in 21...21 {
+        for testCase in 1...22 {
+//        for testCase in 22...22 {
+            
 //            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
 //                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
 //                return
@@ -75,7 +76,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
             }
             
             print("🧬 Nutrients for Test Case: \(testCase)")
-            print(nutrientsDataFrame)
+            print(dataFrameWithObservationIdsRemoved(from: nutrientsDataFrame))
 
             /// Extract `expectedNutrients` from data frame
             guard let expectedNutrientsDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
@@ -154,4 +155,14 @@ final class NutritionLabelClassifierTests: XCTestCase {
         return [recognizedTexts, recognizedTextsWithoutLanugageCorrection]
     }
 
+    func dataFrameWithObservationIdsRemoved(from dataFrame: DataFrame) -> DataFrame {
+        var newDataFrame = dataFrame
+        newDataFrame.transformColumn("value1") { (valueWithId: ValueWithId?) -> Value? in
+            return valueWithId?.value
+        }
+        newDataFrame.transformColumn("value2") { (valueWithId: ValueWithId?) -> Value? in
+            return valueWithId?.value
+        }
+        return newDataFrame
+    }
 }

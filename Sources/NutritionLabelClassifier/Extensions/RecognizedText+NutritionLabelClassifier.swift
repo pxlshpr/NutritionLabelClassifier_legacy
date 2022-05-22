@@ -80,7 +80,8 @@ extension Array where Element == RecognizedText {
 //        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
         
         let mininumHeightOverlapThreshold = 0.08
-    
+//        let mininumHeightOverlapThreshold = 0.0
+
         var row: [[RecognizedText]] = []
         var discarded: [RecognizedText] = []
         let candidates = filter {

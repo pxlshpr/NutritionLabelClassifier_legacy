@@ -1,6 +1,8 @@
 import Foundation
 
 enum Attribute: String, CaseIterable {
+    case nutritionFacts
+    
     case servingSizeVolume
     case servingSizeWeight
     case servingSizeDescriptive
@@ -66,11 +68,11 @@ enum Attribute: String, CaseIterable {
         switch self {
         case .energy:
             return [.kj, .kcal]
-        case .protein, .carbohydrate, .fat:
+        case .protein, .carbohydrate, .fat, .salt:
             return [.g]
         case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten, .starch:
             return [.g, .mg, .mcg]
-        case .salt, .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
+        case .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
             return [.mg, .mcg, .p, .g]
 //        case .servingSizeVolume:
 //        case .servingSizeWeight:
@@ -83,6 +85,8 @@ enum Attribute: String, CaseIterable {
     
     var regex: String? {
         switch self {
+        case .nutritionFacts:
+            return #"Nutrition Facts"#
         case .energy:
             return #"^.*(energy|calories|energie).*$"#
             
@@ -112,7 +116,7 @@ enum Attribute: String, CaseIterable {
             return Regex.cholesterol
             
         case .salt:
-            return #"(salt|salz)"#
+            return #"(salt|salz|sel)"#
         case .sodium:
             return #"sodium"#
         case .sugar:
