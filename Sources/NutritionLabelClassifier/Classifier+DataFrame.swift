@@ -29,7 +29,20 @@ extension NutritionLabelClassifier {
                     value1BeingExtracted = nil
                 }
                 attributeBeingExtracted = attribute
-            } else if let value = artefact.value, let unit = value.unit, let attribute = attributeBeingExtracted {
+            } else if let value = artefact.value, let attribute = attributeBeingExtracted {
+                
+                /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
+                var unit = value.unit
+                var value = value
+                if unit == nil {
+                    guard let defaultUnit = attribute.defaultUnit else {
+                        continue
+                    }
+                    value = Value(amount: value.amount, unit: defaultUnit)
+                    unit = defaultUnit
+                }
+                guard let unit = unit else { continue }
+                
                 guard !ignoreNextValueDueToPerPreposition else {
                     ignoreNextValueDueToPerPreposition = false
                     continue
@@ -137,12 +150,20 @@ extension NutritionLabelClassifier {
             
             /// Process any attributes that were extracted
             for row in result.rows {
-                rows.append(row)
+                /// Only add attributes that haven't already been added
+                if !rows.contains(where: { $0.attribute == row.attribute }) {
+                    rows.append(row)
+                }
             }
             
             /// Now do an inline search for any attribute that is still being extracted
             if let row = result.rowBeingExtracted {
                 
+                /// Skip attributes that have already been added
+                guard !rows.contains(where: { $0.attribute == row.attribute }) else {
+                    continue
+                }
+
                 var rowBeingExtracted = row
                 let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
                 for column in inlineTextColumns {

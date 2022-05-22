@@ -44,7 +44,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 16...16 {
+        for testCase in 1...17 {
             guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
                 XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
                 return
@@ -115,9 +115,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
                     XCTFail("Missing Attribute: \(attribute) for Test Case: \(testCase)")
                     return
                 }
-                
-                XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1)
-                XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2)
+                XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1, "TestCase: \(testCase)")
+                XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2, "TestCase: \(testCase)")
             }
         }
     }

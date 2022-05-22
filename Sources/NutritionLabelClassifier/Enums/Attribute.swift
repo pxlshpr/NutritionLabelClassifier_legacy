@@ -49,6 +49,10 @@ enum Attribute: String, CaseIterable {
         supportedUnits.contains(unit)
     }
     
+    var defaultUnit: NutritionUnit? {
+        supportedUnits.first
+    }
+    
     var supportsMultipleColumns: Bool {
         switch self {
         case .energy:
@@ -61,13 +65,13 @@ enum Attribute: String, CaseIterable {
     var supportedUnits: [NutritionUnit] {
         switch self {
         case .energy:
-            return [.kcal, .kj]
+            return [.kj, .kcal]
         case .protein, .carbohydrate, .fat:
             return [.g]
         case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten, .starch:
             return [.g, .mg, .mcg]
         case .salt, .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
-            return [.g, .mg, .mcg, .p]
+            return [.mg, .mcg, .p, .g]
 //        case .servingSizeVolume:
 //        case .servingSizeWeight:
 //        case .servingSizeDescriptive:
