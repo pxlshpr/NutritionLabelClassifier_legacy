@@ -137,9 +137,36 @@ extension NutritionLabelClassifier {
         ///                 return false
     }
     
+
     public static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
-        
+        dataFrameOfNutrients(from: [recognizedTexts])
+    }
+
+    public static func dataFrameOfNutrients(from arrayOfRecognizedTexts: [[RecognizedText]]) -> DataFrame {
         var rows: [Row] = []
+        for recognizedTexts in arrayOfRecognizedTexts {
+            extractRowsOfNutrients(from: recognizedTexts, into: &rows)
+        }
+        return dataFrameOfNutrients(from: rows)
+    }
+
+    private static func dataFrameOfNutrients(from rows: [Row]) -> DataFrame {
+        var dataFrame = DataFrame()
+        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attribute })
+        let value1Column = Column(name: "value1", contents: rows.map { $0.value1 })
+        let value2Column = Column(name: "value2", contents: rows.map { $0.value2 })
+//        let column1Id = ColumnID("values1", Value?.self)
+//        let column2Id = ColumnID("values2", Value?.self)
+//
+        dataFrame.append(column: labelColumn)
+        dataFrame.append(column: value1Column)
+        dataFrame.append(column: value2Column)
+        return dataFrame
+    }
+    
+    private static func extractRowsOfNutrients(from recognizedTexts: [RecognizedText], into rows: inout [Row]) {
+        
+//        var rows: [Row] = []
         
         /// Holds onto those that are single `Value`s that have already been used
         var discarded: [RecognizedText] = []
@@ -190,18 +217,7 @@ extension NutritionLabelClassifier {
                 rows.append(rowBeingExtracted)
             }
         }
-        
-        var dataFrame = DataFrame()
-        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attribute })
-        let value1Column = Column(name: "value1", contents: rows.map { $0.value1 })
-        let value2Column = Column(name: "value2", contents: rows.map { $0.value2 })
-//        let column1Id = ColumnID("values1", Value?.self)
-//        let column2Id = ColumnID("values2", Value?.self)
-//
-        dataFrame.append(column: labelColumn)
-        dataFrame.append(column: value1Column)
-        dataFrame.append(column: value2Column)
-        return dataFrame
+//        return rows
     }
     
     static func pickInlineText(fromColumn column: [RecognizedText]) -> RecognizedText? {

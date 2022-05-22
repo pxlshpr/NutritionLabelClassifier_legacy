@@ -7,6 +7,7 @@ let defaultUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
 
 enum TestCaseFileType {
     case input
+    case inputWithoutLanguageCorrection
     case expectedNutrients
     case expectedFeatures
     
@@ -14,6 +15,8 @@ enum TestCaseFileType {
         switch self {
         case .input:
             return "\(testCase)"
+        case .inputWithoutLanguageCorrection:
+            return "\(testCase)-without_language_correction"
         case .expectedNutrients:
             return "\(testCase)-nutrients"
         case .expectedFeatures:

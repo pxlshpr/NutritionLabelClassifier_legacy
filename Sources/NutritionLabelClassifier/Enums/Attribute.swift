@@ -84,13 +84,13 @@ enum Attribute: String, CaseIterable {
     var regex: String? {
         switch self {
         case .energy:
-            return #"^.*(energy|calories).*$"#
+            return #"^.*(energy|calories|energie).*$"#
             
         case .protein:
-            return #"protein"#
+            return #"(protein|proteine)"#
             
         case .carbohydrate:
-            return #"carb.*"#
+            return #"(carb|glucides).*"#
         case .dietaryFibre:
             return #"(dietary |)fib(re|er)"#
         case .gluten:
@@ -112,11 +112,11 @@ enum Attribute: String, CaseIterable {
             return Regex.cholesterol
             
         case .salt:
-            return #"salt"#
+            return #"(salt|salz)"#
         case .sodium:
             return #"sodium"#
         case .sugar:
-            return #"sugar"#
+            return #"(sugar|sucres|zucker|zuccheri)"#
         case .calcium:
             return #"calcium"#
         case .iron:
@@ -165,8 +165,8 @@ enum Attribute: String, CaseIterable {
     }
     
     struct Regex {
-        static let fat = #"^(?=^.*fa(t|i).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
-        static let saturatedFat = #"^.*(saturated|of which saturates).*$"#
+        static let fat = #"^(?=^.*(fa(t|i)|fett|grassi).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
+        static let saturatedFat = #"^.*(saturated|of which saturates|saturi).*$"#
         static let transFat = #"^.*trans.*$"#
         static let monounsaturatedFat = #"^.*mono(-|)unsaturat.*$"#
         static let polyunsaturatedFat = #"^.*poly(-|)unsaturat.*$"#

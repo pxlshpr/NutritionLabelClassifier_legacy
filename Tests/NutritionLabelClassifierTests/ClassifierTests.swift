@@ -44,14 +44,21 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...17 {
-            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
-                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
+        for testCase in 1...18 {
+//            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
+//                XCTFail("Couldn't get recognized texts for Test Case \(testCase)")
+//                return
+//            }
+//
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
+
+            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
+                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
                 return
             }
 
-            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: recognizedTexts)
-            
+            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in nutrientsDataFrame.rows {
@@ -130,4 +137,20 @@ final class NutritionLabelClassifierTests: XCTestCase {
         
         return dataFrame.recognizedTexts
     }
+    
+    //MARK: - Helpers
+    func arrayOfRecognizedTextsForTestCase(_ testCase: Int) -> [[RecognizedText]]? {
+        guard let recognizedTexts = dataFrameForTestCase(testCase)?.recognizedTexts else {
+            XCTFail("Couldn't read file for Test Case \(testCase)")
+            return nil
+        }
+
+        guard let recognizedTextsWithoutLanugageCorrection = dataFrameForTestCase(testCase, testCaseFileType: .inputWithoutLanguageCorrection)?.recognizedTexts else {
+            XCTFail("Couldn't read file for Test Case \(testCase) (Without Lanuage Correction)")
+            return nil
+        }
+
+        return [recognizedTexts, recognizedTextsWithoutLanugageCorrection]
+    }
+
 }
