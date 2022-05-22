@@ -67,7 +67,7 @@ enum Attribute: String, CaseIterable {
     var supportedUnits: [NutritionUnit] {
         switch self {
         case .energy:
-            return [.kj, .kcal]
+            return [.kcal, .kj]
         case .protein, .carbohydrate, .fat, .salt:
             return [.g]
         case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten, .starch:
