@@ -4,8 +4,8 @@ import VisionSugar
 import CoreText
 import Foundation
 
-typealias ValueWithId = (value: Value, observationId: UUID)
-typealias Row = (attribute: Attribute, value1: ValueWithId?, value2: ValueWithId?)
+public typealias ValueWithId = (value: Value, observationId: UUID)
+public typealias Row = (attribute: Attribute, value1: ValueWithId?, value2: ValueWithId?)
 typealias ProcessArtefactsResult = (rows: [Row], rowBeingExtracted: Row?)
 
 extension NutritionLabelClassifier {

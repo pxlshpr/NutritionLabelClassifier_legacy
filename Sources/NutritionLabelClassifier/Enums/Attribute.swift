@@ -1,6 +1,6 @@
 import Foundation
 
-enum Attribute: String, CaseIterable {
+public enum Attribute: String, CaseIterable {
     case nutritionFacts
     
     case servingSizeVolume
@@ -182,7 +182,7 @@ enum Attribute: String, CaseIterable {
 }
 
 extension Attribute: Identifiable {
-    var id: RawValue { rawValue }
+    public var id: RawValue { rawValue }
 }
 
 extension Attribute {

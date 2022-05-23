@@ -1,6 +1,6 @@
 import Foundation
 
-struct Value {
+public struct Value {
     let amount: Double
     let unit: NutritionUnit?
     
@@ -71,21 +71,21 @@ struct Value {
 }
 
 extension Value: Equatable {
-    static func ==(lhs: Value, rhs: Value) -> Bool {
+    public static func ==(lhs: Value, rhs: Value) -> Bool {
         lhs.amount == rhs.amount &&
         lhs.unit == rhs.unit
     }
 }
 
 extension Value: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(amount)
         hasher.combine(unit)
     }
 }
 
 extension Value: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         if let unit = unit {
             return "\(amount) \(unit.rawValue)"
         } else {
