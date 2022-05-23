@@ -236,6 +236,7 @@ extension NutritionLabelClassifier {
         let combinedRecognizedText = RecognizedText(
             id: nextRecognizedText.id,
             rectString: NSCoder.string(for: nextRecognizedText.rect),
+            boundingBoxString: NSCoder.string(for: nextRecognizedText.boundingBox),
             candidates: ["\(recognizedText.string) \(nextRecognizedText.string)"])
         return processArtefacts(of: combinedRecognizedText, from: recognizedTexts, ignoring: discarded)
     }
