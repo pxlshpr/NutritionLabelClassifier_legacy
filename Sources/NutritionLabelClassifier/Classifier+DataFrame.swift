@@ -204,7 +204,7 @@ extension NutritionLabelClassifier {
             for index in rows.indices {
                 let row = rows[index]
                 if row.valueWithId2 == nil, let value1 = row.valueWithId1, value1.value.amount == 0 {
-                    rows[index].valueWithId1 = value1
+                    rows[index].valueWithId2 = value1
                 }
             }
         }
