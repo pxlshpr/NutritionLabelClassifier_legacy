@@ -4,8 +4,9 @@ import VisionSugar
 import CoreText
 import Foundation
 
+public typealias AttributeWithId = (attribute: Attribute, observationId: UUID)
 public typealias ValueWithId = (value: Value, observationId: UUID)
-public typealias Row = (attribute: Attribute, value1: ValueWithId?, value2: ValueWithId?)
+public typealias Row = (attributeWithId: AttributeWithId, valueWithId1: ValueWithId?, valueWithId2: ValueWithId?)
 typealias ProcessArtefactsResult = (rows: [Row], rowBeingExtracted: Row?)
 
 extension NutritionLabelClassifier {
@@ -32,29 +33,32 @@ extension NutritionLabelClassifier {
         let id = recognizedText.id
 
         var rows: [Row] = []
-        var attributeBeingExtracted: Attribute? = nil
+        var attributeBeingExtractedWithId: AttributeWithId? = nil
         var value1BeingExtracted: Value? = nil
         
         var ignoreNextValueDueToPerPreposition = false
         
         for i in artefacts.indices {
             let artefact = artefacts[i]
-            if let attribute = artefact.attribute {
+            if let extractedAttribute = artefact.attribute {
                 /// if we're in the process of extracting a value, save it as a row
-                if let attributeBeingExtracted = attributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
+                if let attributeBeingExtracted = attributeBeingExtractedWithId, let valueBeingExtracted = value1BeingExtracted {
                     rows.append((attributeBeingExtracted, (valueBeingExtracted, id), nil))
                     value1BeingExtracted = nil
                 }
-                attributeBeingExtracted = attribute
-            } else if let value = artefact.value, let attribute = attributeBeingExtracted {
+                attributeBeingExtractedWithId = (extractedAttribute, recognizedText.id)
+            } else if let value = artefact.value, let attributeWithId = attributeBeingExtractedWithId {
                 
                 var unit = value.unit
                 var value = value
                 
                 /// **Heuristic** If the value is missing its unit, *and* we don't have two values available inline—assign the attribute's default unit to it
-                if unit == nil, !haveTwoInlineValues(for: recognizedText, in: recognizedTexts, forAttribute: attribute, ignoring: discarded)
+                if unit == nil, !haveTwoInlineValues(for: recognizedText,
+                                                     in: recognizedTexts,
+                                                     forAttribute: attributeWithId.attribute,
+                                                     ignoring: discarded)
                 {
-                    guard let defaultUnit = attribute.defaultUnit else {
+                    guard let defaultUnit = attributeWithId.attribute.defaultUnit else {
                         continue
                     }
                     value = Value(amount: value.amount, unit: defaultUnit)
@@ -75,8 +79,8 @@ extension NutritionLabelClassifier {
 //                        value1BeingExtracted = nil
                         continue
                     }
-                    rows.append((attribute, (value1, id), (value, id)))
-                    attributeBeingExtracted = nil
+                    rows.append((attributeWithId, (value1, id), (value, id)))
+                    attributeBeingExtractedWithId = nil
                     value1BeingExtracted = nil
                 } else {
                     /// Before setting this as the first value, check that the attribute supports the unit, and that we don't have the RI (required intake) preposition immediately following it
@@ -87,7 +91,7 @@ extension NutritionLabelClassifier {
                     {
                         nextArtefactInvalidatesValue = true
                     }
-                    guard attribute.supportsUnit(unit), !nextArtefactInvalidatesValue else {
+                    guard attributeWithId.attribute.supportsUnit(unit), !nextArtefactInvalidatesValue else {
                         continue
                     }
                     value1BeingExtracted = value
@@ -99,7 +103,7 @@ extension NutritionLabelClassifier {
             }
         }
         
-        if let attributeBeingExtracted = attributeBeingExtracted {
+        if let attributeBeingExtracted = attributeBeingExtractedWithId {
             if let value1BeingExtracted = value1BeingExtracted {
                 return (rows, (attributeBeingExtracted, (value1BeingExtracted, id), nil))
             } else {
@@ -130,14 +134,14 @@ extension NutritionLabelClassifier {
     static func extract(_ row: inout Row, from recognizedText: RecognizedText, extractedRows: [Row]) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
-        for artefact in recognizedText.getArtefacts(for: row.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
+        for artefact in recognizedText.getArtefacts(for: row.attributeWithId.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
             if let value = artefact.value {
                 
                 /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
                 var unit = value.unit
                 var value = value
                 if unit == nil {
-                    guard let defaultUnit = row.attribute.defaultUnit else {
+                    guard let defaultUnit = row.attributeWithId.attribute.defaultUnit else {
                         continue
                     }
                     value = Value(amount: value.amount, unit: defaultUnit)
@@ -145,17 +149,17 @@ extension NutritionLabelClassifier {
                 }
                 guard let unit = unit else { continue }
                 
-                if let value1 = row.value1 {
+                if let value1 = row.valueWithId1 {
                     guard let unit1 = value1.value.unit, unit == unit1 else {
                         continue
                     }
-                    row.value2 = (value, recognizedText.id)
+                    row.valueWithId2 = (value, recognizedText.id)
 //                    row.value2 = value
                     didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the row
                     return (didExtract: didExtract, shouldContinue: false)
-                } else if row.attribute.supportsUnit(unit) {
-                    row.value1 = (value, recognizedText.id)
+                } else if row.attributeWithId.attribute.supportsUnit(unit) {
+                    row.valueWithId1 = (value, recognizedText.id)
 //                    row.value1 = value
                     didExtract = true
                 }
@@ -199,8 +203,8 @@ extension NutritionLabelClassifier {
         if rows.hasTwoColumnsOfValues {
             for index in rows.indices {
                 let row = rows[index]
-                if row.value2 == nil, let value1 = row.value1, value1.value.amount == 0 {
-                    rows[index].value2 = value1
+                if row.valueWithId2 == nil, let value1 = row.valueWithId1, value1.value.amount == 0 {
+                    rows[index].valueWithId1 = value1
                 }
             }
         }
@@ -212,9 +216,9 @@ extension NutritionLabelClassifier {
     
     private static func dataFrameOfNutrients(from rows: [Row]) -> DataFrame {
         var dataFrame = DataFrame()
-        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attribute })
-        let value1Column = Column(name: "value1", contents: rows.map { $0.value1 })
-        let value2Column = Column(name: "value2", contents: rows.map { $0.value2 })
+        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attributeWithId })
+        let value1Column = Column(name: "value1", contents: rows.map { $0.valueWithId1 })
+        let value2Column = Column(name: "value2", contents: rows.map { $0.valueWithId2 })
 //        let column1Id = ColumnID("values1", Value?.self)
 //        let column2Id = ColumnID("values2", Value?.self)
 //
@@ -260,7 +264,7 @@ extension NutritionLabelClassifier {
             /// Process any attributes that were extracted
             for row in result.rows {
                 /// Only add attributes that haven't already been added
-                if !rows.contains(where: { $0.attribute == row.attribute }) {
+                if !rows.contains(where: { $0.attributeWithId.attribute == row.attributeWithId.attribute }) {
                     rows.append(row)
                 }
             }
@@ -269,14 +273,14 @@ extension NutritionLabelClassifier {
             if let row = result.rowBeingExtracted {
                 
                 /// If we have a value1 for this row, make sure we add the recognized text it was added from to the discarded list before checking the inline ones
-                if let value1Id = row.value1?.observationId,
+                if let value1Id = row.valueWithId1?.observationId,
                     let recognizedTextForValue1 = recognizedTexts.first(where: { $0.id == value1Id })
                 {
                     discarded.append(recognizedTextForValue1)
                 }
                 
                 /// Skip attributes that have already been added
-                guard !rows.contains(where: { $0.attribute == row.attribute }) else {
+                guard !rows.contains(where: { $0.attributeWithId.attribute == row.attributeWithId.attribute }) else {
                     continue
                 }
 
@@ -284,7 +288,7 @@ extension NutritionLabelClassifier {
                 let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
                 for column in inlineTextColumns {
                     
-                    guard let inlineText = pickInlineText(fromColumn: column, for: row.attribute) else { continue }
+                    guard let inlineText = pickInlineText(fromColumn: column, for: row.attributeWithId.attribute) else { continue }
                     
                     let result = extract(&rowBeingExtracted, from: inlineText, extractedRows: rows)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
@@ -300,7 +304,7 @@ extension NutritionLabelClassifier {
                 }
                 
                 /// After going through all inline texts and not completing the row, add this (possibly incomplete one)
-                guard rowBeingExtracted.value1 != nil || rowBeingExtracted.value2 != nil else {
+                guard rowBeingExtracted.valueWithId1 != nil || rowBeingExtracted.valueWithId2 != nil else {
                     continue
                 }
                 rows.append(rowBeingExtracted)
@@ -339,7 +343,7 @@ extension NutritionLabelClassifier {
 extension Array where Element == Row {
     var hasTwoColumnsOfValues: Bool {
         for row in self {
-            if row.value2 != nil {
+            if row.valueWithId2 != nil {
                 return true
             }
         }
@@ -349,7 +353,7 @@ extension Array where Element == Row {
     var percentageOfNilValue2: Double {
         var numberOfNilValue2s = 0.0
         for row in self {
-            if row.value2 == nil {
+            if row.valueWithId2 == nil {
                 numberOfNilValue2s += 1
             }
         }
@@ -359,7 +363,7 @@ extension Array where Element == Row {
     var clearingValue2: [Row] {
         var rows = self
         for index in rows.indices {
-            rows[index].value2 = nil
+            rows[index].valueWithId2 = nil
         }
         return rows
     }

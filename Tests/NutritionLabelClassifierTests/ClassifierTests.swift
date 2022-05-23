@@ -44,7 +44,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     }
 
     func testClassifier() throws {
-        for testCase in 1...23 {
+        for testCase in 22...22 {
 //        for testCase in 23...23 {
             
 //            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
@@ -64,7 +64,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in nutrientsDataFrame.rows {
-                guard let attribute = row["attribute"] as? Attribute,
+                guard let attributeWithId = row["attribute"] as? AttributeWithId,
                       let valueWithId1 = row["value1"] as? ValueWithId?,
                       let valueWithId2 = row["value2"] as? ValueWithId?
                 else {
@@ -72,7 +72,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
                     return
                 }
                 
-                processedNutrients[attribute] = (valueWithId1?.value, valueWithId2?.value)
+                processedNutrients[attributeWithId.attribute] = (valueWithId1?.value, valueWithId2?.value)
             }
             
             print("🧬 Nutrients for Test Case: \(testCase)")
@@ -124,8 +124,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
                     XCTFail("Missing Attribute: \(attribute) for Test Case: \(testCase)")
                     return
                 }
-                XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1, "TestCase: \(testCase)")
-                XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2, "TestCase: \(testCase)")
+                XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1, "TestCase: \(testCase), Attribute: \(attribute)")
+                XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2, "TestCase: \(testCase), Attribute: \(attribute)")
             }
         }
     }
