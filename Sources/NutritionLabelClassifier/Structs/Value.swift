@@ -1,8 +1,8 @@
 import Foundation
 
 public struct Value {
-    let amount: Double
-    let unit: NutritionUnit?
+    public let amount: Double
+    public let unit: NutritionUnit?
     
     init?(fromString string: String) {
         
