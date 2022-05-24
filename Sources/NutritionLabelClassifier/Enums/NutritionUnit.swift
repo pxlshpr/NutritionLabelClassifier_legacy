@@ -1,6 +1,6 @@
 import Foundation
 
-enum NutritionUnit: String, CaseIterable {
+public enum NutritionUnit: String, CaseIterable {
     case mg //TODO: Recognize `mq` as a typo
     case kj
     case mcg //TODO: Recognize `ug` as an alternative and remove it
