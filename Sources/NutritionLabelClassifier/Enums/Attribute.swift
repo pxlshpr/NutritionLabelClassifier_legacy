@@ -196,3 +196,63 @@ extension Attribute {
         return []
     }
 }
+
+
+extension Attribute: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .nutritionFacts:
+            return "Nutrition Facts"
+        case .servingSizeVolume:
+            return "Serving Size Volume"
+        case .servingSizeWeight:
+            return "Serving Size Weight"
+        case .servingSizeDescriptive:
+            return "Serving Size Descriptive"
+        case .servingsPerContainer:
+            return "Servings Per Container"
+        case .energy:
+            return "Energy"
+        case .protein:
+            return "Protein"
+        case .carbohydrate:
+            return "Carbohydrate"
+        case .dietaryFibre:
+            return "Dietary Fibre"
+        case .gluten:
+            return "Gluten"
+        case .sugar:
+            return "Sugar"
+        case .starch:
+            return "Starch"
+        case .fat:
+            return "Fat"
+        case .saturatedFat:
+            return "Saturated Fat"
+        case .polyunsaturatedFat:
+            return "Polyunsaturated Fat"
+        case .monounsaturatedFat:
+            return "Monounsaturated Fat"
+        case .transFat:
+            return "Trans Fat"
+        case .cholesterol:
+            return "Cholesterol"
+        case .salt:
+            return "Salt"
+        case .sodium:
+            return "Sodium"
+        case .calcium:
+            return "Calcium"
+        case .iron:
+            return "Iron"
+        case .potassium:
+            return "Potassium"
+        case .vitaminA:
+            return "Vitamin A"
+        case .vitaminC:
+            return "Vitamin C"
+        case .vitaminD:
+            return "Vitamin D"
+        }
+    }
+}
