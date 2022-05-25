@@ -142,6 +142,15 @@ public enum Attribute: String, CaseIterable {
         }
     }
     
+    var supportsUnitLessValues: Bool {
+        switch self {
+        case .servingsPerContainer:
+            return true
+        default:
+            return false
+        }
+    }
+    
     init?(fromString string: String) {
         var pickedAttribute: Attribute? = nil
         for attribute in Self.allCases {

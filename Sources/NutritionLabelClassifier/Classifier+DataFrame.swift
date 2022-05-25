@@ -52,11 +52,13 @@ extension NutritionLabelClassifier {
                 var unit = value.unit
                 var value = value
                 
-                /// **Heuristic** If the value is missing its unit, *and* we don't have two values available inline—assign the attribute's default unit to it
-                if unit == nil, !haveTwoInlineValues(for: recognizedText,
-                                                     in: recognizedTexts,
-                                                     forAttribute: attributeWithId.attribute,
-                                                     ignoring: discarded)
+                /// **Heuristic** If the value is missing its unit, *and* we don't have two values available inline, *and* it doesn't allow unit-less values—assign the attribute's default unit to it
+                if unit == nil,
+                   !attributeWithId.attribute.supportsUnitLessValues,
+                   !haveTwoInlineValues(for: recognizedText,
+                                        in: recognizedTexts,
+                                        forAttribute: attributeWithId.attribute,
+                                        ignoring: discarded)
                 {
                     guard let defaultUnit = attributeWithId.attribute.defaultUnit else {
                         continue
@@ -64,7 +66,10 @@ extension NutritionLabelClassifier {
                     value = Value(amount: value.amount, unit: defaultUnit)
                     unit = defaultUnit
                 }
-                guard let unit = unit else { continue }
+                
+                if !attributeWithId.attribute.supportsUnitLessValues {
+                    guard let _ = unit else { continue }
+                }
                 
                 guard !ignoreNextValueDueToPerPreposition else {
                     ignoreNextValueDueToPerPreposition = false
@@ -91,9 +96,19 @@ extension NutritionLabelClassifier {
                     {
                         nextArtefactInvalidatesValue = true
                     }
-                    guard attributeWithId.attribute.supportsUnit(unit), !nextArtefactInvalidatesValue else {
+                    
+                    guard !nextArtefactInvalidatesValue else {
                         continue
                     }
+                    if let unit = unit {
+                        guard attributeWithId.attribute.supportsUnit(unit) else {
+                            continue
+                        }
+                    }
+                    
+//                    guard attributeWithId.attribute.supportsUnit(unit), !nextArtefactInvalidatesValue else {
+//                        continue
+//                    }
                     value1BeingExtracted = value
                 }
             } else if let preposition = artefact.preposition {

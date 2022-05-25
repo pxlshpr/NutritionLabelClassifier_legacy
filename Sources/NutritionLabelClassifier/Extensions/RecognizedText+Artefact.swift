@@ -40,13 +40,17 @@ extension RecognizedText {
             /// Otherwise, get the string component up to and including the next numeral
             } else if let substring = string.substringUpToFirstNumeral {
                 /// Check if it matches any prepositions or attributes (currently picks prepositions over attributes for the entire substring)
-                if let preposition = Preposition(fromString: substring) {
-                    let artefact = Artefact(preposition: preposition, observationId: id)
-                    array.append(artefact)
-                } else if let attribute = Attribute(fromString: substring) {
+                if let attribute = Attribute(fromString: substring) {
                     let artefact = Artefact(attribute: attribute, observationId: id)
                     array.append(artefact)
+                } else  if let preposition = Preposition(fromString: substring) {
+                    let artefact = Artefact(preposition: preposition, observationId: id)
+                    array.append(artefact)
                 }
+//                } else if let attribute = Attribute(fromString: substring) {
+//                    let artefact = Artefact(attribute: attribute, observationId: id)
+//                    array.append(artefact)
+//                }
                 string = string.replacingFirstOccurrence(of: substring, with: "").trimmingWhitespaces
             } else {
                 break
