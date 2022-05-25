@@ -81,7 +81,7 @@ extension Output {
     }
 }
 
-public enum ContainerName {
+public enum ContainerName: String {
     case container
     case package
     case unknown
