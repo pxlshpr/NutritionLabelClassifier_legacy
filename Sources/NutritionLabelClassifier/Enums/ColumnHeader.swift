@@ -1,6 +1,6 @@
 import Foundation
 
-enum ColumnHeader {
+public enum ColumnHeader {
     case per100g
     case perServing(serving: String?)
     case per100gAndPerServing(serving: String?)
@@ -34,7 +34,7 @@ extension ColumnHeader {
 }
 
 extension ColumnHeader: Equatable {
-    static func ==(lhs: ColumnHeader, rhs: ColumnHeader) -> Bool {
+    public static func ==(lhs: ColumnHeader, rhs: ColumnHeader) -> Bool {
         switch (lhs, rhs) {
         case (.per100g, .per100g):
             return true
