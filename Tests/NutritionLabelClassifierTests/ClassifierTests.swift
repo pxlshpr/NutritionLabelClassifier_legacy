@@ -43,6 +43,24 @@ final class NutritionLabelClassifierTests: XCTestCase {
         }
     }
 
+    func testClassifierOutput() throws {
+        for testCase in 2...2 {
+            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
+                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
+                return
+            }
+
+            let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+//            print("🧬 Output: \(output)")
+//            print(dataFrameWithObservationIdsRemoved(from: output))
+            
+            output.nutrients.rows.forEach {
+                print($0.attributeWithId.attribute)
+            }
+        }
+    }
+    
     func testClassifier() throws {
         for testCase in 1...23 {
 //        for testCase in 23...23 {

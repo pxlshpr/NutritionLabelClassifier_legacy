@@ -13,20 +13,20 @@ extension Output {
         public let perContainer: PerContainer?
 
         public struct Amount {
-            public let value: DoubleWithId
-            public let unit: UnitWithId?
-            public let unitSize: StringWithId?
+            public let valueWithId: DoubleWithId
+            public let unitWithId: UnitWithId?
+            public let unitSizeWIthId: StringWithId?
             public let equivalentSize: EquivalentSize?
 
             public struct EquivalentSize {
-                public let name: StringWithId
-                public let value: DoubleWithId
+                public let nameWithId: StringWithId
+                public let valueWithId: DoubleWithId
             }
         }
         
         public struct PerContainer {
-            public let value: DoubleWithId
-            public let name: ContainerNameWithId?
+            public let valueWithId: DoubleWithId
+            public let nameWithId: ContainerNameWithId?
 
             public struct ContainerNameWithId {
                 public let containerName: ContainerName
@@ -46,20 +46,6 @@ extension Output {
             public let id: UUID
         }
         
-        public struct NutrientRow {
-            public let attribute: AttributeWithId
-            public let value1: ValueWithId?
-            public let value2: ValueWithId?
-
-            public struct AttributeWithId {
-                public let attribute: Attribute
-                public let id: UUID
-            }
-            
-            public struct ValueWithId {
-                public let value: Value
-            }
-        }
     }
     
     //MARK: Containers
@@ -76,6 +62,22 @@ extension Output {
     public struct StringWithId {
         public let string: String
         public let id: UUID
+    }
+    
+    public struct NutrientRow {
+        public let attributeWithId: AttributeWithId
+        public let value1WithId: ValueWithId?
+        public let value2WithId: ValueWithId?
+
+        public struct AttributeWithId {
+            public let attribute: Attribute
+            public let id: UUID
+        }
+        
+        public struct ValueWithId {
+            public let value: Value
+            public let id: UUID
+        }
     }
 }
 

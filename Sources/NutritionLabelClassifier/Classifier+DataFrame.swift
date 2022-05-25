@@ -182,7 +182,10 @@ extension NutritionLabelClassifier {
         ///             Else if it is (another) `Attribute`
         ///                 return false
     }
-    
+
+    public static func classify(_ recognizedTexts: [RecognizedText]) -> Output {
+        classify([recognizedTexts])
+    }
 
     public static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
         dataFrameOfNutrients(from: [recognizedTexts])
