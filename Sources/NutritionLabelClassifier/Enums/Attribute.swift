@@ -64,6 +64,18 @@ public enum Attribute: String, CaseIterable {
         }
     }
     
+    /// For values like `servingsPerContainer` and `addedSugar` which allows extracting preceding values like the following:
+    /// `40 Servings Per Container`
+    /// `Includes 4g Added Sugar`
+    var supportsPrecedingValue: Bool {
+        switch self {
+        case .servingsPerContainer:
+            return true
+        default:
+            return false
+        }
+    }
+    
     var supportedUnits: [NutritionUnit] {
         switch self {
         case .energy:
@@ -86,7 +98,7 @@ public enum Attribute: String, CaseIterable {
     var regex: String? {
         switch self {
         case .servingsPerContainer:
-            return #"(servings |)per (container|package|tub)"#
+            return #"(servings |)per (container|package|tub|pot)"#
         case .nutritionFacts:
             return #"Nutrition Facts"#
         case .energy:

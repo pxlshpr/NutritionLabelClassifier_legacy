@@ -59,7 +59,7 @@ public struct Value {
         static let atStartOfString = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$)*(?: |\)|/|$))|nil(?: |$)|trace(?: |$))"#
         static let atStartOfString_legacy2 = #"^(?:(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))|nil(?: |$)|trace(?: |$))"#
         static let atStartOfString_legacy1 = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
-        static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |$)"#
+        static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |\/|$)"#
         
         /// Recognizes number in a string using comma as decimal place (matches `39,3` and `2,05` but not `2,000` or `1,2,3`)
         static let usingCommaAsDecimalPlace = #"^[0-9]*,[0-9][0-9]?([^0-9]|$)"#

@@ -47,6 +47,7 @@ extension NutritionLabelClassifier {
                     value1BeingExtracted = nil
                 }
                 attributeBeingExtractedWithId = (extractedAttribute, recognizedText.id)
+                
             } else if let value = artefact.value, let attributeWithId = attributeBeingExtractedWithId {
                 
                 var unit = value.unit
@@ -129,7 +130,12 @@ extension NutritionLabelClassifier {
             if let value1BeingExtracted = value1BeingExtracted {
                 return (rows, (attributeBeingExtracted, (value1BeingExtracted, id), nil))
             } else {
-                return (rows, (attributeBeingExtracted, nil, nil))
+                if attributeBeingExtracted.attribute.supportsPrecedingValue,
+                   let value = artefacts.valuePreceding(attributeBeingExtracted.attribute) {
+                    return (rows, (attributeBeingExtracted, (value, id), nil))
+                } else {
+                    return (rows, (attributeBeingExtracted, nil, nil))
+                }
             }
         } else {
             return (rows, nil)
@@ -391,5 +397,30 @@ extension Array where Element == Row {
             rows[index].valueWithId2 = nil
         }
         return rows
+    }
+}
+
+extension Array where Element == Artefact {
+    func valuePreceding(_ attribute: Attribute) -> Value? {
+        guard let attributeIndex = firstIndex(where: { $0.attribute == attribute }),
+              attributeIndex > 0,
+              let value = self[attributeIndex-1].value
+        else {
+            return nil
+        }
+        
+        /// If the value has a unit, make sure that the attribute supports it
+        if let unit = value.unit {
+            guard attribute.supportsUnit(unit) else {
+                return nil
+            }
+        } else {
+            /// Otherwise, if the value has no unit, make sure that the attribute supports unit-less values
+            guard attribute.supportsUnitLessValues else {
+                return nil
+            }
+        }
+        
+        return value
     }
 }

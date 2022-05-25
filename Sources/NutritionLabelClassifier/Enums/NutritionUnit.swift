@@ -29,7 +29,7 @@ public enum NutritionUnit: String, CaseIterable {
         case .mcg:
             return "^(ug|mcg)$"
         case .kcal:
-            return "^(k|)cal$"
+            return "^(k|)cal(s|ories|)$"
         case .p:
             return "^%$"
         }
@@ -46,7 +46,7 @@ public enum NutritionUnit: String, CaseIterable {
         case .mcg:
             return ["mcg", "ug"]
         case .kcal:
-            return ["kcal", "cal", "calorie"]
+            return ["kcal", "cal", "calorie", "calories"]
         case .p:
             return ["%"]
         }

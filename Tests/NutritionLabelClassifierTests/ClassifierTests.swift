@@ -5,6 +5,10 @@ import VisionSugar
 
 @testable import NutritionLabelClassifier
 
+let RunLegacyTests = true
+let ClassifierTestCases = 1...23
+let ClassifierOutputTestCases = 23...23
+
 let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Double])] = [
     ("Brennwert Energi 735 kJ (177 kcal) 412 kJ (99 kcal)", [177, 99], [735, 412]),
     ("384kJ/91kcal 284kJ/67 kcal", [91, 67], [384, 284]),
@@ -43,26 +47,10 @@ final class NutritionLabelClassifierTests: XCTestCase {
         }
     }
 
-    func testClassifierOutput() throws {
-        for testCase in 11...11 {
-            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
-                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
-                return
-            }
-
-            let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
-//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
-//            print("🧬 Output: \(output)")
-//            print(dataFrameWithObservationIdsRemoved(from: output))
-            
-            output.nutrients.rows.forEach {
-                print("\($0.attributeWithId.attribute): \($0.value1WithId?.value.description ?? ""), \($0.value2WithId?.value.description ?? "")")
-            }
-        }
-    }
-    
     func testClassifier() throws {
-        for testCase in 1...23 {
+        guard RunLegacyTests else { return }
+//        for testCase in 6...6 {
+        for testCase in ClassifierTestCases {
 //        for testCase in 23...23 {
             
 //            guard let recognizedTexts = recognizedTextsForTestCase(testCase) else {
@@ -144,6 +132,24 @@ final class NutritionLabelClassifierTests: XCTestCase {
                 }
                 XCTAssertEqual(values.value1, expectedNutrients[attribute]?.value1, "TestCase: \(testCase), Attribute: \(attribute)")
                 XCTAssertEqual(values.value2, expectedNutrients[attribute]?.value2, "TestCase: \(testCase), Attribute: \(attribute)")
+            }
+        }
+    }
+    
+    func testClassifierOutput() throws {
+        for testCase in ClassifierOutputTestCases {
+            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
+                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
+                return
+            }
+
+            let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+//            print("🧬 Output: \(output)")
+//            print(dataFrameWithObservationIdsRemoved(from: output))
+            
+            output.nutrients.rows.forEach {
+                print("\($0.attributeWithId.attribute): \($0.value1WithId?.value.description ?? ""), \($0.value2WithId?.value.description ?? "")")
             }
         }
     }
