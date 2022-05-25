@@ -19,6 +19,10 @@ extension DataFrame {
                 return nil
             }
             
+            guard attributeWithIdRow.attribute.isNutrient else {
+                return nil
+            }
+            
             let attributeWithId = Output.NutrientRow.AttributeWithId(
                 attribute: attributeWithIdRow.attribute,
                 id: attributeWithIdRow.observationId
@@ -47,7 +51,17 @@ extension DataFrame {
                 attributeWithId: attributeWithId, value1WithId: value1WithId, value2WithId: value2WithId
             )
         }
-        let serving = Output.Serving(amount: nil, perContainer: nil)
+        
+        
+        var perContainer: Output.Serving.PerContainer? = nil
+        if let row = rows.first(where: { $0.attributeWithId.attribute == .servingsPerContainer}), let valueWithId = row.value1WithId {
+            perContainer = Output.Serving.PerContainer(
+                valueWithId: Output.DoubleWithId(
+                    double: valueWithId.value.amount,
+                    id: valueWithId.id),
+                nameWithId: nil)
+        }
+        let serving = Output.Serving(amount: nil, perContainer: perContainer)        
         let nutrients = Output.Nutrients(columnHeader1: nil, columnHeader2: nil, rows: rows)
         
         return Output(serving: serving, nutrients: nutrients, primaryColumnIndex: 0)

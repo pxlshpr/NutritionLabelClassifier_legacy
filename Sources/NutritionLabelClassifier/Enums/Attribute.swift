@@ -76,6 +76,15 @@ public enum Attribute: String, CaseIterable {
         }
     }
     
+    var isNutrient: Bool {
+        switch self {
+        case .servingsPerContainer:
+            return false
+        default:
+            return true
+        }
+    }
+    
     var supportedUnits: [NutritionUnit] {
         switch self {
         case .energy:
