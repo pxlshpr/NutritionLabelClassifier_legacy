@@ -57,10 +57,10 @@ public enum Attribute: String, CaseIterable {
     
     var supportsMultipleColumns: Bool {
         switch self {
-        case .energy:
-            return true
-        default:
+        case .servingsPerContainer:
             return false
+        default:
+            return true
         }
     }
     
@@ -86,7 +86,7 @@ public enum Attribute: String, CaseIterable {
     var regex: String? {
         switch self {
         case .servingsPerContainer:
-            return #"servings per (container|package)"#
+            return #"(servings |)per (container|package|tub)"#
         case .nutritionFacts:
             return #"Nutrition Facts"#
         case .energy:

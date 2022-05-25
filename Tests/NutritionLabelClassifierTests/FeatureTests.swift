@@ -13,10 +13,10 @@ final class FeatureTests: XCTestCase {
         }
     }
 
-    func testFeatures() throws {
-        testCasesStringsWithFeatures.forEach {
-            let dummyRecognizedText = RecognizedText(id: defaultUUID, rectString: "", boundingBoxString: "", candidates: [$0.input])
-            XCTAssertEqual(dummyRecognizedText.features, $0.features)
-        }
-    }
+//    func testFeatures() throws {
+//        testCasesStringsWithFeatures.forEach {
+//            let dummyRecognizedText = RecognizedText(id: defaultUUID, rectString: "", boundingBoxString: "", candidates: [$0.input])
+//            XCTAssertEqual(dummyRecognizedText.features, $0.features)
+//        }
+//    }
 }
