@@ -19,10 +19,6 @@ extension DataFrame {
                 return nil
             }
             
-            guard attributeWithIdRow.attribute.isNutrient else {
-                return nil
-            }
-            
             let attributeWithId = Output.NutrientRow.AttributeWithId(
                 attribute: attributeWithIdRow.attribute,
                 id: attributeWithIdRow.observationId
@@ -61,8 +57,12 @@ extension DataFrame {
                     id: valueWithId.id),
                 nameWithId: nil)
         }
-        let serving = Output.Serving(amount: nil, perContainer: perContainer)        
-        let nutrients = Output.Nutrients(columnHeader1: nil, columnHeader2: nil, rows: rows)
+        
+        let serving = Output.Serving(amount: nil, perContainer: perContainer)
+        let nutrients = Output.Nutrients(
+            columnHeader1: nil,
+            columnHeader2: nil,
+            rows: rows.filter { $0.attributeWithId.attribute.isNutrient })
         
         return Output(serving: serving, nutrients: nutrients, primaryColumnIndex: 0)
     }
