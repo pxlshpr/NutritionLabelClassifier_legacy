@@ -7,7 +7,7 @@ public enum NutritionUnit: String, CaseIterable {
     case kcal
     case p = "%" /// percent
     case g
-//    case cup
+    case cup
 
     init?(string: String) {
         for unit in Self.allCases {
@@ -33,6 +33,8 @@ public enum NutritionUnit: String, CaseIterable {
             return "^(k|)cal(s|ories|)$"
         case .p:
             return "^%$"
+        case .cup:
+            return "^cup(s|)$"
         }
     }
     
@@ -50,6 +52,8 @@ public enum NutritionUnit: String, CaseIterable {
             return ["kcal", "cal", "calorie", "calories"]
         case .p:
             return ["%"]
+        case .cup:
+            return ["cup", "cups"]
         }
     }
     
