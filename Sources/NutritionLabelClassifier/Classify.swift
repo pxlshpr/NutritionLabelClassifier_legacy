@@ -19,13 +19,17 @@ extension DataFrame {
                 return nil
             }
             
-            let attributeWithId = Output.NutrientRow.AttributeWithId(
+            guard valueWithId1Row != nil || valueWithId2Row != nil else {
+                return nil
+            }
+            
+            let attributeWithId = Output.NutrientRow.IdentifiableAttribute(
                 attribute: attributeWithIdRow.attribute,
                 id: attributeWithIdRow.observationId
             )
-            let value1WithId: Output.NutrientRow.ValueWithId?
+            let value1WithId: Output.NutrientRow.IdentifiableValue?
             if let valueWithId = valueWithId1Row {
-                value1WithId = Output.NutrientRow.ValueWithId(
+                value1WithId = Output.NutrientRow.IdentifiableValue(
                     value: valueWithId.value,
                     id: valueWithId.observationId
                 )
@@ -33,9 +37,9 @@ extension DataFrame {
                 value1WithId = nil
             }
 
-            let value2WithId: Output.NutrientRow.ValueWithId?
+            let value2WithId: Output.NutrientRow.IdentifiableValue?
             if let valueWithId = valueWithId2Row {
-                value2WithId = Output.NutrientRow.ValueWithId(
+                value2WithId = Output.NutrientRow.IdentifiableValue(
                     value: valueWithId.value,
                     id: valueWithId.observationId
                 )
@@ -44,13 +48,15 @@ extension DataFrame {
             }
 
             return Output.NutrientRow(
-                attributeWithId: attributeWithId, value1WithId: value1WithId, value2WithId: value2WithId
+                identifiableAttribute: attributeWithId,
+                identifiableValue1: value1WithId,
+                identifiableValue2: value2WithId
             )
         }
         
         
         var perContainer: Output.Serving.PerContainer? = nil
-        if let row = rows.first(where: { $0.attributeWithId.attribute == .servingsPerContainer}), let valueWithId = row.value1WithId {
+        if let row = rows.first(where: { $0.identifiableAttribute.attribute == .servingsPerContainer}), let valueWithId = row.identifiableValue1 {
             perContainer = Output.Serving.PerContainer(
                 valueWithId: Output.DoubleWithId(
                     double: valueWithId.value.amount,
@@ -62,7 +68,7 @@ extension DataFrame {
         let nutrients = Output.Nutrients(
             columnHeader1: nil,
             columnHeader2: nil,
-            rows: rows.filter { $0.attributeWithId.attribute.isNutrient })
+            rows: rows.filter { $0.identifiableAttribute.attribute.isNutrient })
         
         return Output(serving: serving, nutrients: nutrients, primaryColumnIndex: 0)
     }

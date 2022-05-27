@@ -46,7 +46,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
             XCTAssertEqual(headers.header2, testCase.header2)
         }
     }
-
+    
     func testClassifier() throws {
         guard RunLegacyTests else { return }
 //        for testCase in 6...6 {
@@ -148,9 +148,18 @@ final class NutritionLabelClassifierTests: XCTestCase {
 //            print("🧬 Output: \(output)")
 //            print(dataFrameWithObservationIdsRemoved(from: output))
             
-            output.nutrients.rows.forEach {
-                print("\($0.attributeWithId.attribute): \($0.value1WithId?.value.description ?? ""), \($0.value2WithId?.value.description ?? "")")
+            /// Extract `expectedNutrients` from data frame
+            guard let expectedDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
+                XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
+                return
             }
+            print("📃 Expected DataFrame for Test Case: \(testCase)")
+            print(expectedDataFrame)
+            
+            /// Create `Output` from test case file too
+            /// Now use a specialized function that compares the values between what was generated and what was expected
+            /// If anything that was expected is missing or is incorrect, fail the test
+            /// Decide if we'll be failing tests when we have values in the output that wasn't included in the expected results
         }
     }
     
@@ -188,5 +197,60 @@ final class NutritionLabelClassifierTests: XCTestCase {
             return valueWithId?.value
         }
         return newDataFrame
+    }
+}
+
+extension Output {
+    
+    
+    
+    init?(fromExpectationDataFrame dataFrame: DataFrame) {
+    
+        var nutrientRows: [NutrientRow] = []
+        for row in dataFrame.rows {
+            guard let attributeName = row["attributeString"] as? String,
+                  let attribute = Attribute(rawValue: attributeName),
+                  let value1String = row["value1String"] as? String?,
+                  let value2String = row["value2String"] as? String?
+            else {
+                print("Failed to read an expected nutrient for \(row)")
+                return nil
+            }
+            
+            var value1: Value? = nil
+            if let value1String = value1String {
+                guard let value = Value(fromString: value1String) else {
+                    print("Failed to convert value1String: \(value1String)")
+                    return nil
+                }
+                value1 = value
+            }
+            
+            var value2: Value? = nil
+            if let value2String = value2String {
+                guard let value = Value(fromString: value2String) else {
+                    print("Failed to convert value2String: \(value2String)")
+                    return nil
+                }
+                value2 = value
+            }
+            
+            let nutrientRow = NutrientRow(
+                identifiableAttribute: Output.NutrientRow.IdentifiableAttribute(
+                    attribute: attribute,
+                    id: defaultUUID
+                ),
+                identifiableValue1: nil,
+                identifiableValue2: nil)
+            
+            nutrientRows.append(nutrientRow)
+        }
+
+        let nutrients = Nutrients(
+            columnHeader1: nil,
+            columnHeader2: nil,
+            rows: nutrientRows)
+
+        self.init(serving: nil, nutrients: nutrients, primaryColumnIndex: 0)
     }
 }

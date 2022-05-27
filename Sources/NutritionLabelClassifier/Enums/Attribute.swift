@@ -1,13 +1,23 @@
 import Foundation
 
 public enum Attribute: String, CaseIterable {
+    
     case nutritionFacts
     
-    case servingSizeVolume
-    case servingSizeWeight
-    case servingSizeDescriptive
-    case servingsPerContainer
+    case servingAmountValue                 /// Double
+    case servingAmountUnit                  /// NutritionUnit
+    case servingAmountUnitSize              /// String
+    case servingAmountEquivalentValue       /// Double
+    case servingAmountEquivalentUnit        /// Double
+    case servingAmountEquivalentUnitSize    /// String
+
+//    case servingSizeVolume
+//    case servingSizeWeight
+//    case servingSizeDescriptive
     
+    case servingsPerContainer
+
+    //MARK: Nutrients
     case energy
     
     case protein
@@ -193,7 +203,7 @@ public enum Attribute: String, CaseIterable {
     
     var isValueBased: Bool {
         switch self {
-        case .servingSizeVolume, .servingSizeWeight, .servingSizeDescriptive, .servingsPerContainer:
+        case .servingAmountValue, .servingAmountUnit, .servingAmountUnitSize, .servingAmountEquivalentValue, .servingAmountEquivalentUnit, .servingAmountEquivalentUnitSize, .servingsPerContainer:
             return false
         default:
             return true
@@ -235,12 +245,18 @@ extension Attribute: CustomStringConvertible {
         switch self {
         case .nutritionFacts:
             return "Nutrition Facts"
-        case .servingSizeVolume:
-            return "Serving Size Volume"
-        case .servingSizeWeight:
-            return "Serving Size Weight"
-        case .servingSizeDescriptive:
-            return "Serving Size Descriptive"
+        case .servingAmountValue:
+            return "Serving Amount (Value)"
+        case .servingAmountUnit:
+            return "Serving Amount (Unit)"
+        case .servingAmountUnitSize:
+            return "Serving Amount (Unit Size)"
+        case .servingAmountEquivalentValue:
+            return "Serving Amount Equivalent Value"
+        case .servingAmountEquivalentUnit:
+            return "Serving Amount Equivalent Unit"
+        case .servingAmountEquivalentUnitSize:
+            return "Serving Amount Equivalent Unit Size"
         case .servingsPerContainer:
             return "Servings Per Container"
         case .energy:

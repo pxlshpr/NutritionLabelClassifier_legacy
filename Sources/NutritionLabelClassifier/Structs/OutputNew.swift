@@ -1,12 +1,12 @@
 import Foundation
 
-public struct Output {
+public struct OutputNew {
     public let serving: Serving?
     public let nutrients: Nutrients
     public let primaryColumnIndex: Int
 }
 
-extension Output {
+extension OutputNew {
     //MARK: Serving
     public struct Serving {
         public let amount: Amount?
@@ -79,10 +79,4 @@ extension Output {
             public let id: UUID
         }
     }
-}
-
-public enum ContainerName: String {
-    case container
-    case package
-    case unknown
 }
