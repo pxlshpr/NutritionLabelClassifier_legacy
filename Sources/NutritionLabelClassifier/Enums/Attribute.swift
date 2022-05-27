@@ -27,6 +27,10 @@ public enum Attribute: String, CaseIterable {
             return false
         }
     }
+    public var isNutrientAttribute: Bool {
+        !isColumnAttribute && !isServingAttribute
+    }
+
 //    case servingSizeVolume
 //    case servingSizeWeight
 //    case servingSizeDescriptive
