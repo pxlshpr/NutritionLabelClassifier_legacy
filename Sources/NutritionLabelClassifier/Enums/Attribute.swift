@@ -11,6 +11,14 @@ public enum Attribute: String, CaseIterable {
     case servingEquivalentUnit        /// Double
     case servingEquivalentUnitSize    /// String
     
+    public var isColumnAttribute: Bool {
+        switch self {
+        case .nutrientsColumnHeader1, .nutrientsColumnHeader2:
+            return true
+        default:
+            return false
+        }
+    }
     public var isServingAttribute: Bool {
         switch self {
         case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerName, .servingsPerContainerAmount:
