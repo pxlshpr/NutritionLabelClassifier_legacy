@@ -7,6 +7,7 @@ public enum NutritionUnit: String, CaseIterable {
     case kcal
     case p = "%" /// percent
     case g
+//    case cup
 
     init?(string: String) {
         for unit in Self.allCases {

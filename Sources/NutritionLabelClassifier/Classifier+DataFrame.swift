@@ -112,7 +112,7 @@ extension NutritionLabelClassifier {
 //                    }
                     value1BeingExtracted = value
                     
-                    /// If the attribute doesn't support multiple units (such as `servingsPerContainer`), add the row and clear the variables now
+                    /// If the attribute doesn't support multiple units (such as `servingsPerContainerAmount`), add the row and clear the variables now
                     if !attributeWithId.attribute.supportsMultipleColumns {
                         rows.append((attributeWithId, (value, id), nil))
                         value1BeingExtracted = nil

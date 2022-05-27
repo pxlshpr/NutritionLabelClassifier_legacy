@@ -7,7 +7,7 @@ import VisionSugar
 
 let RunLegacyTests = true
 let ClassifierTestCases = 1...23
-let ClassifierOutputTestCases = 23...23
+let ClassifierOutputTestCases = 2...2
 
 let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Double])] = [
     ("Brennwert Energi 735 kJ (177 kcal) 412 kJ (99 kcal)", [177, 99], [735, 412]),
@@ -103,6 +103,10 @@ final class NutritionLabelClassifierTests: XCTestCase {
                     return
                 }
                 
+                guard value1String != nil || value2String != nil else {
+                    continue
+                }
+                
                 var value1: Value? = nil
                 if let value1String = value1String {
                     guard let value = Value(fromString: value1String) else {
@@ -156,6 +160,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
             print("📃 Expected DataFrame for Test Case: \(testCase)")
             print(expectedDataFrame)
             
+            let exepectedOutput = Output(fromExpectedDataFrame: expectedDataFrame)
+            print("We've got it")
             /// Create `Output` from test case file too
             /// Now use a specialized function that compares the values between what was generated and what was expected
             /// If anything that was expected is missing or is incorrect, fail the test
@@ -197,60 +203,5 @@ final class NutritionLabelClassifierTests: XCTestCase {
             return valueWithId?.value
         }
         return newDataFrame
-    }
-}
-
-extension Output {
-    
-    
-    
-    init?(fromExpectationDataFrame dataFrame: DataFrame) {
-    
-        var nutrientRows: [Nutrients.Row] = []
-        for row in dataFrame.rows {
-            guard let attributeName = row["attributeString"] as? String,
-                  let attribute = Attribute(rawValue: attributeName),
-                  let value1String = row["value1String"] as? String?,
-                  let value2String = row["value2String"] as? String?
-            else {
-                print("Failed to read an expected nutrient for \(row)")
-                return nil
-            }
-            
-            var value1: Value? = nil
-            if let value1String = value1String {
-                guard let value = Value(fromString: value1String) else {
-                    print("Failed to convert value1String: \(value1String)")
-                    return nil
-                }
-                value1 = value
-            }
-            
-            var value2: Value? = nil
-            if let value2String = value2String {
-                guard let value = Value(fromString: value2String) else {
-                    print("Failed to convert value2String: \(value2String)")
-                    return nil
-                }
-                value2 = value
-            }
-            
-            let nutrientRow = Nutrients.Row(
-                identifiableAttribute: Nutrients.Row.IdentifiableAttribute(
-                    attribute: attribute,
-                    id: defaultUUID
-                ),
-                identifiableValue1: nil,
-                identifiableValue2: nil)
-            
-            nutrientRows.append(nutrientRow)
-        }
-
-        let nutrients = Nutrients(
-            identifiableColumnHeader1: nil,
-            identifiableColumnHeader2: nil,
-            rows: nutrientRows)
-
-        self.init(serving: nil, nutrients: nutrients, primaryColumnIndex: 0)
     }
 }

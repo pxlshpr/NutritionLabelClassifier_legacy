@@ -57,7 +57,7 @@ extension DataFrame {
         
         
         var perContainer: Output.Serving.PerContainer? = nil
-        if let row = rows.first(where: { $0.identifiableAttribute.attribute == .servingsPerContainer}), let valueWithId = row.identifiableValue1 {
+        if let row = rows.first(where: { $0.identifiableAttribute.attribute == .servingsPerContainerAmount}), let valueWithId = row.identifiableValue1 {
             perContainer = Output.Serving.PerContainer(
                 identifiableAmount: Output.IdentifiableDouble(
                     double: valueWithId.value.amount,

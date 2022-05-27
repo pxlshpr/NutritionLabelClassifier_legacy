@@ -18,8 +18,9 @@ extension Output {
         public let perContainer: PerContainer?
 
         public struct EquivalentSize {
-            public let identifiableName: IdentifiableString
             public let identifiableAmount: IdentifiableDouble
+            public let identifiableUnit: IdentifiableUnit?
+            public let identifiableUnitSizeName: IdentifiableString?
         }
 
         public struct PerContainer {
@@ -82,6 +83,17 @@ public enum ContainerName: String {
     case container
     case package
     case unknown
+    
+    init(string: String) {
+        switch string.lowercased() {
+        case "container":
+            self = .container
+        case "package":
+            self = .package
+        default:
+            self = .unknown
+        }
+    }
 }
 
 //MARK: - Helpers
@@ -99,11 +111,13 @@ public extension Output.Serving {
 }
 
 public extension Output.Serving.EquivalentSize {
-    var name: String { identifiableName.string }
     var amount: Double { identifiableAmount.double }
+    var unit: NutritionUnit? { identifiableUnit?.nutritionUnit }
+    var sizeName: String? { identifiableUnitSizeName?.string }
     
-    var nameId: UUID { identifiableName.id }
     var amountId: UUID { identifiableAmount.id }
+    var unitId: UUID? { identifiableUnit?.id }
+    var sizeNameId: UUID? { identifiableUnitSizeName?.id }
 }
 
 public extension Output.Serving.PerContainer {

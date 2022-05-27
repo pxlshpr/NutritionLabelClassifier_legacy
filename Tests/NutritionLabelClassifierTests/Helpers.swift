@@ -31,7 +31,16 @@ func dataFrameForTestCase(_ testCase: Int, testCaseFileType: TestCaseFileType = 
         return nil
     }
     let url = URL(fileURLWithPath: path)
-    return DataFrame.read(from: url)
+    do {
+        return try DataFrame(
+            contentsOfCSVFile: url,
+            types: ["double":.double]
+        )
+    } catch {
+        print("Error reading CSV: \(error)")
+        return nil
+    }
+//    return DataFrame.read(from: url)
 }
 
 func f(_ attribute: Attribute, _ a: Double? = nil, _ u: NutritionUnit? = nil) -> Feature {

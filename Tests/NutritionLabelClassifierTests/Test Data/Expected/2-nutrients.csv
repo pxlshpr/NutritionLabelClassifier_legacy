@@ -9,3 +9,11 @@ carbohydrate,19.5g,15.0g,,
 dietaryFibre,0.7g,0.5g,,
 sodium,72mg,55mg,,
 calcium,169mg,130mg,,
+servingAmount,,,130.0,
+servingUnit,,,,g
+servingUnitSize,,,,
+servingEquivalentAmount,,,1.0,
+servingEquivalentUnit,,,,cup
+servingEquivalentUnitSize,,,,
+servingsPerContainerAmount,,,40.0,
+servingsPerContainerName,,,,tub

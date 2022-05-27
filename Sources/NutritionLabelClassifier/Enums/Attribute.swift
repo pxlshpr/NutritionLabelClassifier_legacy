@@ -4,18 +4,27 @@ public enum Attribute: String, CaseIterable {
     
     case nutritionFacts
     
-    case servingValue                 /// Double
+    case servingAmount                 /// Double
     case servingUnit                  /// NutritionUnit
     case servingUnitSize              /// String
-    case servingEquivalentValue       /// Double
+    case servingEquivalentAmount       /// Double
     case servingEquivalentUnit        /// Double
     case servingEquivalentUnitSize    /// String
 
+    var isServingAttribute: Bool {
+        switch self {
+        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize:
+            return true
+        default:
+            return false
+        }
+    }
 //    case servingSizeVolume
 //    case servingSizeWeight
 //    case servingSizeDescriptive
     
-    case servingsPerContainer
+    case servingsPerContainerAmount
+    case servingsPerContainerName
 
     //MARK: Nutrients
     case energy
@@ -67,19 +76,19 @@ public enum Attribute: String, CaseIterable {
     
     var supportsMultipleColumns: Bool {
         switch self {
-        case .servingsPerContainer:
+        case .servingsPerContainerAmount, .servingsPerContainerName:
             return false
         default:
             return true
         }
     }
     
-    /// For values like `servingsPerContainer` and `addedSugar` which allows extracting preceding values like the following:
+    /// For values like `servingsPerContainerAmount` and `addedSugar` which allows extracting preceding values like the following:
     /// `40 Servings Per Container`
     /// `Includes 4g Added Sugar`
     var supportsPrecedingValue: Bool {
         switch self {
-        case .servingsPerContainer:
+        case .servingsPerContainerAmount, .servingsPerContainerName:
             return true
         default:
             return false
@@ -88,7 +97,7 @@ public enum Attribute: String, CaseIterable {
     
     var isNutrient: Bool {
         switch self {
-        case .servingsPerContainer:
+        case .servingsPerContainerAmount, .servingsPerContainerName:
             return false
         default:
             return true
@@ -108,7 +117,7 @@ public enum Attribute: String, CaseIterable {
 //        case .servingSizeVolume:
 //        case .servingSizeWeight:
 //        case .servingSizeDescriptive:
-//        case .servingsPerContainer:
+//        case .servingsPerContainerAmount:
         default:
             return []
         }
@@ -116,7 +125,7 @@ public enum Attribute: String, CaseIterable {
     
     var regex: String? {
         switch self {
-        case .servingsPerContainer:
+        case .servingsPerContainerAmount, .servingsPerContainerName:
             return #"(servings |)per (container|package|tub|pot)"#
         case .nutritionFacts:
             return #"Nutrition Facts"#
@@ -175,7 +184,7 @@ public enum Attribute: String, CaseIterable {
     
     var supportsUnitLessValues: Bool {
         switch self {
-        case .servingsPerContainer:
+        case .servingsPerContainerAmount, .servingsPerContainerName:
             return true
         default:
             return false
@@ -203,7 +212,7 @@ public enum Attribute: String, CaseIterable {
     
     var isValueBased: Bool {
         switch self {
-        case .servingValue, .servingUnit, .servingUnitSize, .servingEquivalentValue, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainer:
+        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerAmount, .servingsPerContainerName:
             return false
         default:
             return true
@@ -245,20 +254,22 @@ extension Attribute: CustomStringConvertible {
         switch self {
         case .nutritionFacts:
             return "Nutrition Facts"
-        case .servingValue:
-            return "Serving Amount (Value)"
+        case .servingAmount:
+            return "Serving Amount"
         case .servingUnit:
-            return "Serving Amount (Unit)"
+            return "Serving Unit"
         case .servingUnitSize:
-            return "Serving Amount (Unit Size)"
-        case .servingEquivalentValue:
-            return "Serving Amount Equivalent Value"
+            return "Serving Unit Size"
+        case .servingEquivalentAmount:
+            return "Serving Equivalent Amount"
         case .servingEquivalentUnit:
-            return "Serving Amount Equivalent Unit"
+            return "Serving Equivalent Unit"
         case .servingEquivalentUnitSize:
-            return "Serving Amount Equivalent Unit Size"
-        case .servingsPerContainer:
-            return "Servings Per Container"
+            return "Serving Equivalent Unit Size"
+        case .servingsPerContainerAmount:
+            return "Servings Per Container Amount"
+        case .servingsPerContainerName:
+            return "Servings Per Container Name"
         case .energy:
             return "Energy"
         case .protein:
