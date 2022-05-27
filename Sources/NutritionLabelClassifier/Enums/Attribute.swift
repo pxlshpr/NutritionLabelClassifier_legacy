@@ -11,7 +11,7 @@ public enum Attribute: String, CaseIterable {
     case servingEquivalentUnit        /// Double
     case servingEquivalentUnitSize    /// String
     
-    var isServingAttribute: Bool {
+    public var isServingAttribute: Bool {
         switch self {
         case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerName, .servingsPerContainerAmount:
             return true
