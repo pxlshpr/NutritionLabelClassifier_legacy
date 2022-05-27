@@ -27,8 +27,18 @@ public enum Attribute: String, CaseIterable {
             return false
         }
     }
+    
+    public var isIrrelevant: Bool {
+        switch self {
+        case .nutritionFacts:
+            return true
+        default:
+            return false
+        }
+    }
+    
     public var isNutrientAttribute: Bool {
-        !isColumnAttribute && !isServingAttribute
+        !isColumnAttribute && !isServingAttribute && !isIrrelevant
     }
 
 //    case servingSizeVolume
