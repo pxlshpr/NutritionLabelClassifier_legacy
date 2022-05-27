@@ -10,7 +10,7 @@ extension Output {
     //MARK: Serving
     public struct Serving {
         
-        public let identifiableAmount: IdentifiableDouble
+        public let identifiableAmount: IdentifiableDouble?
         public let identifiableUnit: IdentifiableUnit?
         public let identifiableUnitSizeName: IdentifiableString?
         public let equivalentSize: EquivalentSize?
@@ -102,11 +102,11 @@ extension Output {
 /// These are simplified accessors that remove the `identifiable` naming convention
 
 public extension Output.Serving {
-    var amount: Double { identifiableAmount.double }
+    var amount: Double? { identifiableAmount?.double }
     var unit: NutritionUnit? { identifiableUnit?.nutritionUnit }
     var unitSizeName: String? { identifiableUnitSizeName?.string }
     
-    var amountId: UUID { identifiableAmount.id }
+    var amountId: UUID? { identifiableAmount?.id }
     var unitId: UUID? { identifiableUnit?.id }
     var unitSizeNameId: UUID? { identifiableUnitSizeName?.id }
 }
