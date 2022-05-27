@@ -62,7 +62,7 @@ extension DataFrame {
                 identifiableAmount: Output.IdentifiableDouble(
                     double: valueWithId.value.amount,
                     id: valueWithId.id),
-                identifiableContainerName: nil)
+                identifiableName: nil)
         }
         
         let serving = Output.Serving(

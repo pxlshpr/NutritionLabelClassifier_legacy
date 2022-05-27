@@ -13,7 +13,7 @@ public enum Attribute: String, CaseIterable {
 
     var isServingAttribute: Bool {
         switch self {
-        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize:
+        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerName, .servingsPerContainerAmount:
             return true
         default:
             return false

@@ -25,7 +25,8 @@ extension Output.Serving {
         var equivalentSize: EquivalentSize? = nil
         
         var identifiablePerContainerAmount: Output.IdentifiableDouble? = nil
-        var identifiablePerContainerName: Output.Serving.PerContainer.IdentifiableContainerName? = nil
+        var identifiablePerContainerName: Output.IdentifiableString? = nil
+//        var identifiablePerContainerName: Output.Serving.PerContainer.IdentifiableContainerName? = nil
         var perContainer: PerContainer? = nil
         
         for row in dataFrame.rows {
@@ -66,8 +67,8 @@ extension Output.Serving {
                 identifiablePerContainerAmount = Output.IdentifiableDouble(double: double, id: defaultUUID)
             }
             if attribute == .servingsPerContainerName, let string = string {
-                identifiablePerContainerName = Output.Serving.PerContainer.IdentifiableContainerName(
-                    containerName: ContainerName(string: string),
+                identifiablePerContainerName = Output.IdentifiableString(
+                    string: string,
                     id: defaultUUID)
             }
         }
@@ -87,7 +88,7 @@ extension Output.Serving {
         if let identifiablePerContainerAmount = identifiablePerContainerAmount {
             perContainer = PerContainer(
                 identifiableAmount: identifiablePerContainerAmount,
-                identifiableContainerName: identifiablePerContainerName)
+                identifiableName: identifiablePerContainerName)
         }
         
         self.init(

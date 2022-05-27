@@ -25,12 +25,13 @@ extension Output {
 
         public struct PerContainer {
             public let identifiableAmount: IdentifiableDouble
-            public let identifiableContainerName: IdentifiableContainerName?
+//            public let identifiableContainerName: IdentifiableContainerName?
+            public let identifiableName: IdentifiableString?
 
-            public struct IdentifiableContainerName {
-                public let containerName: ContainerName
-                public let id: UUID
-            }
+//            public struct IdentifiableContainerName {
+//                public let containerName: ContainerName
+//                public let id: UUID
+//            }
         }
     }
     
@@ -79,22 +80,22 @@ extension Output {
     }
 }
 
-public enum ContainerName: String {
-    case container
-    case package
-    case unknown
-    
-    init(string: String) {
-        switch string.lowercased() {
-        case "container":
-            self = .container
-        case "package":
-            self = .package
-        default:
-            self = .unknown
-        }
-    }
-}
+//public enum ContainerName: String {
+//    case container
+//    case package
+//    case unknown
+//
+//    init(string: String) {
+//        switch string.lowercased() {
+//        case "container":
+//            self = .container
+//        case "package":
+//            self = .package
+//        default:
+//            self = .unknown
+//        }
+//    }
+//}
 
 //MARK: - Helpers
 
@@ -122,10 +123,12 @@ public extension Output.Serving.EquivalentSize {
 
 public extension Output.Serving.PerContainer {
     var amount: Double { identifiableAmount.double }
-    var containerName: ContainerName? { identifiableContainerName?.containerName }
+    var name: String? { identifiableName?.string }
+//    var containerName: ContainerName? { identifiableContainerName?.containerName }
     
     var amountId: UUID { identifiableAmount.id }
-    var containerNameId: UUID? { identifiableContainerName?.id }
+    var nameId: UUID? { identifiableName?.id }
+//    var containerNameId: UUID? { identifiableContainerName?.id }
 }
 
 public extension Output.Nutrients {
