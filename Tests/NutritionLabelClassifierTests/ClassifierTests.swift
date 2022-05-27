@@ -206,7 +206,7 @@ extension Output {
     
     init?(fromExpectationDataFrame dataFrame: DataFrame) {
     
-        var nutrientRows: [NutrientRow] = []
+        var nutrientRows: [Nutrients.Row] = []
         for row in dataFrame.rows {
             guard let attributeName = row["attributeString"] as? String,
                   let attribute = Attribute(rawValue: attributeName),
@@ -235,8 +235,8 @@ extension Output {
                 value2 = value
             }
             
-            let nutrientRow = NutrientRow(
-                identifiableAttribute: Output.NutrientRow.IdentifiableAttribute(
+            let nutrientRow = Nutrients.Row(
+                identifiableAttribute: Nutrients.Row.IdentifiableAttribute(
                     attribute: attribute,
                     id: defaultUUID
                 ),
@@ -247,8 +247,8 @@ extension Output {
         }
 
         let nutrients = Nutrients(
-            columnHeader1: nil,
-            columnHeader2: nil,
+            identifiableColumnHeader1: nil,
+            identifiableColumnHeader2: nil,
             rows: nutrientRows)
 
         self.init(serving: nil, nutrients: nutrients, primaryColumnIndex: 0)

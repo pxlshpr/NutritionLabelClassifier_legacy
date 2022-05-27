@@ -4,12 +4,12 @@ public enum Attribute: String, CaseIterable {
     
     case nutritionFacts
     
-    case servingAmountValue                 /// Double
-    case servingAmountUnit                  /// NutritionUnit
-    case servingAmountUnitSize              /// String
-    case servingAmountEquivalentValue       /// Double
-    case servingAmountEquivalentUnit        /// Double
-    case servingAmountEquivalentUnitSize    /// String
+    case servingValue                 /// Double
+    case servingUnit                  /// NutritionUnit
+    case servingUnitSize              /// String
+    case servingEquivalentValue       /// Double
+    case servingEquivalentUnit        /// Double
+    case servingEquivalentUnitSize    /// String
 
 //    case servingSizeVolume
 //    case servingSizeWeight
@@ -203,7 +203,7 @@ public enum Attribute: String, CaseIterable {
     
     var isValueBased: Bool {
         switch self {
-        case .servingAmountValue, .servingAmountUnit, .servingAmountUnitSize, .servingAmountEquivalentValue, .servingAmountEquivalentUnit, .servingAmountEquivalentUnitSize, .servingsPerContainer:
+        case .servingValue, .servingUnit, .servingUnitSize, .servingEquivalentValue, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainer:
             return false
         default:
             return true
@@ -245,17 +245,17 @@ extension Attribute: CustomStringConvertible {
         switch self {
         case .nutritionFacts:
             return "Nutrition Facts"
-        case .servingAmountValue:
+        case .servingValue:
             return "Serving Amount (Value)"
-        case .servingAmountUnit:
+        case .servingUnit:
             return "Serving Amount (Unit)"
-        case .servingAmountUnitSize:
+        case .servingUnitSize:
             return "Serving Amount (Unit Size)"
-        case .servingAmountEquivalentValue:
+        case .servingEquivalentValue:
             return "Serving Amount Equivalent Value"
-        case .servingAmountEquivalentUnit:
+        case .servingEquivalentUnit:
             return "Serving Amount Equivalent Unit"
-        case .servingAmountEquivalentUnitSize:
+        case .servingEquivalentUnitSize:
             return "Serving Amount Equivalent Unit Size"
         case .servingsPerContainer:
             return "Servings Per Container"
