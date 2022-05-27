@@ -5,7 +5,7 @@ import VisionSugar
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = false
+let RunLegacyTests = true
 let ClassifierTestCases = 1...23
 let ClassifierOutputTestCases = 2...2
 

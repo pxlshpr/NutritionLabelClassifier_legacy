@@ -10,7 +10,7 @@ public enum Attribute: String, CaseIterable {
     case servingEquivalentAmount       /// Double
     case servingEquivalentUnit        /// Double
     case servingEquivalentUnitSize    /// String
-
+    
     var isServingAttribute: Bool {
         switch self {
         case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerName, .servingsPerContainerAmount:
@@ -25,6 +25,9 @@ public enum Attribute: String, CaseIterable {
     
     case servingsPerContainerAmount
     case servingsPerContainerName
+
+    case nutrientsColumnHeader1
+    case nutrientsColumnHeader2
 
     //MARK: Nutrients
     case energy
@@ -270,6 +273,10 @@ extension Attribute: CustomStringConvertible {
             return "Servings Per Container Amount"
         case .servingsPerContainerName:
             return "Servings Per Container Name"
+        case .nutrientsColumnHeader1:
+            return "Nutrients Column Header 1"
+        case .nutrientsColumnHeader2:
+            return "Nutrients Column Header 2"
         case .energy:
             return "Energy"
         case .protein:
