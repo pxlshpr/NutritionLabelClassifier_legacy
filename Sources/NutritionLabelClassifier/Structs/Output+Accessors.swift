@@ -31,8 +31,8 @@ public extension Output.Serving.PerContainer {
 }
 
 public extension Output.Nutrients {
-    var columnHeader1: ColumnHeaderType? { identifiableColumnHeader1?.type }
-    var columnHeader2: ColumnHeaderType? { identifiableColumnHeader2?.type }
+    var columnHeader1Type: ColumnHeaderType? { identifiableColumnHeader1?.type }
+    var columnHeader2Type: ColumnHeaderType? { identifiableColumnHeader2?.type }
 
     var columnHeader1SizeName: String? { identifiableColumnHeader1?.sizeName }
     var columnHeader2SizeName: String? { identifiableColumnHeader2?.sizeName }
