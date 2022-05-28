@@ -8,6 +8,8 @@ import VisionSugar
 let RunLegacyTests = true
 let ClassifierTestCases = 1...23
 let ClassifierOutputTestCases = 2...2
+//let ClassifierTestCases = 100...100
+//let ClassifierOutputTestCases = 100...100
 
 let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Double])] = [
     ("Brennwert Energi 735 kJ (177 kcal) 412 kJ (99 kcal)", [177, 99], [735, 412]),
