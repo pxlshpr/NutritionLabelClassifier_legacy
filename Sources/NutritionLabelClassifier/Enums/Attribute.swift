@@ -324,9 +324,9 @@ extension Attribute: CustomStringConvertible {
         case .servingsPerContainerName:
             return "Servings Per Container Name"
         case .nutrientsColumnHeader1:
-            return "Nutrients Column Header 1"
+            return "Column Header 1"
         case .nutrientsColumnHeader2:
-            return "Nutrients Column Header 2"
+            return "Column Header 2"
         case .energy:
             return "Energy"
         case .protein:
