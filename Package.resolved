@@ -35,15 +35,6 @@
         "revision" : "d59f45c70117e02ccab41185e68b8a62e26463ca",
         "version" : "0.0.37"
       }
-    },
-    {
-      "identity" : "zipfoundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/weichsel/ZIPFoundation",
-      "state" : {
-        "revision" : "7254c74b49cec2cb81520523ba993c671f71b066",
-        "version" : "0.9.14"
-      }
     }
   ],
   "version" : 2
