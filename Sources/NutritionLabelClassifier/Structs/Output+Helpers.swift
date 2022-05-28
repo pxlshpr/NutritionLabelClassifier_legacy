@@ -1,6 +1,6 @@
 import Foundation
 
-extension Output {
+public extension Output {
     var containsServingAttributes: Bool {
         guard let serving = serving else { return false }
         return serving.amount != nil
