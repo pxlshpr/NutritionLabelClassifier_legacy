@@ -5,7 +5,7 @@ import TabularData
 
 final class NutritionLabelColumnHeaderTests: XCTestCase {
 
-    let testCases: [(input: String, header: ColumnHeader?)] = [
+    let testCases: [(input: String, header: ColumnHeaderText?)] = [
         /// per100g
         ("Per 100 g", .per100g),
         ("Per 100g", .per100g),
@@ -38,7 +38,7 @@ final class NutritionLabelColumnHeaderTests: XCTestCase {
     
     func testColumnHeaders() throws {
         for testCase in testCases {
-            XCTAssertEqual(ColumnHeader(string: testCase.input), testCase.header)
+            XCTAssertEqual(ColumnHeaderText(string: testCase.input), testCase.header)
         }
     }
 }

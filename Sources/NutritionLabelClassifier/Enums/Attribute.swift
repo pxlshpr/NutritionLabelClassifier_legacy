@@ -75,6 +75,7 @@ public enum Attribute: String, CaseIterable {
     case servingsPerContainerAmount
     case servingsPerContainerName
 
+    /// String where `100g` indicates Per 100 g, Otherwise
     case nutrientsColumnHeader1
     case nutrientsColumnHeader2
 

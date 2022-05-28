@@ -42,7 +42,8 @@ extension Output {
         public let rows: [Row]
         
         public struct IdentifiableColumnHeader {
-            public let columnHeader: ColumnHeader
+            public let type: ColumnHeaderType
+            public let sizeName: String?
             public let id: UUID
         }
         
