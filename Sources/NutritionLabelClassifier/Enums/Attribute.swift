@@ -8,7 +8,7 @@ public enum Attribute: String, CaseIterable {
     case servingUnit                  /// NutritionUnit
     case servingUnitSize              /// String
     case servingEquivalentAmount       /// Double
-    case servingEquivalentUnit        /// Double
+    case servingEquivalentUnit        /// NutritionUnit
     case servingEquivalentUnitSize    /// String
     
     public var isColumnAttribute: Bool {
@@ -22,6 +22,33 @@ public enum Attribute: String, CaseIterable {
     public var isServingAttribute: Bool {
         switch self {
         case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerName, .servingsPerContainerAmount:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    public var expectsDouble: Bool {
+        switch self {
+        case .servingAmount, .servingEquivalentAmount:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    public var expectsNutritionUnit: Bool {
+        switch self {
+        case .servingUnit, .servingEquivalentUnit:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    public var expectsString: Bool {
+        switch self {
+        case .servingUnitSize, .servingEquivalentUnitSize:
             return true
         default:
             return false
