@@ -48,7 +48,7 @@ public struct Value {
         }
     }
     
-    init(amount: Double, unit: NutritionUnit? = nil) {
+    public init(amount: Double, unit: NutritionUnit? = nil) {
         self.amount = amount
         self.unit = unit
     }
