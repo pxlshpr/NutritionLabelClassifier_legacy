@@ -30,7 +30,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsDouble: Bool {
         switch self {
-        case .servingAmount, .servingEquivalentAmount:
+        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount:
             return true
         default:
             return false
@@ -48,7 +48,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsString: Bool {
         switch self {
-        case .servingUnitSize, .servingEquivalentUnitSize:
+        case .servingUnitSize, .servingEquivalentUnitSize, .servingsPerContainerName:
             return true
         default:
             return false
