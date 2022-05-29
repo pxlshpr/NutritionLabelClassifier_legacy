@@ -6,7 +6,7 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = false
+let RunLegacyTests = true
 let ClassifierTestCases = 1...23
 let ClassifierOutputTestCases = 3...3
 //let ClassifierTestCases = 100...100

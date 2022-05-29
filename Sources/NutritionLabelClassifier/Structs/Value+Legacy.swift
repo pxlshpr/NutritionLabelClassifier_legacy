@@ -29,9 +29,12 @@ extension Value {
         }
         self.amount = amount
         if groups.count == 3 {
-            guard let unit = NutritionUnit(rawValue: groups[2].lowercased()) else {
+            guard let unit = NutritionUnit(string: groups[2].lowercased()) else {
                 return nil
             }
+//            guard let unit = NutritionUnit(rawValue: groups[2].lowercased()) else {
+//                return nil
+//            }
             
             /// invalidate extra large 'g' values to account for serving size being misread into value lines sometimes
             if unit == .g, amount > 100 {

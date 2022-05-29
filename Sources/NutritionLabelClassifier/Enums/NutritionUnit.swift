@@ -1,11 +1,32 @@
 import Foundation
 
-public enum NutritionUnit: String, CaseIterable {
+extension NutritionUnit: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .mg:
+            return "mg"
+        case .kj:
+            return "kJ"
+        case .mcg:
+            return "mcg"
+        case .kcal:
+            return "kCal"
+        case .p:
+            return "%"
+        case .g:
+            return "g"
+        case .cup:
+            return "cup"
+        }
+    }
+}
+
+public enum NutritionUnit: Int, CaseIterable {
     case mg //TODO: Recognize `mq` as a typo
     case kj
     case mcg //TODO: Recognize `ug` as an alternative and remove it
     case kcal
-    case p = "%" /// percent
+    case p
     case g
     case cup
 
