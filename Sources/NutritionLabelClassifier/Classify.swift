@@ -56,21 +56,3 @@ extension NutritionLabelClassifier {
         return dataFrame
     }
 }
-
-
-extension Output.IdentifiableDouble {
-    init(_ valueWithId: IdentifiableValue) {
-        self.double = valueWithId.value.amount
-        self.id = valueWithId.id
-    }
-}
-
-extension Output.IdentifiableUnit {
-    init?(_ valueWithId: IdentifiableValue) {
-        guard let unit = valueWithId.value.unit else {
-            return nil
-        }
-        self.nutritionUnit = unit
-        self.id = valueWithId.id
-    }
-}

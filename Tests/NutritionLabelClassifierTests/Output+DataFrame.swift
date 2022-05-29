@@ -20,17 +20,17 @@ extension Output {
 extension Output.Serving {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
 
-        var identifiableAmount: Output.IdentifiableDouble? = nil
-        var identifiableUnit: Output.IdentifiableUnit? = nil
-        var identifiableUnitSizeName: Output.IdentifiableString? = nil
+        var identifiableAmount: IdentifiableDouble? = nil
+        var identifiableUnit: IdentifiableUnit? = nil
+        var identifiableUnitSizeName: IdentifiableString? = nil
         
-        var identifiableEquivalentAmount: Output.IdentifiableDouble? = nil
-        var identifiableEquivalentUnit: Output.IdentifiableUnit? = nil
-        var identifiableEquivalentUnitSizeName: Output.IdentifiableString? = nil
+        var identifiableEquivalentAmount: IdentifiableDouble? = nil
+        var identifiableEquivalentUnit: IdentifiableUnit? = nil
+        var identifiableEquivalentUnitSizeName: IdentifiableString? = nil
         var equivalentSize: EquivalentSize? = nil
         
-        var identifiablePerContainerAmount: Output.IdentifiableDouble? = nil
-        var identifiablePerContainerName: Output.IdentifiableString? = nil
+        var identifiablePerContainerAmount: IdentifiableDouble? = nil
+        var identifiablePerContainerName: IdentifiableString? = nil
 //        var identifiablePerContainerName: Output.Serving.PerContainer.IdentifiableContainerName? = nil
         var perContainer: PerContainer? = nil
         
@@ -45,34 +45,34 @@ extension Output.Serving {
             }
             
             if attribute == .servingAmount, let double = double {
-                identifiableAmount = Output.IdentifiableDouble(double: double, id: defaultUUID)
+                identifiableAmount = IdentifiableDouble(double: double, id: defaultUUID)
             }
             
             if attribute == .servingUnit, let string = string, let unit = NutritionUnit(string: string) {
-                identifiableUnit = Output.IdentifiableUnit(nutritionUnit: unit, id: defaultUUID)
+                identifiableUnit = IdentifiableUnit(nutritionUnit: unit, id: defaultUUID)
             }
 
             if attribute == .servingUnitSize, let string = string {
-                identifiableUnitSizeName = Output.IdentifiableString(string: string, id: defaultUUID)
+                identifiableUnitSizeName = IdentifiableString(string: string, id: defaultUUID)
             }
             
             //MARK: Equivalent Amount
             if attribute == .servingEquivalentAmount, let double = double {
-                identifiableEquivalentAmount = Output.IdentifiableDouble(double: double, id: defaultUUID)
+                identifiableEquivalentAmount = IdentifiableDouble(double: double, id: defaultUUID)
             }
             if attribute == .servingEquivalentUnit, let string = string, let unit = NutritionUnit(string: string) {
-                identifiableEquivalentUnit = Output.IdentifiableUnit(nutritionUnit: unit, id: defaultUUID)
+                identifiableEquivalentUnit = IdentifiableUnit(nutritionUnit: unit, id: defaultUUID)
             }
             if attribute == .servingEquivalentUnitSize, let string = string {
-                identifiableEquivalentUnitSizeName = Output.IdentifiableString(string: string, id: defaultUUID)
+                identifiableEquivalentUnitSizeName = IdentifiableString(string: string, id: defaultUUID)
             }
             
             //MARK: Per Container
             if attribute == .servingsPerContainerAmount, let double = double {
-                identifiablePerContainerAmount = Output.IdentifiableDouble(double: double, id: defaultUUID)
+                identifiablePerContainerAmount = IdentifiableDouble(double: double, id: defaultUUID)
             }
             if attribute == .servingsPerContainerName, let string = string {
-                identifiablePerContainerName = Output.IdentifiableString(
+                identifiablePerContainerName = IdentifiableString(
                     string: string,
                     id: defaultUUID)
             }

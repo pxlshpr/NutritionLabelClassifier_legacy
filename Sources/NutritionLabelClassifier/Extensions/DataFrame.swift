@@ -81,7 +81,7 @@ extension DataFrame {
         let perContainer: Output.Serving.PerContainer?
         if let valueWithId = identifiableValue1ForAttribute(.servingsPerContainerAmount) {
             perContainer = Output.Serving.PerContainer(
-                identifiableAmount: Output.IdentifiableDouble(valueWithId),
+                identifiableAmount: IdentifiableDouble(valueWithId),
                 identifiableName: nil)
         } else {
             perContainer = nil
@@ -93,8 +93,8 @@ extension DataFrame {
             let equivalentSize: Output.Serving.EquivalentSize?
             if let value2WithId = identifiableValue2ForAttribute(.servingAmount) {
                 equivalentSize = Output.Serving.EquivalentSize(
-                    identifiableAmount: Output.IdentifiableDouble(value2WithId),
-                    identifiableUnit: Output.IdentifiableUnit(value2WithId),
+                    identifiableAmount: IdentifiableDouble(value2WithId),
+                    identifiableUnit: IdentifiableUnit(value2WithId),
                     identifiableUnitSizeName: nil
                 )
             } else {
@@ -102,8 +102,8 @@ extension DataFrame {
             }
             
             serving = Output.Serving(
-                identifiableAmount: Output.IdentifiableDouble(value1WithId),
-                identifiableUnit: Output.IdentifiableUnit(value1WithId),
+                identifiableAmount: IdentifiableDouble(value1WithId),
+                identifiableUnit: IdentifiableUnit(value1WithId),
                 identifiableUnitSizeName: nil,
                 equivalentSize: equivalentSize,
                 perContainer: perContainer

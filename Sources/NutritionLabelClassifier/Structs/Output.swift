@@ -16,6 +16,38 @@ public struct IdentifiableValue {
     public let id: UUID
 }
 
+public struct IdentifiableDouble {
+    public let double: Double
+    public let id: UUID
+}
+
+extension IdentifiableDouble {
+    init(_ valueWithId: IdentifiableValue) {
+        self.double = valueWithId.value.amount
+        self.id = valueWithId.id
+    }
+}
+
+extension IdentifiableUnit {
+    init?(_ valueWithId: IdentifiableValue) {
+        guard let unit = valueWithId.value.unit else {
+            return nil
+        }
+        self.nutritionUnit = unit
+        self.id = valueWithId.id
+    }
+}
+
+public struct IdentifiableUnit {
+    public let nutritionUnit: NutritionUnit
+    public let id: UUID
+}
+
+public struct IdentifiableString {
+    public let string: String
+    public let id: UUID
+}
+
 extension Output {
     //MARK: Serving
     public struct Serving {
@@ -62,22 +94,6 @@ extension Output {
             public let identifiableValue1: IdentifiableValue?
             public let identifiableValue2: IdentifiableValue?
         }
-    }
-    
-    //MARK: Containers
-    public struct IdentifiableDouble {
-        public let double: Double
-        public let id: UUID
-    }
-    
-    public struct IdentifiableUnit {
-        public let nutritionUnit: NutritionUnit
-        public let id: UUID
-    }
-    
-    public struct IdentifiableString {
-        public let string: String
-        public let id: UUID
     }
 }
 
