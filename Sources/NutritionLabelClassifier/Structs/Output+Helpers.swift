@@ -30,9 +30,9 @@ public extension Output {
             return serving?.perContainer != nil
         case .servingsPerContainerName:
             return serving?.perContainer?.name != nil
-        case .nutrientsColumnHeader1:
+        case .columnHeader1:
             return nutrients.identifiableColumnHeader1 != nil
-        case .nutrientsColumnHeader2:
+        case .columnHeader2:
             return nutrients.identifiableColumnHeader2 != nil
         default:
             return nutrients.rows.contains(where: { $0.attribute == attribute })

@@ -13,7 +13,7 @@ public enum Attribute: String, CaseIterable {
     
     public var isColumnAttribute: Bool {
         switch self {
-        case .nutrientsColumnHeader1, .nutrientsColumnHeader2:
+        case .columnHeader1, .columnHeader2:
             return true
         default:
             return false
@@ -76,8 +76,8 @@ public enum Attribute: String, CaseIterable {
     case servingsPerContainerName
 
     /// String where `100g` indicates Per 100 g, Otherwise
-    case nutrientsColumnHeader1
-    case nutrientsColumnHeader2
+    case columnHeader1
+    case columnHeader2
 
     //MARK: Nutrients
     case energy
@@ -323,9 +323,9 @@ extension Attribute: CustomStringConvertible {
             return "Servings Per Container Amount"
         case .servingsPerContainerName:
             return "Servings Per Container Name"
-        case .nutrientsColumnHeader1:
+        case .columnHeader1:
             return "Column Header 1"
-        case .nutrientsColumnHeader2:
+        case .columnHeader2:
             return "Column Header 2"
         case .energy:
             return "Energy"
