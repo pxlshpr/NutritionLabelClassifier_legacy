@@ -6,7 +6,7 @@ extension RecognizedText {
         getArtefacts()
     }
     
-    func getArtefacts(for attribute: Attribute? = nil, rowBeingExtracted: Row? = nil, extractedRows: [Row] = []) -> [Artefact] {
+    func getArtefacts(for attribute: Attribute? = nil, rowBeingExtracted: Observation? = nil, extractedRows: [Observation] = []) -> [Artefact] {
         var arrays: [[Artefact]] = []
         for candidate in candidates {
             arrays.append(artefacts(for: candidate))
@@ -82,7 +82,7 @@ extension RecognizedText {
      
         For example: if VisionKit misreads `1.4g` as `11.4g` for `.saturatedFat`, and submits both strings as candidates, and we happen to have `.fat` set as `2.2g`—we would choose `1.4g` over `11.4g`
      */
-    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[Artefact]], for attribute: Attribute? = nil, rowBeingExtracted: Row? = nil, extractedRows: [Row] = []) -> [Artefact]?
+    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[Artefact]], for attribute: Attribute? = nil, rowBeingExtracted: Observation? = nil, extractedRows: [Observation] = []) -> [Artefact]?
     {
         guard arrays.count > 1 else { return nil }
         

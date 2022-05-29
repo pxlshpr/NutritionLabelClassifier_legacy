@@ -6,6 +6,16 @@ public struct Output {
     public let primaryColumnIndex: Int
 }
 
+public struct IdentifiableAttribute {
+    public let attribute: Attribute
+    public let id: UUID
+}
+
+public struct IdentifiableValue {
+    public let value: Value
+    public let id: UUID
+}
+
 extension Output {
     //MARK: Serving
     public struct Serving {
@@ -51,16 +61,6 @@ extension Output {
             public let identifiableAttribute: IdentifiableAttribute
             public let identifiableValue1: IdentifiableValue?
             public let identifiableValue2: IdentifiableValue?
-
-            public struct IdentifiableAttribute {
-                public let attribute: Attribute
-                public let id: UUID
-            }
-            
-            public struct IdentifiableValue {
-                public let value: Value
-                public let id: UUID
-            }
         }
     }
     

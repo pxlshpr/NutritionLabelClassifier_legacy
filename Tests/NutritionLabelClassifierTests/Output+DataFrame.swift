@@ -169,26 +169,26 @@ extension Output.Nutrients {
                 continue
             }
             
-            var identifiableValue1: Row.IdentifiableValue? = nil
+            var identifiableValue1: IdentifiableValue? = nil
             if let value1String = value1String {
                 guard let value = Value(fromString: value1String) else {
                     print("Failed to convert value1String: \(value1String)")
                     continue
                 }
-                identifiableValue1 = Row.IdentifiableValue(value: value, id: defaultUUID)
+                identifiableValue1 = IdentifiableValue(value: value, id: defaultUUID)
             }
             
-            var identifiableValue2: Row.IdentifiableValue? = nil
+            var identifiableValue2: IdentifiableValue? = nil
             if let value2String = value2String {
                 guard let value = Value(fromString: value2String) else {
                     print("Failed to convert value2String: \(value2String)")
                     continue
                 }
-                identifiableValue2 = Row.IdentifiableValue(value: value, id: defaultUUID)
+                identifiableValue2 = IdentifiableValue(value: value, id: defaultUUID)
             }
             
             let nutrientRow = Row(
-                identifiableAttribute: Row.IdentifiableAttribute(
+                identifiableAttribute: IdentifiableAttribute(
                     attribute: attribute,
                     id: defaultUUID
                 ),

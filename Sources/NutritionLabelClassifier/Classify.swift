@@ -49,13 +49,13 @@ extension DataFrame {
                 return nil
             }
             
-            let attributeWithId = Output.Nutrients.Row.IdentifiableAttribute(
+            let attributeWithId = IdentifiableAttribute(
                 attribute: attributeWithIdRow.attribute,
                 id: attributeWithIdRow.observationId
             )
-            let value1WithId: Output.Nutrients.Row.IdentifiableValue?
+            let value1WithId: IdentifiableValue?
             if let valueWithId = valueWithId1Row {
-                value1WithId = Output.Nutrients.Row.IdentifiableValue(
+                value1WithId = IdentifiableValue(
                     value: valueWithId.value,
                     id: valueWithId.observationId
                 )
@@ -63,9 +63,9 @@ extension DataFrame {
                 value1WithId = nil
             }
 
-            let value2WithId: Output.Nutrients.Row.IdentifiableValue?
+            let value2WithId: IdentifiableValue?
             if let valueWithId = valueWithId2Row {
-                value2WithId = Output.Nutrients.Row.IdentifiableValue(
+                value2WithId = IdentifiableValue(
                     value: valueWithId.value,
                     id: valueWithId.observationId
                 )
