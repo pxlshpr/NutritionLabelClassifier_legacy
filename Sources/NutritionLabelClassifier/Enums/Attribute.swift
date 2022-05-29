@@ -53,7 +53,7 @@ public enum Attribute: String, CaseIterable {
     
     public var isColumnAttribute: Bool {
         switch self {
-        case .columnHeader1Type, .columnHeader2Type:
+        case .columnHeader1Type, .columnHeader2Type, .columnHeader1Size, .columnHeader2Size, .primaryColumnIndex:
             return true
         default:
             return false
