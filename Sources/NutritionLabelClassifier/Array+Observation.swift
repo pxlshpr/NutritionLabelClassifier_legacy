@@ -3,7 +3,7 @@ import Foundation
 extension Array where Element == Observation {
     var hasTwoColumnsOfValues: Bool {
         for observation in self {
-            if observation.identifiableValue2 != nil {
+            if observation.valueText2 != nil {
                 return true
             }
         }
@@ -13,7 +13,7 @@ extension Array where Element == Observation {
     var percentageOfNilValue2: Double {
         var numberOfNilValue2s = 0.0
         for observation in self {
-            if observation.identifiableValue2 == nil {
+            if observation.valueText2 == nil {
                 numberOfNilValue2s += 1
             }
         }
@@ -23,7 +23,7 @@ extension Array where Element == Observation {
     var clearingValue2: [Observation] {
         var observations = self
         for index in observations.indices {
-            observations[index].identifiableValue2 = nil
+            observations[index].valueText2 = nil
         }
         return observations
     }

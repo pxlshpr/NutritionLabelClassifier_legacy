@@ -99,41 +99,41 @@ extension NutritionLabelClassifierTests {
     
     func compare(observedNutrients: Output.Nutrients, toExpectedNutrients expectedNutrients: Output.Nutrients) {
         compare(observedRows: observedNutrients.rows, withExpectedRows: expectedNutrients.rows)
-        compareColumn1(ofObservedNutrients: observedNutrients, withExpectedNutrients: expectedNutrients)
-        compareColumn2(ofObservedNutrients: observedNutrients, withExpectedNutrients: expectedNutrients)
+        compareHeader1(ofObservedNutrients: observedNutrients, withExpectedNutrients: expectedNutrients)
+        compareHeader2(ofObservedNutrients: observedNutrients, withExpectedNutrients: expectedNutrients)
     }
     
-    func compareColumn1(ofObservedNutrients observedNutrients: Output.Nutrients, withExpectedNutrients expectedNutrients: Output.Nutrients) {
-        guard isEqual(observedColumnHeader: observedNutrients.identifiableColumnHeader1,
-                      toExpectedColumnHeader: expectedNutrients.identifiableColumnHeader1) else {
+    func compareHeader1(ofObservedNutrients observedNutrients: Output.Nutrients, withExpectedNutrients expectedNutrients: Output.Nutrients) {
+        guard isEqual(observedHeaderText: observedNutrients.headerText1,
+                      toExpectedHeaderText: expectedNutrients.headerText1) else {
             XCTFail("Observed Column Header 1 doesn't match")
             return
         }
     }
 
-    func compareColumn2(ofObservedNutrients observedNutrients: Output.Nutrients, withExpectedNutrients expectedNutrients: Output.Nutrients) {
-        guard isEqual(observedColumnHeader: observedNutrients.identifiableColumnHeader2,
-                      toExpectedColumnHeader: expectedNutrients.identifiableColumnHeader2) else {
+    func compareHeader2(ofObservedNutrients observedNutrients: Output.Nutrients, withExpectedNutrients expectedNutrients: Output.Nutrients) {
+        guard isEqual(observedHeaderText: observedNutrients.headerText2,
+                      toExpectedHeaderText: expectedNutrients.headerText2) else {
             XCTFail("Observed Column Header 2 doesn't match")
             return
         }
     }
 
-    func isEqual(observedColumnHeader: Output.Nutrients.IdentifiableColumnHeader?, toExpectedColumnHeader expectedColumnHeader: Output.Nutrients.IdentifiableColumnHeader?) -> Bool {
-        guard let expectedColumnHeader = expectedColumnHeader else {
+    func isEqual(observedHeaderText: HeaderText?, toExpectedHeaderText expectedHeaderText: HeaderText?) -> Bool {
+        guard let expectedHeaderText = expectedHeaderText else {
             return true
         }
-        guard let observedColumnHeader = observedColumnHeader else {
+        guard let observedHeaderText = observedHeaderText else {
             print("⚠️ Missing observed column header 1")
             return false
         }
         
-        guard observedColumnHeader.type == expectedColumnHeader.type else {
+        guard observedHeaderText.type == expectedHeaderText.type else {
             print("⚠️ Column header 1 type doesn't match")
             return false
         }
 
-        guard observedColumnHeader.sizeName == expectedColumnHeader.sizeName else {
+        guard observedHeaderText.sizeName == expectedHeaderText.sizeName else {
             print("⚠️ Column header 1 sizeName doesn't match")
             return false
         }

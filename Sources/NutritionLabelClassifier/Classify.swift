@@ -31,8 +31,8 @@ extension NutritionLabelClassifier {
         if observations.hasTwoColumnsOfValues {
             for index in observations.indices {
                 let observation = observations[index]
-                if observation.identifiableValue2 == nil, let value1 = observation.identifiableValue1, value1.value.amount == 0 {
-                    observations[index].identifiableValue2 = value1
+                if observation.valueText2 == nil, let value1 = observation.valueText1, value1.value.amount == 0 {
+                    observations[index].valueText2 = value1
                 }
             }
         }
@@ -44,9 +44,9 @@ extension NutritionLabelClassifier {
     
     private static func dataFrameOfNutrients(from observations: [Observation]) -> DataFrame {
         var dataFrame = DataFrame()
-        let labelColumn = Column(name: "attribute", contents: observations.map { $0.identifiableAttribute })
-        let value1Column = Column(name: "value1", contents: observations.map { $0.identifiableValue1 })
-        let value2Column = Column(name: "value2", contents: observations.map { $0.identifiableValue2 })
+        let labelColumn = Column(name: "attribute", contents: observations.map { $0.attributeText })
+        let value1Column = Column(name: "value1", contents: observations.map { $0.valueText1 })
+        let value2Column = Column(name: "value2", contents: observations.map { $0.valueText2 })
 //        let column1Id = ColumnID("values1", Value?.self)
 //        let column2Id = ColumnID("values2", Value?.self)
 //

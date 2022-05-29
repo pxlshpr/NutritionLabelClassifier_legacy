@@ -89,17 +89,17 @@ extension RecognizedText {
         /// Make sure we have an attribute provided, and that it does have a parent attribute for which we have already extracted a row first.
         guard let attribute = attribute,
               let parentAttribute = attribute.parentAttribute,
-              let parentObservation = extractedObservations.first(where: { $0.identifiableAttribute.attribute == parentAttribute })
+              let parentObservation = extractedObservations.first(where: { $0.attributeText.attribute == parentAttribute })
         else {
             return nil
         }
         
         /// Grab the respective `Value` of the parent `Row` based on what we're currently grabbing (as comparisons across rows make no sense).
         let parentValue: Value?
-        if observationBeingExtracted?.identifiableValue1 != nil {
-            parentValue = parentObservation.identifiableValue2?.value
+        if observationBeingExtracted?.valueText1 != nil {
+            parentValue = parentObservation.valueText2?.value
         } else {
-            parentValue = parentObservation.identifiableValue1?.value
+            parentValue = parentObservation.valueText1?.value
         }
         guard let parentValue = parentValue else { return nil }
 

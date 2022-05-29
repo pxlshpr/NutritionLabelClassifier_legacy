@@ -6,45 +6,51 @@ public struct Output {
     public let primaryColumnIndex: Int
 }
 
-public struct IdentifiableAttribute {
+public struct AttributeText {
     public let attribute: Attribute
-    public let id: UUID
+    public let textId: UUID
 }
 
-public struct IdentifiableValue {
+public struct ValueText {
     public let value: Value
-    public let id: UUID
+    public let textId: UUID
 }
 
-public struct IdentifiableDouble {
+public struct DoubleText {
     public let double: Double
-    public let id: UUID
+    public let textId: UUID
 }
 
-extension IdentifiableDouble {
-    init(_ valueWithId: IdentifiableValue) {
+extension DoubleText {
+    init(_ valueWithId: ValueText) {
         self.double = valueWithId.value.amount
-        self.id = valueWithId.id
+        self.textId = valueWithId.textId
     }
 }
 
-extension IdentifiableUnit {
-    init?(_ valueWithId: IdentifiableValue) {
+extension UnitText {
+    init?(_ valueWithId: ValueText) {
         guard let unit = valueWithId.value.unit else {
             return nil
         }
-        self.nutritionUnit = unit
-        self.id = valueWithId.id
+        self.unit = unit
+        self.textId = valueWithId.textId
     }
 }
 
-public struct IdentifiableUnit {
-    public let nutritionUnit: NutritionUnit
-    public let id: UUID
+public struct UnitText {
+    public let unit: NutritionUnit
+    public let textId: UUID
 }
 
-public struct IdentifiableString {
+public struct StringText {
     public let string: String
+    public let textId: UUID
+}
+
+public struct HeaderText {
+    public let type: ColumnHeaderType
+    public let sizeName: String?
     public let id: UUID
 }
 
@@ -52,64 +58,35 @@ extension Output {
     //MARK: Serving
     public struct Serving {
         
-        public let identifiableAmount: IdentifiableDouble?
-        public let identifiableUnit: IdentifiableUnit?
-        public let identifiableUnitSizeName: IdentifiableString?
+        public let amountText: DoubleText?
+        public let unitText: UnitText?
+        public let unitNameText: StringText?
         public let equivalentSize: EquivalentSize?
 
         public let perContainer: PerContainer?
 
         public struct EquivalentSize {
-            public let identifiableAmount: IdentifiableDouble
-            public let identifiableUnit: IdentifiableUnit?
-            public let identifiableUnitSizeName: IdentifiableString?
+            public let amountText: DoubleText
+            public let unitText: UnitText?
+            public let unitNameText: StringText?
         }
 
         public struct PerContainer {
-            public let identifiableAmount: IdentifiableDouble
-//            public let identifiableContainerName: IdentifiableContainerName?
-            public let identifiableName: IdentifiableString?
-
-//            public struct IdentifiableContainerName {
-//                public let containerName: ContainerName
-//                public let id: UUID
-//            }
+            public let amountText: DoubleText
+            public let nameText: StringText?
         }
     }
     
     //MARK: Nutrients
     public struct Nutrients {
-        public let identifiableColumnHeader1: IdentifiableColumnHeader?
-        public let identifiableColumnHeader2: IdentifiableColumnHeader?
+        public let headerText1: HeaderText?
+        public let headerText2: HeaderText?
         public let rows: [Row]
         
-        public struct IdentifiableColumnHeader {
-            public let type: ColumnHeaderType
-            public let sizeName: String?
-            public let id: UUID
-        }
-        
         public struct Row {
-            public let identifiableAttribute: IdentifiableAttribute
-            public let identifiableValue1: IdentifiableValue?
-            public let identifiableValue2: IdentifiableValue?
+            public let attributeText: AttributeText
+            public let valueText1: ValueText?
+            public let valueText2: ValueText?
         }
     }
 }
-
-//public enum ContainerName: String {
-//    case container
-//    case package
-//    case unknown
-//
-//    init(string: String) {
-//        switch string.lowercased() {
-//        case "container":
-//            self = .container
-//        case "package":
-//            self = .package
-//        default:
-//            self = .unknown
-//        }
-//    }
-//}

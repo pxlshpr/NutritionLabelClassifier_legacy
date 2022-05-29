@@ -1,52 +1,52 @@
 import Foundation
 
 public extension Output.Serving {
-    var amount: Double? { identifiableAmount?.double }
-    var unit: NutritionUnit? { identifiableUnit?.nutritionUnit }
-    var unitSizeName: String? { identifiableUnitSizeName?.string }
+    var amount: Double? { amountText?.double }
+    var unit: NutritionUnit? { unitText?.unit }
+    var unitSizeName: String? { unitNameText?.string }
     
-    var amountId: UUID? { identifiableAmount?.id }
-    var unitId: UUID? { identifiableUnit?.id }
-    var unitSizeNameId: UUID? { identifiableUnitSizeName?.id }
+    var amountId: UUID? { amountText?.textId }
+    var unitId: UUID? { unitText?.textId }
+    var unitSizeNameId: UUID? { unitNameText?.textId }
 }
 
 public extension Output.Serving.EquivalentSize {
-    var amount: Double { identifiableAmount.double }
-    var unit: NutritionUnit? { identifiableUnit?.nutritionUnit }
-    var sizeName: String? { identifiableUnitSizeName?.string }
+    var amount: Double { amountText.double }
+    var unit: NutritionUnit? { unitText?.unit }
+    var sizeName: String? { unitNameText?.string }
     
-    var amountId: UUID { identifiableAmount.id }
-    var unitId: UUID? { identifiableUnit?.id }
-    var sizeNameId: UUID? { identifiableUnitSizeName?.id }
+    var amountId: UUID { amountText.textId }
+    var unitId: UUID? { unitText?.textId }
+    var sizeNameId: UUID? { unitNameText?.textId }
 }
 
 public extension Output.Serving.PerContainer {
-    var amount: Double { identifiableAmount.double }
-    var name: String? { identifiableName?.string }
+    var amount: Double { amountText.double }
+    var name: String? { nameText?.string }
 //    var containerName: ContainerName? { identifiableContainerName?.containerName }
     
-    var amountId: UUID { identifiableAmount.id }
-    var nameId: UUID? { identifiableName?.id }
+    var amountId: UUID { amountText.textId }
+    var nameId: UUID? { nameText?.textId }
 //    var containerNameId: UUID? { identifiableContainerName?.id }
 }
 
 public extension Output.Nutrients {
-    var columnHeader1Type: ColumnHeaderType? { identifiableColumnHeader1?.type }
-    var columnHeader2Type: ColumnHeaderType? { identifiableColumnHeader2?.type }
+    var columnHeader1Type: ColumnHeaderType? { headerText1?.type }
+    var columnHeader2Type: ColumnHeaderType? { headerText2?.type }
 
-    var columnHeader1SizeName: String? { identifiableColumnHeader1?.sizeName }
-    var columnHeader2SizeName: String? { identifiableColumnHeader2?.sizeName }
+    var columnHeader1SizeName: String? { headerText1?.sizeName }
+    var columnHeader2SizeName: String? { headerText2?.sizeName }
 
-    var columnHeader1Id: UUID? { identifiableColumnHeader1?.id }
-    var columnHeader2Id: UUID? { identifiableColumnHeader2?.id }
+    var columnHeader1Id: UUID? { headerText1?.id }
+    var columnHeader2Id: UUID? { headerText2?.id }
 }
 
 public extension Output.Nutrients.Row {
-    var attribute: Attribute { identifiableAttribute.attribute }
-    var value1: Value? { identifiableValue1?.value }
-    var value2: Value? { identifiableValue2?.value }
+    var attribute: Attribute { attributeText.attribute }
+    var value1: Value? { valueText1?.value }
+    var value2: Value? { valueText2?.value }
     
-    var attributeId: UUID { identifiableAttribute.id }
-    var value1Id: UUID? { identifiableValue1?.id }
-    var value2Id: UUID? { identifiableValue2?.id }
+    var attributeId: UUID { attributeText.textId }
+    var value1Id: UUID? { valueText1?.textId }
+    var value2Id: UUID? { valueText2?.textId }
 }
