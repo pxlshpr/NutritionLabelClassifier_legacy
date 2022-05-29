@@ -1,12 +1,12 @@
 import Foundation
 
-public enum ColumnHeaderType: Int, CaseIterable {
+public enum HeaderType: Int, CaseIterable {
     case per100g = 1
     case perServing = 1000
     case perCustomSize = 2000
 }
 
-extension ColumnHeaderType: CustomStringConvertible {
+extension HeaderType: CustomStringConvertible {
     public var description: String {
         switch self {
         case .per100g:

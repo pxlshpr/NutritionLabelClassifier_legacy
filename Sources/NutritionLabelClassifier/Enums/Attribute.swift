@@ -14,9 +14,9 @@ public enum Attribute: String, CaseIterable {
     case servingsPerContainerAmount
     case servingsPerContainerName
 
-    case columnHeader1Type
+    case header1Type
     case columnHeader1Size
-    case columnHeader2Type
+    case header2Type
     case columnHeader2Size
 
     case primaryColumnIndex
@@ -52,7 +52,7 @@ public enum Attribute: String, CaseIterable {
     
     public var isColumnAttribute: Bool {
         switch self {
-        case .columnHeader1Type, .columnHeader2Type, .columnHeader1Size, .columnHeader2Size, .primaryColumnIndex:
+        case .header1Type, .header2Type, .columnHeader1Size, .columnHeader2Size, .primaryColumnIndex:
             return true
         default:
             return false
@@ -151,7 +151,7 @@ public enum Attribute: String, CaseIterable {
     
     var isNutrient: Bool {
         switch self {
-        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerAmount, .servingsPerContainerName, .columnHeader1Type, .columnHeader1Size, .columnHeader2Type, .columnHeader2Size, .primaryColumnIndex: return false
+        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerAmount, .servingsPerContainerName, .header1Type, .columnHeader1Size, .header2Type, .columnHeader2Size, .primaryColumnIndex: return false
         default:
             return true
         }
@@ -323,9 +323,9 @@ extension Attribute: CustomStringConvertible {
             return "Servings Per Container Amount"
         case .servingsPerContainerName:
             return "Servings Per Container Name"
-        case .columnHeader1Type:
+        case .header1Type:
             return "Column Header 1 Type"
-        case .columnHeader2Type:
+        case .header2Type:
             return "Column Header 2 Type"
         case .columnHeader1Size:
             return "Column Header 1 Size"

@@ -28,7 +28,7 @@ extension NutritionLabelClassifierTests {
             return
         }
         
-        guard observedServing.unitSizeName == expectedServing.unitSizeName else {
+        guard observedServing.unitName == expectedServing.unitName else {
             XCTFail("Serving unit name's do not match")
             return
         }
@@ -133,7 +133,7 @@ extension NutritionLabelClassifierTests {
             return false
         }
 
-        guard observedHeaderText.sizeName == expectedHeaderText.sizeName else {
+        guard observedHeaderText.unitName == expectedHeaderText.unitName else {
             print("⚠️ Column header 1 sizeName doesn't match")
             return false
         }

@@ -49,8 +49,8 @@ public struct StringText {
 }
 
 public struct HeaderText {
-    public let type: ColumnHeaderType
-    public let sizeName: String?
+    public let type: HeaderType
+    public let unitName: String?
     public let id: UUID
 }
 

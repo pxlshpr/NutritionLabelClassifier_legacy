@@ -121,35 +121,35 @@ extension Output.Nutrients {
     init(fromExpectedDataFrame dataFrame: DataFrame) {
         
         let columnHeader1: HeaderText?
-        if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Type),
+        if let row = dataFrame.rowForExpectedAttribute(.header1Type),
            let typeDouble = row["double"] as? Double,
-           let type = ColumnHeaderType(rawValue: Int(typeDouble))
+           let type = HeaderType(rawValue: Int(typeDouble))
         {
-            let sizeName: String?
+            let unitName: String?
             if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Size),
                let string = row["string"] as? String {
-                sizeName = string
+                unitName = string
             } else {
-                sizeName = nil
+                unitName = nil
             }
-            columnHeader1 = HeaderText(type: type, sizeName: sizeName, id: defaultUUID)
+            columnHeader1 = HeaderText(type: type, unitName: unitName, id: defaultUUID)
         } else {
             columnHeader1 = nil
         }
 
         let columnHeader2: HeaderText?
-        if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Type),
+        if let row = dataFrame.rowForExpectedAttribute(.header2Type),
            let typeDouble = row["double"] as? Double,
-           let type = ColumnHeaderType(rawValue: Int(typeDouble))
+           let type = HeaderType(rawValue: Int(typeDouble))
         {
-            let sizeName: String?
+            let unitName: String?
             if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Size),
                let string = row["string"] as? String {
-                sizeName = string
+                unitName = string
             } else {
-                sizeName = nil
+                unitName = nil
             }
-            columnHeader2 = HeaderText(type: type, sizeName: sizeName, id: defaultUUID)
+            columnHeader2 = HeaderText(type: type, unitName: unitName, id: defaultUUID)
         } else {
             columnHeader2 = nil
         }

@@ -5,7 +5,7 @@ public extension Output {
         guard let serving = serving else { return false }
         return serving.amount != nil
         || serving.unit != nil
-        || serving.unitSizeName != nil
+        || serving.unitName != nil
         || serving.equivalentSize != nil
         || serving.perContainer != nil
     }
@@ -19,7 +19,7 @@ public extension Output {
         case .servingUnit:
             return serving?.unit != nil
         case .servingUnitSize:
-            return serving?.unitSizeName != nil
+            return serving?.unitName != nil
         case .servingEquivalentAmount:
             return serving?.equivalentSize != nil
         case .servingEquivalentUnit:
@@ -30,9 +30,9 @@ public extension Output {
             return serving?.perContainer != nil
         case .servingsPerContainerName:
             return serving?.perContainer?.name != nil
-        case .columnHeader1Type:
+        case .header1Type:
             return nutrients.headerText1 != nil
-        case .columnHeader2Type:
+        case .header2Type:
             return nutrients.headerText2 != nil
         default:
             return nutrients.rows.contains(where: { $0.attribute == attribute })

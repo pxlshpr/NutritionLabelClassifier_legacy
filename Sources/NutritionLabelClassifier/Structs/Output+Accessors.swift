@@ -3,11 +3,11 @@ import Foundation
 public extension Output.Serving {
     var amount: Double? { amountText?.double }
     var unit: NutritionUnit? { unitText?.unit }
-    var unitSizeName: String? { unitNameText?.string }
+    var unitName: String? { unitNameText?.string }
     
     var amountId: UUID? { amountText?.textId }
     var unitId: UUID? { unitText?.textId }
-    var unitSizeNameId: UUID? { unitNameText?.textId }
+    var unitNameId: UUID? { unitNameText?.textId }
 }
 
 public extension Output.Serving.EquivalentSize {
@@ -31,14 +31,14 @@ public extension Output.Serving.PerContainer {
 }
 
 public extension Output.Nutrients {
-    var columnHeader1Type: ColumnHeaderType? { headerText1?.type }
-    var columnHeader2Type: ColumnHeaderType? { headerText2?.type }
+    var header1Type: HeaderType? { headerText1?.type }
+    var header2Type: HeaderType? { headerText2?.type }
 
-    var columnHeader1SizeName: String? { headerText1?.sizeName }
-    var columnHeader2SizeName: String? { headerText2?.sizeName }
+    var header1UnitName: String? { headerText1?.unitName }
+    var header2UnitName: String? { headerText2?.unitName }
 
-    var columnHeader1Id: UUID? { headerText1?.id }
-    var columnHeader2Id: UUID? { headerText2?.id }
+    var header1Id: UUID? { headerText1?.id }
+    var header2Id: UUID? { headerText2?.id }
 }
 
 public extension Output.Nutrients.Row {
