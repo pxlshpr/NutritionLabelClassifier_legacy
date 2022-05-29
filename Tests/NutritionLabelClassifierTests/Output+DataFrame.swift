@@ -6,7 +6,7 @@ import TabularData
 extension Output {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
         var primaryColumnIndex = 0
-        if let row = dataFrame.rowForAttribute(.primaryColumnIndex),
+        if let row = dataFrame.rowForExpectedAttribute(.primaryColumnIndex),
            let double = row["double"] as? Double
         {
             primaryColumnIndex = Int(double)
@@ -107,7 +107,7 @@ extension Output.Serving {
 }
 
 extension DataFrame {
-    func rowForAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
+    func rowForExpectedAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
         rows.first(where: {
             guard let attributeName = $0["attributeString"] as? String,
                   let attr = Attribute(rawValue: attributeName) else {
@@ -121,12 +121,12 @@ extension Output.Nutrients {
     init(fromExpectedDataFrame dataFrame: DataFrame) {
         
         let columnHeader1: IdentifiableColumnHeader?
-        if let row = dataFrame.rowForAttribute(.columnHeader1Type),
+        if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Type),
            let typeDouble = row["double"] as? Double,
            let type = ColumnHeaderType(rawValue: Int(typeDouble))
         {
             let sizeName: String?
-            if let row = dataFrame.rowForAttribute(.columnHeader1Size),
+            if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Size),
                let string = row["string"] as? String {
                 sizeName = string
             } else {
@@ -138,12 +138,12 @@ extension Output.Nutrients {
         }
 
         let columnHeader2: IdentifiableColumnHeader?
-        if let row = dataFrame.rowForAttribute(.columnHeader2Type),
+        if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Type),
            let typeDouble = row["double"] as? Double,
            let type = ColumnHeaderType(rawValue: Int(typeDouble))
         {
             let sizeName: String?
-            if let row = dataFrame.rowForAttribute(.columnHeader2Size),
+            if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Size),
                let string = row["string"] as? String {
                 sizeName = string
             } else {

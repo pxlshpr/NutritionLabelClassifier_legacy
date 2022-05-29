@@ -4,7 +4,7 @@ import XCTest
 
 extension NutritionLabelClassifierTests {
     
-    func _testClassifier() throws {
+    func testClassifier() throws {
         guard RunLegacyTests else { return }
 //        for testCase in 6...6 {
         for testCase in ClassifierTestCases {
@@ -97,33 +97,33 @@ extension NutritionLabelClassifierTests {
         }
     }
     
-    func _testClassifierOutput() throws {
-        for testCase in ClassifierOutputTestCases {
-            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
-                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
-                return
-            }
-
-            let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
-            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
-//            print("🧬 Output: \(output)")
-            print(nutrientsDataFrame)
-//            print(dataFrameWithObservationIdsRemoved(from: output))
-            
-            /// Extract `expectedNutrients` from data frame
-            guard let expectedDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
-                XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
-                return
-            }
-            print("📃 Expected DataFrame for Test Case: \(testCase)")
-            print(expectedDataFrame)
-            
-            let exepectedOutput = Output(fromExpectedDataFrame: expectedDataFrame)
-            print("We've got it")
-            /// Create `Output` from test case file too
-            /// Now use a specialized function that compares the values between what was generated and what was expected
-            /// If anything that was expected is missing or is incorrect, fail the test
-            /// Decide if we'll be failing tests when we have values in the output that wasn't included in the expected results
-        }
-    }
+//    func _testClassifierOutput() throws {
+//        for testCase in ClassifierOutputTestCases {
+//            guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
+//                XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
+//                return
+//            }
+//
+//            let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+////            print("🧬 Output: \(output)")
+//            print(nutrientsDataFrame)
+////            print(dataFrameWithObservationIdsRemoved(from: output))
+//
+//            /// Extract `expectedNutrients` from data frame
+//            guard let expectedDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
+//                XCTFail("Couldn't get expected nutrients for Test Case \(testCase)")
+//                return
+//            }
+//            print("📃 Expected DataFrame for Test Case: \(testCase)")
+//            print(expectedDataFrame)
+//
+//            let exepectedOutput = Output(fromExpectedDataFrame: expectedDataFrame)
+//            print("We've got it")
+//            /// Create `Output` from test case file too
+//            /// Now use a specialized function that compares the values between what was generated and what was expected
+//            /// If anything that was expected is missing or is incorrect, fail the test
+//            /// Decide if we'll be failing tests when we have values in the output that wasn't included in the expected results
+//        }
+//    }
 }

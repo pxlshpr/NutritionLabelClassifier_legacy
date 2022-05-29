@@ -14,7 +14,6 @@ public enum Attribute: String, CaseIterable {
     case servingsPerContainerAmount
     case servingsPerContainerName
 
-    /// String where `100g` indicates Per 100 g, Otherwise
     case columnHeader1Type
     case columnHeader1Size
     case columnHeader2Type
@@ -152,8 +151,7 @@ public enum Attribute: String, CaseIterable {
     
     var isNutrient: Bool {
         switch self {
-        case .servingsPerContainerAmount, .servingsPerContainerName:
-            return false
+        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerAmount, .servingsPerContainerName, .columnHeader1Type, .columnHeader1Size, .columnHeader2Type, .columnHeader2Size, .primaryColumnIndex: return false
         default:
             return true
         }
@@ -169,10 +167,8 @@ public enum Attribute: String, CaseIterable {
             return [.g, .mg, .mcg]
         case .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
             return [.mg, .mcg, .p, .g]
-//        case .servingSizeVolume:
-//        case .servingSizeWeight:
-//        case .servingSizeDescriptive:
-//        case .servingsPerContainerAmount:
+        case .servingAmount:
+            return [.cup, .g, .mcg, .mg]
         default:
             return []
         }
@@ -182,6 +178,8 @@ public enum Attribute: String, CaseIterable {
         switch self {
         case .servingsPerContainerAmount:
             return #"(servings |)per (container|package|tub|pot)"#
+        case .servingAmount:
+            return #"serving size"#
         case .nutritionFacts:
             return #"Nutrition Facts"#
         case .energy:

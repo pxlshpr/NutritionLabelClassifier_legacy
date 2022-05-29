@@ -22,13 +22,13 @@ extension NutritionUnit: CustomStringConvertible {
 }
 
 public enum NutritionUnit: Int, CaseIterable {
+    case kcal
+    case cup
+    case mcg //TODO: Recognize `ug` as an alternative and remove it
     case mg //TODO: Recognize `mq` as a typo
     case kj
-    case mcg //TODO: Recognize `ug` as an alternative and remove it
-    case kcal
     case p
     case g
-    case cup
 
     init?(string: String) {
         for unit in Self.allCases {
