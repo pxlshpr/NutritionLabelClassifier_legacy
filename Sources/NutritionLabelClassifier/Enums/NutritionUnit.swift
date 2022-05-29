@@ -10,7 +10,7 @@ extension NutritionUnit: CustomStringConvertible {
         case .mcg:
             return "mcg"
         case .kcal:
-            return "kCal"
+            return "kcal"
         case .p:
             return "%"
         case .g:
