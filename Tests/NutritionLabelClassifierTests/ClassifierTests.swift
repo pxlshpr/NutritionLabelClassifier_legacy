@@ -2,12 +2,13 @@ import XCTest
 import SwiftSugar
 import TabularData
 import VisionSugar
+import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = true
+let RunLegacyTests = false
 let ClassifierTestCases = 1...23
-let ClassifierOutputTestCases = 2...2
+let ClassifierOutputTestCases = 3...3
 //let ClassifierTestCases = 100...100
 //let ClassifierOutputTestCases = 100...100
 
@@ -47,6 +48,82 @@ final class NutritionLabelClassifierTests: XCTestCase {
             XCTAssertEqual(headers.header1, testCase.header1)
             XCTAssertEqual(headers.header2, testCase.header2)
         }
+    }
+    
+    var testCaseIds: [UUID] {
+        let url = URL.documents
+            .appendingPathComponent("Test Data", isDirectory: true)
+            .appendingPathComponent("Test Cases", isDirectory: true)
+            .appendingPathComponent("With Language Correction", isDirectory: true)
+        let files: [URL]
+        do {
+            files = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        } catch {
+            print("Error getting Test Case Files: \(error)")
+            files = []
+        }
+        return files.compactMap { UUID(uuidString: $0.lastPathComponent.replacingOccurrences(of: ".csv", with: "")) }
+    }
+
+    func testCase(withId id: UUID) throws {
+        print("🧪 Test Case: \(id)")
+        
+        guard let array = arrayOfRecognizedTextsForTestCase(withId: id) else {
+            XCTFail("Couldn't get array of recognized texts for Test Case \(id)")
+            return
+        }
+
+        let output = NutritionLabelClassifier.classify(array)
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+//            print("🧬 Output: \(output)")
+//            print(dataFrameWithObservationIdsRemoved(from: output))
+        
+        /// Extract `expectedNutrients` from data frame
+        guard let expectedDataFrame = dataFrameForTestCase(withId: id, testCaseFileType: .expectedNutrients) else {
+            XCTFail("Couldn't get expected nutrients for Test Case \(id)")
+            return
+        }
+        print("👀 Expected DataFrame for Test Case: \(id)")
+        print(expectedDataFrame)
+        
+        let exepectedOutput = Output(fromExpectedDataFrame: expectedDataFrame)
+        print("We've got it")
+        /// Create `Output` from test case file too
+        /// Now use a specialized function that compares the values between what was generated and what was expected
+        /// If anything that was expected is missing or is incorrect, fail the test
+        /// Decide if we'll be failing tests when we have values in the output that wasn't included in the expected results
+    }
+    
+    func testClassifierUsingZipFile() throws {
+        print(URL.documents)
+        let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
+        let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)
+        
+        /// Remove directory and create it again
+        try FileManager.default.removeItem(at: testDataUrl)
+        try FileManager.default.createDirectory(at: testDataUrl, withIntermediateDirectories: true)
+
+        /// Unzip Test Data contents
+        try Zip.unzipFile(filePath, destination: testDataUrl, overwrite: true, password: nil, progress: { (progress) -> () in
+            print(progress)
+        })
+        
+        /// For each UUID in Test Cases/With Lanugage Correction
+        for testCaseId in testCaseIds {
+            try testCase(withId: testCaseId)
+        }
+        /// Get its associated recognized texts file, and expectations file and feed these to a test function
+
+//        let zipFilePath = documentsFolder.appendingPathComponent("archive.zip")
+//        try Zip.zipFiles([filePath], zipFilePath: zipFilePath, password: "password", progress: { (progress) -> () in
+//            print(progress)
+//        }) //Zip
+//
+//        }
+//        catch {
+//          print("Something went wrong")
+//        }
+        
     }
     
     func testClassifier() throws {
@@ -150,8 +227,9 @@ final class NutritionLabelClassifierTests: XCTestCase {
             }
 
             let output = NutritionLabelClassifier.classify(arrayOfRecognizedTexts)
-//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
 //            print("🧬 Output: \(output)")
+            print(nutrientsDataFrame)
 //            print(dataFrameWithObservationIdsRemoved(from: output))
             
             /// Extract `expectedNutrients` from data frame
@@ -194,6 +272,20 @@ final class NutritionLabelClassifierTests: XCTestCase {
         }
 
         return [recognizedTexts, recognizedTextsWithoutLanugageCorrection]
+    }
+
+    func arrayOfRecognizedTextsForTestCase(withId id: UUID) -> [[RecognizedText]]? {
+        guard let withLC = dataFrameForTestCase(withId: id, testCaseFileType: .input)?.recognizedTexts else {
+            XCTFail("Couldn't read file for Test Case \(id)")
+            return nil
+        }
+
+        guard let withoutLC = dataFrameForTestCase(withId: id, testCaseFileType: .inputWithoutLanguageCorrection)?.recognizedTexts else {
+            XCTFail("Couldn't read file for Test Case \(id)")
+            return nil
+        }
+
+        return [withLC, withoutLC]
     }
 
     func dataFrameWithObservationIdsRemoved(from dataFrame: DataFrame) -> DataFrame {

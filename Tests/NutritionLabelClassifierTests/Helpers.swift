@@ -23,7 +23,33 @@ enum TestCaseFileType: String {
             return "\(testCase)-features"
         }
     }
+    
+    var directoryUrl: URL {
+        let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)
+        let testCasesUrl = testDataUrl.appendingPathComponent("Test Cases", isDirectory: true)
+        switch self {
+        case .input:
+            return testCasesUrl.appendingPathComponent("With Language Correction", isDirectory: true)
+        case .inputWithoutLanguageCorrection:
+            return testCasesUrl.appendingPathComponent("Without Language Correction", isDirectory: true)
+        case .expectedNutrients:
+            return testDataUrl.appendingPathComponent("Expectations", isDirectory: true)
+        default:
+            return URL.documents
+        }
+    }
 }
+
+func dataFrameForTestCase(withId id: UUID, testCaseFileType type: TestCaseFileType = .input) -> DataFrame? {
+    let csvUrl = type.directoryUrl.appendingPathComponent("\(id).csv", isDirectory: false)
+    do {
+        return try DataFrame(contentsOfCSVFile: csvUrl, types: ["double":.double])
+    } catch {
+        print("Error reading CSV: \(error)")
+        return nil
+    }
+}
+
 
 func dataFrameForTestCase(_ testCase: Int, testCaseFileType: TestCaseFileType = .input) -> DataFrame? {
     guard let path = Bundle.module.path(forResource: "\(testCaseFileType.fileName(for: testCase))", ofType: "csv") else {
