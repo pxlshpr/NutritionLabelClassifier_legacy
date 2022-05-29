@@ -22,7 +22,9 @@ extension NutritionLabelClassifierTests {
                 return
             }
 
-            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
+            let classifier = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts)
+            let nutrientsDataFrame = classifier.dataFrameOfNutrients()
+//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
 
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]

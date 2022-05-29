@@ -2,24 +2,36 @@ import Foundation
 import VisionSugar
 import TabularData
 
-public struct NutritionLabelClassifier {
-    public static func classify(_ arrayOfRecognizedTexts: [[RecognizedText]]) -> Output {
-        let dataFrame = dataFrameOfNutrients(from: arrayOfRecognizedTexts)
-        return dataFrame.classifierOutput
+public class NutritionLabelClassifier {
+    
+    var arrayOfRecognizedTexts: [[RecognizedText]]
+    var observations: [Observation] = []
+    
+    init(arrayOfRecognizedTexts: [[RecognizedText]]) {
+        self.arrayOfRecognizedTexts = arrayOfRecognizedTexts
     }
     
-    public static func classify(_ recognizedTexts: [RecognizedText]) -> Output {
-        classify([recognizedTexts])
+    init(recognizedTexts: [RecognizedText]) {
+        self.arrayOfRecognizedTexts = [recognizedTexts]
+    }
+    
+    public static func classify(_ arrayOfRecognizedTexts: [[RecognizedText]]) -> Output {
+        let classifier = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts)
+        return classifier.getObservations()
+    }
+    
+   public static func classify(_ recognizedTexts: [RecognizedText]) -> Output {
+        let classifier = NutritionLabelClassifier(recognizedTexts: recognizedTexts)
+        return classifier.getObservations()
     }
 
-    public static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
-        dataFrameOfNutrients(from: [recognizedTexts])
+    func getObservations() -> Output {
+        dataFrameOfNutrients().classifierOutput
     }
-
-    public static func dataFrameOfNutrients(from arrayOfRecognizedTexts: [[RecognizedText]]) -> DataFrame {
-        var observations: [Observation] = []
+    
+    public func dataFrameOfNutrients() -> DataFrame {
         for recognizedTexts in arrayOfRecognizedTexts {
-            extractNutrientObservations(from: recognizedTexts, into: &observations)
+            observations = NutrientsClassifier.classify(recognizedTexts, into: observations)
         }
 
         /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
@@ -39,7 +51,7 @@ public struct NutritionLabelClassifier {
         
         /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
         
-        return dataFrameOfNutrients(from: observations)
+        return Self.dataFrameOfNutrients(from: observations)
     }
     
     private static func dataFrameOfNutrients(from observations: [Observation]) -> DataFrame {
@@ -47,8 +59,6 @@ public struct NutritionLabelClassifier {
         let labelColumn = Column(name: "attribute", contents: observations.map { $0.attributeText })
         let value1Column = Column(name: "value1", contents: observations.map { $0.valueText1 })
         let value2Column = Column(name: "value2", contents: observations.map { $0.valueText2 })
-//        let column1Id = ColumnID("values1", Value?.self)
-//        let column2Id = ColumnID("values2", Value?.self)
 //
         dataFrame.append(column: labelColumn)
         dataFrame.append(column: value1Column)
