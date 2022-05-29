@@ -79,6 +79,8 @@ public enum Attribute: String, CaseIterable {
     case columnHeader1
     case columnHeader2
 
+    case primaryColumnIndex
+    
     //MARK: Nutrients
     case energy
     
@@ -327,6 +329,8 @@ extension Attribute: CustomStringConvertible {
             return "Column Header 1"
         case .columnHeader2:
             return "Column Header 2"
+        case .primaryColumnIndex:
+            return "Primary Column (1 or 2)"
         case .energy:
             return "Energy"
         case .protein:
