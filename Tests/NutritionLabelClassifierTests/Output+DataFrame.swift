@@ -5,10 +5,15 @@ import TabularData
 
 extension Output {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
-        //TODO: Get primaryColumnIndex
+        var primaryColumnIndex = 0
+        if let row = dataFrame.rowForAttribute(.primaryColumnIndex),
+           let double = row["double"] as? Double
+        {
+            primaryColumnIndex = Int(double)
+        }
         self.init(serving: Serving(fromExpectedDataFrame: dataFrame),
                   nutrients: Nutrients(fromExpectedDataFrame: dataFrame),
-                  primaryColumnIndex: 0)
+                  primaryColumnIndex: primaryColumnIndex)
     }
 }
 
@@ -101,8 +106,55 @@ extension Output.Serving {
     }
 }
 
+extension DataFrame {
+    func rowForAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
+        rows.first(where: {
+            guard let attributeName = $0["attributeString"] as? String,
+                  let attr = Attribute(rawValue: attributeName) else {
+                return false
+            }
+            return attr == attribute
+        })
+    }
+}
 extension Output.Nutrients {
     init(fromExpectedDataFrame dataFrame: DataFrame) {
+        
+        let columnHeader1: IdentifiableColumnHeader?
+        if let row = dataFrame.rowForAttribute(.columnHeader1Type),
+           let typeDouble = row["double"] as? Double,
+           let type = ColumnHeaderType(rawValue: Int(typeDouble))
+        {
+            let sizeName: String?
+            if let row = dataFrame.rowForAttribute(.columnHeader1Size),
+               let string = row["string"] as? String {
+                sizeName = string
+            } else {
+                sizeName = nil
+            }
+            columnHeader1 = IdentifiableColumnHeader(type: type, sizeName: sizeName, id: defaultUUID)
+        } else {
+            columnHeader1 = nil
+        }
+
+        let columnHeader2: IdentifiableColumnHeader?
+        if let row = dataFrame.rowForAttribute(.columnHeader2Type),
+           let typeDouble = row["double"] as? Double,
+           let type = ColumnHeaderType(rawValue: Int(typeDouble))
+        {
+            let sizeName: String?
+            if let row = dataFrame.rowForAttribute(.columnHeader2Size),
+               let string = row["string"] as? String {
+                sizeName = string
+            } else {
+                sizeName = nil
+            }
+            columnHeader2 = IdentifiableColumnHeader(type: type, sizeName: sizeName, id: defaultUUID)
+        } else {
+            columnHeader2 = nil
+        }
+
+        /// Rows
         var nutrientRows: [Row] = []
         for row in dataFrame.rows {
             guard let attributeName = row["attributeString"] as? String,
@@ -147,8 +199,8 @@ extension Output.Nutrients {
         }
 
         self.init(
-            identifiableColumnHeader1: nil,
-            identifiableColumnHeader2: nil,
+            identifiableColumnHeader1: columnHeader1,
+            identifiableColumnHeader2: columnHeader2,
             rows: nutrientRows
         )
     }
