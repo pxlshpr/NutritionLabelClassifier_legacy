@@ -5,19 +5,24 @@ import CoreText
 import Foundation
 
 struct Observation {
-    var attributeWithId: AttributeWithId
-    var valueWithId1: ValueWithId?
-    var valueWithId2: ValueWithId?
-    
 //    var attributeWithId: AttributeWithId
-
+    var identifiableAttribute: IdentifiableAttribute
+    var identifiableValue1: IdentifiableValue?
+    var identifiableValue2: IdentifiableValue?
+//    var valueWithId1: ValueWithId?
+//    var valueWithId2: ValueWithId?
 }
 
-public typealias AttributeWithId = (attribute: Attribute, observationId: UUID)
-public typealias ValueWithId = (value: Value, observationId: UUID)
+struct ProcessArtefactsResult {
+    var rows: [Observation]
+    var rowBeingExtracted: Observation?
+}
+//public typealias ValueWithId = (value: Value, observationId: UUID)
+
+//public typealias AttributeWithId = (attribute: Attribute, observationId: UUID)
 //public typealias Observation = (attributeWithId: AttributeWithId, valueWithId1: ValueWithId?, valueWithId2: ValueWithId?)
 
-typealias ProcessArtefactsResult = (rows: [Observation], rowBeingExtracted: Observation?)
+//typealias ProcessArtefactsResult = (rows: [Observation], rowBeingExtracted: Observation?)
 
 extension NutritionLabelClassifier {
 
@@ -43,7 +48,8 @@ extension NutritionLabelClassifier {
         let id = recognizedText.id
 
         var rows: [Observation] = []
-        var attributeBeingExtractedWithId: AttributeWithId? = nil
+        var identifiableAttributeBeingExtracted: IdentifiableAttribute? = nil
+//        var attributeBeingExtractedWithId: AttributeWithId? = nil
         var value1BeingExtracted: Value? = nil
         
         var ignoreNextValueDueToPerPreposition = false
@@ -52,14 +58,17 @@ extension NutritionLabelClassifier {
             let artefact = artefacts[i]
             if let extractedAttribute = artefact.attribute {
                 /// if we're in the process of extracting a value, save it as a row
-                if let attributeBeingExtracted = attributeBeingExtractedWithId, let valueBeingExtracted = value1BeingExtracted {
-                    rows.append(Observation(attributeWithId: attributeBeingExtracted, valueWithId1: (valueBeingExtracted, id), valueWithId2: nil))
+                if let attributeBeingExtracted = identifiableAttributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
+                    rows.append(Observation(identifiableAttribute: attributeBeingExtracted,
+                                            identifiableValue1: IdentifiableValue(value: valueBeingExtracted, id: id),
+                                            identifiableValue2: nil))
 //                    rows.append((attributeBeingExtracted, (valueBeingExtracted, id), nil))
                     value1BeingExtracted = nil
                 }
-                attributeBeingExtractedWithId = (extractedAttribute, recognizedText.id)
+                identifiableAttributeBeingExtracted = IdentifiableAttribute(attribute: extractedAttribute, id: recognizedText.id)
+//                attributeBeingExtractedWithId = (extractedAttribute, recognizedText.id)
                 
-            } else if let value = artefact.value, let attributeWithId = attributeBeingExtractedWithId {
+            } else if let value = artefact.value, let attributeWithId = identifiableAttributeBeingExtracted {
                 
                 var unit = value.unit
                 var value = value
@@ -95,11 +104,11 @@ extension NutritionLabelClassifier {
                             continue
                         }
                     }
-                    rows.append(Observation(attributeWithId: attributeWithId,
-                                            valueWithId1: (value1, id),
-                                            valueWithId2: (value, id)))
+                    rows.append(Observation(identifiableAttribute: attributeWithId,
+                                            identifiableValue1: IdentifiableValue(value: value1, id: id),
+                                            identifiableValue2: IdentifiableValue(value: value, id: id)))
 //                    rows.append((attributeWithId, (value1, id), (value, id)))
-                    attributeBeingExtractedWithId = nil
+                    identifiableAttributeBeingExtracted = nil
                     value1BeingExtracted = nil
                 } else {
                     /// Before setting this as the first value, check that the attribute supports the unit, and that we don't have the RI (required intake) preposition immediately following it
@@ -127,12 +136,12 @@ extension NutritionLabelClassifier {
                     
                     /// If the attribute doesn't support multiple units (such as `servingsPerContainerAmount`), add the row and clear the variables now
                     if !attributeWithId.attribute.supportsMultipleColumns {
-                        rows.append(Observation(attributeWithId: attributeWithId,
-                                                valueWithId1: (value, id),
-                                                valueWithId2: nil))
+                        rows.append(Observation(identifiableAttribute: attributeWithId,
+                                                identifiableValue1: IdentifiableValue(value: value, id: id),
+                                                identifiableValue2: nil))
 //                        rows.append((attributeWithId, (value, id), nil))
                         value1BeingExtracted = nil
-                        attributeBeingExtractedWithId = nil
+                        identifiableAttributeBeingExtracted = nil
                     }
                 }
             } else if let preposition = artefact.preposition {
@@ -142,28 +151,50 @@ extension NutritionLabelClassifier {
             }
         }
         
-        if let attributeBeingExtracted = attributeBeingExtractedWithId {
+        if let attributeBeingExtracted = identifiableAttributeBeingExtracted {
             if let value1BeingExtracted = value1BeingExtracted {
-                return (rows, Observation(attributeWithId: attributeBeingExtracted,
-                                          valueWithId1: (value1BeingExtracted, id),
-                                          valueWithId2: nil))
+                return ProcessArtefactsResult(
+                    rows: rows,
+                    rowBeingExtracted: Observation(identifiableAttribute: attributeBeingExtracted,
+                                                   identifiableValue1: IdentifiableValue(value: value1BeingExtracted, id: id),
+                                                   identifiableValue2: nil)
+                )
+//                return (rows, Observation(identifiableAttribute: attributeBeingExtracted,
+//                                          identifiableValue1: IdentifiableValue(value: value1BeingExtracted, id: id),
+//                                          identifiableValue2: nil))
 //                return (rows, (attributeBeingExtracted, (value1BeingExtracted, id), nil))
             } else {
                 if attributeBeingExtracted.attribute.supportsPrecedingValue,
                    let value = artefacts.valuePreceding(attributeBeingExtracted.attribute) {
-                    return (rows, Observation(attributeWithId: attributeBeingExtracted,
-                                              valueWithId1: (value, id),
-                                              valueWithId2: nil))
+                    return ProcessArtefactsResult(
+                        rows: rows,
+                        rowBeingExtracted: Observation(identifiableAttribute: attributeBeingExtracted,
+                                                       identifiableValue1: IdentifiableValue(value: value, id: id),
+                                                       identifiableValue2: nil)
+                    )
+//                    return (rows, Observation(identifiableAttribute: attributeBeingExtracted,
+//                                              identifiableValue1: IdentifiableValue(value: value, id: id),
+//                                              identifiableValue2: nil))
 //                    return (rows, (attributeBeingExtracted, (value, id), nil))
                 } else {
-                    return (rows, Observation(attributeWithId: attributeBeingExtracted,
-                                              valueWithId1: nil,
-                                              valueWithId2: nil))
+                    return ProcessArtefactsResult(
+                        rows: rows,
+                        rowBeingExtracted: Observation(identifiableAttribute: attributeBeingExtracted,
+                                                       identifiableValue1: nil,
+                                                       identifiableValue2: nil)
+                    )
+//                    return (rows, Observation(identifiableAttribute: attributeBeingExtracted,
+//                                              identifiableValue1: nil,
+//                                              identifiableValue2: nil))
 //                    return (rows, (attributeBeingExtracted, nil, nil))
                 }
             }
         } else {
-            return (rows, nil)
+            return ProcessArtefactsResult(
+                rows: rows,
+                rowBeingExtracted: nil
+            )
+//            return (rows, nil)
         }
         /// Get the artefacts
         /// For each artefact
@@ -187,14 +218,14 @@ extension NutritionLabelClassifier {
     static func extract(_ row: inout Observation, from recognizedText: RecognizedText, extractedRows: [Observation]) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
-        for artefact in recognizedText.getArtefacts(for: row.attributeWithId.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
+        for artefact in recognizedText.getArtefacts(for: row.identifiableAttribute.attribute, rowBeingExtracted: row, extractedRows: extractedRows) {
             if let value = artefact.value {
                 
                 /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
                 var unit = value.unit
                 var value = value
                 if unit == nil {
-                    guard let defaultUnit = row.attributeWithId.attribute.defaultUnit else {
+                    guard let defaultUnit = row.identifiableAttribute.attribute.defaultUnit else {
                         continue
                     }
                     value = Value(amount: value.amount, unit: defaultUnit)
@@ -202,17 +233,17 @@ extension NutritionLabelClassifier {
                 }
                 guard let unit = unit else { continue }
                 
-                if let value1 = row.valueWithId1 {
+                if let value1 = row.identifiableValue1 {
                     guard let unit1 = value1.value.unit, unit == unit1 else {
                         continue
                     }
-                    row.valueWithId2 = (value, recognizedText.id)
+                    row.identifiableValue2 = IdentifiableValue(value: value, id: recognizedText.id)
 //                    row.value2 = value
                     didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the row
                     return (didExtract: didExtract, shouldContinue: false)
-                } else if row.attributeWithId.attribute.supportsUnit(unit) {
-                    row.valueWithId1 = (value, recognizedText.id)
+                } else if row.identifiableAttribute.attribute.supportsUnit(unit) {
+                    row.identifiableValue1 = IdentifiableValue(value: value, id: recognizedText.id)
 //                    row.value1 = value
                     didExtract = true
                 }
@@ -259,8 +290,8 @@ extension NutritionLabelClassifier {
         if rows.hasTwoColumnsOfValues {
             for index in rows.indices {
                 let row = rows[index]
-                if row.valueWithId2 == nil, let value1 = row.valueWithId1, value1.value.amount == 0 {
-                    rows[index].valueWithId2 = value1
+                if row.identifiableValue2 == nil, let value1 = row.identifiableValue1, value1.value.amount == 0 {
+                    rows[index].identifiableValue2 = value1
                 }
             }
         }
@@ -272,9 +303,9 @@ extension NutritionLabelClassifier {
     
     private static func dataFrameOfNutrients(from rows: [Observation]) -> DataFrame {
         var dataFrame = DataFrame()
-        let labelColumn = Column(name: "attribute", contents: rows.map { $0.attributeWithId })
-        let value1Column = Column(name: "value1", contents: rows.map { $0.valueWithId1 })
-        let value2Column = Column(name: "value2", contents: rows.map { $0.valueWithId2 })
+        let labelColumn = Column(name: "attribute", contents: rows.map { $0.identifiableAttribute })
+        let value1Column = Column(name: "value1", contents: rows.map { $0.identifiableValue1 })
+        let value2Column = Column(name: "value2", contents: rows.map { $0.identifiableValue2 })
 //        let column1Id = ColumnID("values1", Value?.self)
 //        let column2Id = ColumnID("values2", Value?.self)
 //
@@ -291,7 +322,11 @@ extension NutritionLabelClassifier {
     private static func processArtefactsOf(_ recognizedText: RecognizedText, byJoiningWithNextInlineRecognizedTextIn recognizedTexts: [RecognizedText], rows: [Observation], ignoring discarded: [RecognizedText]) ->  ProcessArtefactsResult
     {
         guard let nextRecognizedText = recognizedTexts.inlineTextColumns(as: recognizedText).first?.first else {
-            return (rows: rows, rowBeingExtracted: nil)
+            return ProcessArtefactsResult(
+                rows: rows,
+                rowBeingExtracted: nil
+            )
+//            return (rows: rows, rowBeingExtracted: nil)
         }
         let combinedRecognizedText = RecognizedText(
             id: nextRecognizedText.id,
@@ -320,7 +355,7 @@ extension NutritionLabelClassifier {
             /// Process any attributes that were extracted
             for row in result.rows {
                 /// Only add attributes that haven't already been added
-                if !rows.contains(where: { $0.attributeWithId.attribute == row.attributeWithId.attribute }) {
+                if !rows.contains(where: { $0.identifiableAttribute.attribute == row.identifiableAttribute.attribute }) {
                     rows.append(row)
                 }
             }
@@ -329,14 +364,14 @@ extension NutritionLabelClassifier {
             if let row = result.rowBeingExtracted {
                 
                 /// If we have a value1 for this row, make sure we add the recognized text it was added from to the discarded list before checking the inline ones
-                if let value1Id = row.valueWithId1?.observationId,
+                if let value1Id = row.identifiableValue1?.id,
                     let recognizedTextForValue1 = recognizedTexts.first(where: { $0.id == value1Id })
                 {
                     discarded.append(recognizedTextForValue1)
                 }
                 
                 /// Skip attributes that have already been added
-                guard !rows.contains(where: { $0.attributeWithId.attribute == row.attributeWithId.attribute }) else {
+                guard !rows.contains(where: { $0.identifiableAttribute.attribute == row.identifiableAttribute.attribute }) else {
                     continue
                 }
 
@@ -344,7 +379,7 @@ extension NutritionLabelClassifier {
                 let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
                 for column in inlineTextColumns {
                     
-                    guard let inlineText = pickInlineText(fromColumn: column, for: row.attributeWithId.attribute) else { continue }
+                    guard let inlineText = pickInlineText(fromColumn: column, for: row.identifiableAttribute.attribute) else { continue }
                     
                     let result = extract(&rowBeingExtracted, from: inlineText, extractedRows: rows)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
@@ -360,7 +395,7 @@ extension NutritionLabelClassifier {
                 }
                 
                 /// After going through all inline texts and not completing the row, add this (possibly incomplete one)
-                guard rowBeingExtracted.valueWithId1 != nil || rowBeingExtracted.valueWithId2 != nil else {
+                guard rowBeingExtracted.identifiableValue1 != nil || rowBeingExtracted.identifiableValue2 != nil else {
                     continue
                 }
                 rows.append(rowBeingExtracted)
@@ -399,7 +434,7 @@ extension NutritionLabelClassifier {
 extension Array where Element == Observation {
     var hasTwoColumnsOfValues: Bool {
         for row in self {
-            if row.valueWithId2 != nil {
+            if row.identifiableValue2 != nil {
                 return true
             }
         }
@@ -409,7 +444,7 @@ extension Array where Element == Observation {
     var percentageOfNilValue2: Double {
         var numberOfNilValue2s = 0.0
         for row in self {
-            if row.valueWithId2 == nil {
+            if row.identifiableValue2 == nil {
                 numberOfNilValue2s += 1
             }
         }
@@ -419,7 +454,7 @@ extension Array where Element == Observation {
     var clearingValue2: [Observation] {
         var rows = self
         for index in rows.indices {
-            rows[index].valueWithId2 = nil
+            rows[index].identifiableValue2 = nil
         }
         return rows
     }

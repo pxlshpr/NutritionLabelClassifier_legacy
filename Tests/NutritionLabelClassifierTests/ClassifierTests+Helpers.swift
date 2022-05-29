@@ -107,10 +107,10 @@ extension NutritionLabelClassifierTests {
 
     func dataFrameWithObservationIdsRemoved(from dataFrame: DataFrame) -> DataFrame {
         var newDataFrame = dataFrame
-        newDataFrame.transformColumn("value1") { (valueWithId: ValueWithId?) -> Value? in
+        newDataFrame.transformColumn("value1") { (valueWithId: IdentifiableValue?) -> Value? in
             return valueWithId?.value
         }
-        newDataFrame.transformColumn("value2") { (valueWithId: ValueWithId?) -> Value? in
+        newDataFrame.transformColumn("value2") { (valueWithId: IdentifiableValue?) -> Value? in
             return valueWithId?.value
         }
         return newDataFrame

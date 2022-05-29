@@ -12,25 +12,25 @@ extension NutritionLabelClassifier {
 extension DataFrame {
     func rowForObservedAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let attributeWithId = $0["attribute"] as? AttributeWithId else {
+            guard let attributeWithId = $0["attribute"] as? IdentifiableAttribute else {
                 return false
             }
             return attributeWithId.attribute == attribute
         })
     }
 
-    func value1WithIdForAttribute(_ attribute: Attribute) -> ValueWithId? {
+    func identifiableValue1ForAttribute(_ attribute: Attribute) -> IdentifiableValue? {
         guard let row = rowForObservedAttribute(attribute) else {
             return nil
         }
-        return row["value1"] as? ValueWithId
+        return row["value1"] as? IdentifiableValue
     }
     
-    func value2WithIdForAttribute(_ attribute: Attribute) -> ValueWithId? {
+    func identifiableValue2ForAttribute(_ attribute: Attribute) -> IdentifiableValue? {
         guard let row = rowForObservedAttribute(attribute) else {
             return nil
         }
-        return row["value2"] as? ValueWithId
+        return row["value2"] as? IdentifiableValue
     }
 }
 
@@ -39,9 +39,9 @@ extension DataFrame {
     var classifierOutput: Output {
         
         let rows: [Output.Nutrients.Row] = rows.compactMap { row in
-            guard let attributeWithIdRow = row["attribute"] as? AttributeWithId,
-                  let valueWithId1Row = row["value1"] as? ValueWithId?,
-                  let valueWithId2Row = row["value2"] as? ValueWithId? else {
+            guard let attributeWithIdRow = row["attribute"] as? IdentifiableAttribute,
+                  let valueWithId1Row = row["value1"] as? IdentifiableValue?,
+                  let valueWithId2Row = row["value2"] as? IdentifiableValue? else {
                 return nil
             }
             
@@ -51,13 +51,13 @@ extension DataFrame {
             
             let attributeWithId = IdentifiableAttribute(
                 attribute: attributeWithIdRow.attribute,
-                id: attributeWithIdRow.observationId
+                id: attributeWithIdRow.id
             )
             let value1WithId: IdentifiableValue?
             if let valueWithId = valueWithId1Row {
                 value1WithId = IdentifiableValue(
                     value: valueWithId.value,
-                    id: valueWithId.observationId
+                    id: valueWithId.id
                 )
             } else {
                 value1WithId = nil
@@ -67,7 +67,7 @@ extension DataFrame {
             if let valueWithId = valueWithId2Row {
                 value2WithId = IdentifiableValue(
                     value: valueWithId.value,
-                    id: valueWithId.observationId
+                    id: valueWithId.id
                 )
             } else {
                 value2WithId = nil
@@ -86,7 +86,7 @@ extension DataFrame {
             rows: rows.filter { $0.identifiableAttribute.attribute.isNutrient })
 
         let perContainer: Output.Serving.PerContainer?
-        if let valueWithId = value1WithIdForAttribute(.servingsPerContainerAmount) {
+        if let valueWithId = identifiableValue1ForAttribute(.servingsPerContainerAmount) {
             perContainer = Output.Serving.PerContainer(
                 identifiableAmount: Output.IdentifiableDouble(valueWithId),
                 identifiableName: nil)
@@ -95,10 +95,10 @@ extension DataFrame {
         }
         
         let serving: Output.Serving?
-        if let value1WithId = value1WithIdForAttribute(.servingAmount) {
+        if let value1WithId = identifiableValue1ForAttribute(.servingAmount) {
             
             let equivalentSize: Output.Serving.EquivalentSize?
-            if let value2WithId = value2WithIdForAttribute(.servingAmount) {
+            if let value2WithId = identifiableValue2ForAttribute(.servingAmount) {
                 equivalentSize = Output.Serving.EquivalentSize(
                     identifiableAmount: Output.IdentifiableDouble(value2WithId),
                     identifiableUnit: Output.IdentifiableUnit(value2WithId),
@@ -125,18 +125,18 @@ extension DataFrame {
 }
 
 extension Output.IdentifiableDouble {
-    init(_ valueWithId: ValueWithId) {
+    init(_ valueWithId: IdentifiableValue) {
         self.double = valueWithId.value.amount
-        self.id = valueWithId.observationId
+        self.id = valueWithId.id
     }
 }
 
 extension Output.IdentifiableUnit {
-    init?(_ valueWithId: ValueWithId) {
+    init?(_ valueWithId: IdentifiableValue) {
         guard let unit = valueWithId.value.unit else {
             return nil
         }
         self.nutritionUnit = unit
-        self.id = valueWithId.observationId
+        self.id = valueWithId.id
     }
 }

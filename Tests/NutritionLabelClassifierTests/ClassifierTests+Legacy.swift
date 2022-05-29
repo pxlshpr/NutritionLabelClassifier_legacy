@@ -27,9 +27,9 @@ extension NutritionLabelClassifierTests {
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in nutrientsDataFrame.rows {
-                guard let attributeWithId = row["attribute"] as? AttributeWithId,
-                      let valueWithId1 = row["value1"] as? ValueWithId?,
-                      let valueWithId2 = row["value2"] as? ValueWithId?
+                guard let attributeWithId = row["attribute"] as? IdentifiableAttribute,
+                      let valueWithId1 = row["value1"] as? IdentifiableValue?,
+                      let valueWithId2 = row["value2"] as? IdentifiableValue?
                 else {
                     XCTFail("Failed to get a processed nutrient for \(testCase)")
                     return
