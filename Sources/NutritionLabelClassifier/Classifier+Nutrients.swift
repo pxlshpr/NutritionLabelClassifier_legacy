@@ -294,5 +294,40 @@ extension NutritionLabelClassifier {
         return processArtefacts(of: combinedRecognizedText, from: recognizedTexts, ignoring: discarded)
     }
     
-
+    static func haveTwoInlineValues(for recognizedText: RecognizedText, in recognizedTexts: [RecognizedText], forAttribute attribute: Attribute, ignoring discarded: [RecognizedText]) -> Bool {
+        let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
+        var inlineValueCount = 0
+        for column in inlineTextColumns {
+            guard let inlineText = pickInlineText(fromColumn: column, for: attribute) else { continue }
+            if inlineText.artefacts.contains(where: { $0.value != nil }) {
+                inlineValueCount += 1
+            }
+        }
+        return inlineValueCount > 1
+    }
+    static func pickInlineText(fromColumn column: [RecognizedText], for attribute: Attribute) -> RecognizedText? {
+        
+        /// **Heuristic** In order to account for slightly curved labels that may pick up both a `kJ` and `kcal` `Value` when looking for energy—always pick the `kJ` one (as its larger in value) regardless of how far away it is from the observation (as the curvature can sometimes skew this)
+        if column.contains(where: { Value(fromString: $0.string)?.unit == .kcal }),
+           column.contains(where: { Value(fromString: $0.string)?.unit == .kj }) {
+            return column.first(where: { Value(fromString: $0.string)?.unit == .kj })
+        }
+        
+        /// **Heuristic** Remove any texts that contain no artefacts before returning the closest one, if we have more than 1 in a column (see Test Case 22 for how `Alimentaires` and `1.5 g` fall in the same column, with the former overlapping with `Protein` more, and thus `1.5 g` getting ignored
+        var column = column.filter {
+            $0.artefacts.count > 0
+//            Value(fromString: $0.string) != nil
+        }
+        
+        /// **Heuristic** Remove any values that aren't supported by the attribute we're extracting
+        column = column.filter {
+            if let unit = Value(fromString: $0.string)?.unit {
+                return attribute.supportsUnit(unit)
+            }
+            return true
+        }
+        
+        /// As the defaul fall-back, return the first text (ie. the one closest to the observation we're extracted)
+        return column.first
+    }
 }

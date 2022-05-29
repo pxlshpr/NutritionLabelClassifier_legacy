@@ -7,122 +7,56 @@ extension NutritionLabelClassifier {
         let dataFrame = dataFrameOfNutrients(from: arrayOfRecognizedTexts)
         return dataFrame.classifierOutput
     }
-}
-
-extension DataFrame {
-    func rowForObservedAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
-        rows.first(where: {
-            guard let attributeWithId = $0["attribute"] as? IdentifiableAttribute else {
-                return false
-            }
-            return attributeWithId.attribute == attribute
-        })
+    
+    public static func classify(_ recognizedTexts: [RecognizedText]) -> Output {
+        classify([recognizedTexts])
     }
 
-    func identifiableValue1ForAttribute(_ attribute: Attribute) -> IdentifiableValue? {
-        guard let row = rowForObservedAttribute(attribute) else {
-            return nil
+    public static func dataFrameOfNutrients(from recognizedTexts: [RecognizedText]) -> DataFrame {
+        dataFrameOfNutrients(from: [recognizedTexts])
+    }
+
+    public static func dataFrameOfNutrients(from arrayOfRecognizedTexts: [[RecognizedText]]) -> DataFrame {
+        var observations: [Observation] = []
+        for recognizedTexts in arrayOfRecognizedTexts {
+            extractNutrientObservations(from: recognizedTexts, into: &observations)
         }
-        return row["value1"] as? IdentifiableValue
+
+        /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
+        if observations.percentageOfNilValue2 > 0.5 {
+            observations = observations.clearingValue2
+        }
+
+        /// **Heuristic** If we have two values worth of data and any of the cells are missing where one value is 0, simply copy that across
+        if observations.hasTwoColumnsOfValues {
+            for index in observations.indices {
+                let observation = observations[index]
+                if observation.identifiableValue2 == nil, let value1 = observation.identifiableValue1, value1.value.amount == 0 {
+                    observations[index].identifiableValue2 = value1
+                }
+            }
+        }
+        
+        /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
+        
+        return dataFrameOfNutrients(from: observations)
     }
     
-    func identifiableValue2ForAttribute(_ attribute: Attribute) -> IdentifiableValue? {
-        guard let row = rowForObservedAttribute(attribute) else {
-            return nil
-        }
-        return row["value2"] as? IdentifiableValue
+    private static func dataFrameOfNutrients(from observations: [Observation]) -> DataFrame {
+        var dataFrame = DataFrame()
+        let labelColumn = Column(name: "attribute", contents: observations.map { $0.identifiableAttribute })
+        let value1Column = Column(name: "value1", contents: observations.map { $0.identifiableValue1 })
+        let value2Column = Column(name: "value2", contents: observations.map { $0.identifiableValue2 })
+//        let column1Id = ColumnID("values1", Value?.self)
+//        let column2Id = ColumnID("values2", Value?.self)
+//
+        dataFrame.append(column: labelColumn)
+        dataFrame.append(column: value1Column)
+        dataFrame.append(column: value2Column)
+        return dataFrame
     }
 }
 
-extension DataFrame {
-    
-    var classifierOutput: Output {
-        
-        let rows: [Output.Nutrients.Row] = rows.compactMap { row in
-            guard let attributeWithIdRow = row["attribute"] as? IdentifiableAttribute,
-                  let valueWithId1Row = row["value1"] as? IdentifiableValue?,
-                  let valueWithId2Row = row["value2"] as? IdentifiableValue? else {
-                return nil
-            }
-            
-            guard valueWithId1Row != nil || valueWithId2Row != nil else {
-                return nil
-            }
-            
-            let attributeWithId = IdentifiableAttribute(
-                attribute: attributeWithIdRow.attribute,
-                id: attributeWithIdRow.id
-            )
-            let value1WithId: IdentifiableValue?
-            if let valueWithId = valueWithId1Row {
-                value1WithId = IdentifiableValue(
-                    value: valueWithId.value,
-                    id: valueWithId.id
-                )
-            } else {
-                value1WithId = nil
-            }
-
-            let value2WithId: IdentifiableValue?
-            if let valueWithId = valueWithId2Row {
-                value2WithId = IdentifiableValue(
-                    value: valueWithId.value,
-                    id: valueWithId.id
-                )
-            } else {
-                value2WithId = nil
-            }
-
-            return Output.Nutrients.Row(
-                identifiableAttribute: attributeWithId,
-                identifiableValue1: value1WithId,
-                identifiableValue2: value2WithId
-            )
-        }
-
-        let nutrients = Output.Nutrients(
-            identifiableColumnHeader1: nil,
-            identifiableColumnHeader2: nil,
-            rows: rows.filter { $0.identifiableAttribute.attribute.isNutrient })
-
-        let perContainer: Output.Serving.PerContainer?
-        if let valueWithId = identifiableValue1ForAttribute(.servingsPerContainerAmount) {
-            perContainer = Output.Serving.PerContainer(
-                identifiableAmount: Output.IdentifiableDouble(valueWithId),
-                identifiableName: nil)
-        } else {
-            perContainer = nil
-        }
-        
-        let serving: Output.Serving?
-        if let value1WithId = identifiableValue1ForAttribute(.servingAmount) {
-            
-            let equivalentSize: Output.Serving.EquivalentSize?
-            if let value2WithId = identifiableValue2ForAttribute(.servingAmount) {
-                equivalentSize = Output.Serving.EquivalentSize(
-                    identifiableAmount: Output.IdentifiableDouble(value2WithId),
-                    identifiableUnit: Output.IdentifiableUnit(value2WithId),
-                    identifiableUnitSizeName: nil
-                )
-            } else {
-                equivalentSize = nil
-            }
-            
-            serving = Output.Serving(
-                identifiableAmount: Output.IdentifiableDouble(value1WithId),
-                identifiableUnit: Output.IdentifiableUnit(value1WithId),
-                identifiableUnitSizeName: nil,
-                equivalentSize: equivalentSize,
-                perContainer: perContainer
-            )
-        } else {
-            serving = nil
-        }
-           
-        
-        return Output(serving: serving, nutrients: nutrients, primaryColumnIndex: 0)
-    }
-}
 
 extension Output.IdentifiableDouble {
     init(_ valueWithId: IdentifiableValue) {
