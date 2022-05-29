@@ -47,24 +47,21 @@ final class NutritionLabelClassifierTests: XCTestCase {
             return
         }
 
-        let output = NutritionLabelClassifier.classify(array)
-//            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
-//            print("🧬 Output: \(output)")
-//            print(dataFrameWithObservationIdsRemoved(from: output))
+        let classifierOutput = NutritionLabelClassifier.classify(array)
         
         /// Extract `expectedNutrients` from data frame
         guard let expectedDataFrame = dataFrameForTestCase(withId: id, testCaseFileType: .expectedNutrients) else {
             XCTFail("Couldn't get expected nutrients for Test Case \(id)")
             return
         }
-        print("👀 Expected DataFrame for Test Case: \(id)")
-        print(expectedDataFrame)
         
-        let exepectedOutput = Output(fromExpectedDataFrame: expectedDataFrame)
-        print("We've got it")
         /// Create `Output` from test case file too
+        guard let expectedOutput = Output(fromExpectedDataFrame: expectedDataFrame) else {
+            XCTFail("Couldn't create expected Output from DataFrame for Test Case \(id)")
+            return
+        }
+        
         /// Now use a specialized function that compares the values between what was generated and what was expected
-        /// If anything that was expected is missing or is incorrect, fail the test
-        /// Decide if we'll be failing tests when we have values in the output that wasn't included in the expected results
+        compare(classifierOutput: classifierOutput, withExpectedOutput: expectedOutput)
     }
 }

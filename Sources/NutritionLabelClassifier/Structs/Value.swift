@@ -87,7 +87,7 @@ extension Value: Hashable {
 extension Value: CustomStringConvertible {
     public var description: String {
         if let unit = unit {
-            return "\(amount) \(unit.rawValue)"
+            return "\(amount) \(unit.description)"
         } else {
             return "\(amount)"
         }
