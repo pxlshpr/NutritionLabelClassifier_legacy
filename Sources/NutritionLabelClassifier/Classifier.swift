@@ -2,7 +2,7 @@ import Foundation
 import VisionSugar
 import TabularData
 
-extension NutritionLabelClassifier {
+public struct NutritionLabelClassifier {
     public static func classify(_ arrayOfRecognizedTexts: [[RecognizedText]]) -> Output {
         let dataFrame = dataFrameOfNutrients(from: arrayOfRecognizedTexts)
         return dataFrame.classifierOutput

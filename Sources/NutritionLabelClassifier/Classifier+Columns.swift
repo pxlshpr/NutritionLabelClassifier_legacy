@@ -2,7 +2,7 @@ import SwiftSugar
 import TabularData
 import VisionSugar
 
-public struct NutritionLabelClassifier {
+extension NutritionLabelClassifier {
     public struct Regex {
         static let containsTwoKcalValues = #"(?:^.*[^0-9.]+|^)([0-9.]+)[ ]*kcal.*[^0-9.]+([0-9.]+)[ ]*kcal.*$"#
         static let containsTwoKjValues = #"(?:^.*[^0-9.]+|^)([0-9.]+)[ ]*kj.*[^0-9.]+([0-9.]+)[ ]*kj.*$"#
