@@ -6,7 +6,7 @@ extension RecognizedText {
         getArtefacts()
     }
     
-    func getArtefacts(for attribute: Attribute? = nil, rowBeingExtracted: Observation? = nil, extractedRows: [Observation] = []) -> [Artefact] {
+    func getArtefacts(for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [Artefact] {
         var arrays: [[Artefact]] = []
         for candidate in candidates {
             arrays.append(artefacts(for: candidate))
@@ -16,7 +16,7 @@ extension RecognizedText {
             return selection
         }
         
-        if let selection = heuristicSelectionOfValidValueForChildAttribute(from: arrays, for: attribute, rowBeingExtracted: rowBeingExtracted, extractedRows: extractedRows) {
+        if let selection = heuristicSelectionOfValidValueForChildAttribute(from: arrays, for: attribute, observationBeingExtracted: observationBeingExtracted, extractedObservations: extractedObservations) {
             return selection
         }
         
@@ -82,24 +82,24 @@ extension RecognizedText {
      
         For example: if VisionKit misreads `1.4g` as `11.4g` for `.saturatedFat`, and submits both strings as candidates, and we happen to have `.fat` set as `2.2g`—we would choose `1.4g` over `11.4g`
      */
-    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[Artefact]], for attribute: Attribute? = nil, rowBeingExtracted: Observation? = nil, extractedRows: [Observation] = []) -> [Artefact]?
+    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[Artefact]], for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [Artefact]?
     {
         guard arrays.count > 1 else { return nil }
         
         /// Make sure we have an attribute provided, and that it does have a parent attribute for which we have already extracted a row first.
         guard let attribute = attribute,
               let parentAttribute = attribute.parentAttribute,
-              let parentRow = extractedRows.first(where: { $0.identifiableAttribute.attribute == parentAttribute })
+              let parentObservation = extractedObservations.first(where: { $0.identifiableAttribute.attribute == parentAttribute })
         else {
             return nil
         }
         
         /// Grab the respective `Value` of the parent `Row` based on what we're currently grabbing (as comparisons across rows make no sense).
         let parentValue: Value?
-        if rowBeingExtracted?.identifiableValue1 != nil {
-            parentValue = parentRow.identifiableValue2?.value
+        if observationBeingExtracted?.identifiableValue1 != nil {
+            parentValue = parentObservation.identifiableValue2?.value
         } else {
-            parentValue = parentRow.identifiableValue1?.value
+            parentValue = parentObservation.identifiableValue1?.value
         }
         guard let parentValue = parentValue else { return nil }
 
