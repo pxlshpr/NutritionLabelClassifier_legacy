@@ -10,10 +10,50 @@ public enum Attribute: String, CaseIterable {
     case servingEquivalentAmount       /// Double
     case servingEquivalentUnit        /// NutritionUnit
     case servingEquivalentUnitSize    /// String
+
+    case servingsPerContainerAmount
+    case servingsPerContainerName
+
+    /// String where `100g` indicates Per 100 g, Otherwise
+    case columnHeader1Type
+    case columnHeader1Size
+    case columnHeader2Type
+    case columnHeader2Size
+
+    case primaryColumnIndex
+    
+    //MARK: Nutrients
+    case energy
+    
+    case protein
+    
+    case carbohydrate
+    case dietaryFibre
+    case gluten
+    case sugar
+    case starch
+    
+    case fat
+    case saturatedFat
+    case polyunsaturatedFat
+    case monounsaturatedFat
+    case transFat
+    case cholesterol
+    
+    case salt
+    case sodium
+    case calcium
+    case iron
+    case potassium
+    
+    case vitaminA
+    case vitaminC
+    case vitaminD
+    
     
     public var isColumnAttribute: Bool {
         switch self {
-        case .columnHeader1, .columnHeader2:
+        case .columnHeader1Type, .columnHeader2Type:
             return true
         default:
             return false
@@ -68,46 +108,6 @@ public enum Attribute: String, CaseIterable {
         !isColumnAttribute && !isServingAttribute && !isIrrelevant
     }
 
-//    case servingSizeVolume
-//    case servingSizeWeight
-//    case servingSizeDescriptive
-    
-    case servingsPerContainerAmount
-    case servingsPerContainerName
-
-    /// String where `100g` indicates Per 100 g, Otherwise
-    case columnHeader1
-    case columnHeader2
-
-    case primaryColumnIndex
-    
-    //MARK: Nutrients
-    case energy
-    
-    case protein
-    
-    case carbohydrate
-    case dietaryFibre
-    case gluten
-    case sugar
-    case starch
-    
-    case fat
-    case saturatedFat
-    case polyunsaturatedFat
-    case monounsaturatedFat
-    case transFat
-    case cholesterol
-    
-    case salt
-    case sodium
-    case calcium
-    case iron
-    case potassium
-    
-    case vitaminA
-    case vitaminC
-    case vitaminD
     
     var parentAttribute: Attribute? {
         switch self {
@@ -325,10 +325,14 @@ extension Attribute: CustomStringConvertible {
             return "Servings Per Container Amount"
         case .servingsPerContainerName:
             return "Servings Per Container Name"
-        case .columnHeader1:
-            return "Column Header 1"
-        case .columnHeader2:
-            return "Column Header 2"
+        case .columnHeader1Type:
+            return "Column Header 1 Type"
+        case .columnHeader2Type:
+            return "Column Header 2 Type"
+        case .columnHeader1Size:
+            return "Column Header 1 Size"
+        case .columnHeader2Size:
+            return "Column Header 2 Size"
         case .primaryColumnIndex:
             return "Primary Column (1 or 2)"
         case .energy:
