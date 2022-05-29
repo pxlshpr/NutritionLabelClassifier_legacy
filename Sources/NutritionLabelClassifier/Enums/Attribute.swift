@@ -70,7 +70,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsDouble: Bool {
         switch self {
-        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount:
+        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount, .primaryColumnIndex:
             return true
         default:
             return false
