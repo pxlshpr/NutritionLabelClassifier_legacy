@@ -31,7 +31,7 @@ extension NutritionLabelClassifierTests {
             let classifier = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts)
             let observationsDataFrame = classifier.dataFrameOfObservations()
             print(dataFrameWithTextIdsRemoved(from: observationsDataFrame))
-            let output = observationsDataFrame.classifierOutput
+//            let output = observationsDataFrame.classifierOutput
 //            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
 
             /// Extract `processedNutrients` from data frame
