@@ -7,11 +7,11 @@ public class NutritionLabelClassifier {
     var arrayOfRecognizedTexts: [[RecognizedText]]
     var observations: [Observation] = []
     
-    init(arrayOfRecognizedTexts: [[RecognizedText]]) {
+    public init(arrayOfRecognizedTexts: [[RecognizedText]]) {
         self.arrayOfRecognizedTexts = arrayOfRecognizedTexts
     }
     
-    init(recognizedTexts: [RecognizedText]) {
+    public init(recognizedTexts: [RecognizedText]) {
         self.arrayOfRecognizedTexts = [recognizedTexts]
     }
     
