@@ -2,6 +2,12 @@ import XCTest
 
 @testable import NutritionLabelClassifier
 
+let RunLegacyTests = true
+let ClassifierTestCases = 1...23
+let ClassifierOutputTestCases = 3...3
+//let ClassifierTestCases = 100...100
+//let ClassifierOutputTestCases = 100...100
+
 extension NutritionLabelClassifierTests {
     
     func testClassifier() throws {
@@ -23,12 +29,14 @@ extension NutritionLabelClassifierTests {
             }
 
             let classifier = NutritionLabelClassifier(arrayOfRecognizedTexts: arrayOfRecognizedTexts)
-            let nutrientsDataFrame = classifier.dataFrameOfNutrients()
+            let observationsDataFrame = classifier.dataFrameOfObservations()
+            print(dataFrameWithTextIdsRemoved(from: observationsDataFrame))
+            let output = observationsDataFrame.classifierOutput
 //            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
 
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
-            for row in nutrientsDataFrame.rows {
+            for row in observationsDataFrame.rows {
                 guard let attributeWithId = row["attribute"] as? AttributeText,
                       let valueWithId1 = row["value1"] as? ValueText?,
                       let valueWithId2 = row["value2"] as? ValueText?
@@ -41,7 +49,7 @@ extension NutritionLabelClassifierTests {
             }
             
             print("🧬 Nutrients for Test Case: \(testCase)")
-            print(dataFrameWithObservationIdsRemoved(from: nutrientsDataFrame))
+            print(dataFrameWithTextIdsRemoved(from: observationsDataFrame))
 
             /// Extract `expectedNutrients` from data frame
             guard let expectedNutrientsDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {
@@ -110,7 +118,7 @@ extension NutritionLabelClassifierTests {
 //            let nutrientsDataFrame = NutritionLabelClassifier.dataFrameOfNutrients(from: arrayOfRecognizedTexts)
 ////            print("🧬 Output: \(output)")
 //            print(nutrientsDataFrame)
-////            print(dataFrameWithObservationIdsRemoved(from: output))
+////            print(dataFrameWithTextIdsRemoved(from: output))
 //
 //            /// Extract `expectedNutrients` from data frame
 //            guard let expectedDataFrame = dataFrameForTestCase(testCase, testCaseFileType: .expectedNutrients) else {

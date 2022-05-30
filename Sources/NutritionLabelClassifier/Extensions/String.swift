@@ -38,7 +38,58 @@ extension String {
         }
         return substring?.trimmingWhitespaces
     }
+
+    var numberSubstringAtStart: String? {
+        let regex = #"^([0-9]+[0-9.:,\/]*)"#
+        let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)
+        let substring: String?
+        if groups.count > 1 {
+            substring = groups[1]
+        } else if groups.count == 1 {
+            substring = groups[0]
+        } else {
+            substring = nil
+        }
+        return substring?.trimmingWhitespaces
+    }
     
+    var containsWords: Bool {
+        matchesRegex(#"[A-z]+"#)
+    }
+    
+    var unitSubstringAtStart: String? {
+        let units = NutritionUnit.allUnits.map{$0}.joined(separator: "|")
+        let regex = #"^(\#(units))(?: |\(|\)|$)"#
+        let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)
+        let substring: String?
+        if groups.count > 1 {
+            substring = groups[1]
+        } else if groups.count == 1 {
+            substring = groups[0]
+        } else {
+            substring = nil
+        }
+        return substring?.trimmingWhitespaces
+    }
+
+    var servingsPerContainerName: String? {
+        guard let regex = Attribute.servingsPerContainerAmount.regex else {
+            return nil
+        }
+        let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)
+        let substring: String?
+        if groups.count > 1 {
+            substring = groups[1]
+        } else {
+            substring = nil
+        }
+        return substring?.trimmingWhitespaces
+    }
+
+    var servingAttributeSubstringAtStart: String? {
+        return nil
+    }
+
     var substringUpToFirstNumeral: String? {
         let regex = #"^([0-9]*[^0-9\n]+)[0-9]?.*$"#
         let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)

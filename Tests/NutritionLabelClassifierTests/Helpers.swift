@@ -91,14 +91,14 @@ func a(_ attribute: Attribute) -> Attribute {
     attribute
 }
 
-func ap(_ preposition: Preposition) -> Artefact {
-    Artefact(preposition: preposition, observationId: defaultUUID)
+func ap(_ preposition: Preposition) -> NutrientArtefact {
+    NutrientArtefact(preposition: preposition, textId: defaultUUID)
 }
 
-func av(_ amount: Double, _ unit: NutritionUnit? = nil) -> Artefact {
-    Artefact(value: Value(amount: amount, unit: unit), observationId: defaultUUID)
+func av(_ amount: Double, _ unit: NutritionUnit? = nil) -> NutrientArtefact {
+    NutrientArtefact(value: Value(amount: amount, unit: unit), textId: defaultUUID)
 }
 
-func aa(_ attribute: Attribute) -> Artefact {
-    Artefact(attribute: attribute, observationId: defaultUUID)
+func aa(_ attribute: Attribute) -> NutrientArtefact {
+    NutrientArtefact(attribute: attribute, textId: defaultUUID)
 }

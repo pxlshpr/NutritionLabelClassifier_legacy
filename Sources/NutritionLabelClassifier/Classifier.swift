@@ -26,10 +26,10 @@ public class NutritionLabelClassifier {
     }
 
     func getObservations() -> Output {
-        dataFrameOfNutrients().classifierOutput
+        dataFrameOfObservations().classifierOutput
     }
     
-    public func dataFrameOfNutrients() -> DataFrame {
+    public func dataFrameOfObservations() -> DataFrame {
         for recognizedTexts in arrayOfRecognizedTexts {
             observations = NutrientsClassifier.classify(recognizedTexts, into: observations)
             observations = ServingClassifier.classify(recognizedTexts, into: observations)
@@ -60,10 +60,14 @@ public class NutritionLabelClassifier {
         let labelColumn = Column(name: "attribute", contents: observations.map { $0.attributeText })
         let value1Column = Column(name: "value1", contents: observations.map { $0.valueText1 })
         let value2Column = Column(name: "value2", contents: observations.map { $0.valueText2 })
-//
+        let doubleColumn = Column(name: "double", contents: observations.map { $0.doubleText })
+        let stringColumn = Column(name: "string", contents: observations.map { $0.stringText })
         dataFrame.append(column: labelColumn)
         dataFrame.append(column: value1Column)
         dataFrame.append(column: value2Column)
+        dataFrame.append(column: doubleColumn)
+        dataFrame.append(column: stringColumn)
         return dataFrame
     }
 }
+

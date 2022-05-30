@@ -5,6 +5,9 @@ class NutrientsClassifier {
     
     let recognizedTexts: [RecognizedText]
     var observations: [Observation]
+    
+    var pendingObservations: [Observation] = []
+    var observationBeingExtracted: Observation? = nil
 
     /// Holds onto those that are single `Value`s that have already been used
     var discarded: [RecognizedText] = []
@@ -27,15 +30,15 @@ class NutrientsClassifier {
                 continue
             }
             
-            let result: ProcessArtefactsResult
+//            let result: ProcessArtefactsResult
             if heuristicRecognizedTextIsPartOfAttribute(recognizedText) {
-                result = processArtefactsOfRecognizedTextByJoiningWithNextInlineRecognizedText(recognizedText)
+                extractObservationsOfRecognizedTextByJoiningWithNextInlineRecognizedText(recognizedText)
             } else {
-                result = processArtefacts(of: recognizedText)
+                extractObservations(of: recognizedText)
             }
             
             /// Process any attributes that were extracted
-            for observation in result.observations {
+            for observation in pendingObservations {
                 /// Only add attributes that haven't already been added
                 if !observations.contains(where: { $0.attributeText.attribute == observation.attributeText.attribute }) {
                     observations.append(observation)
@@ -43,7 +46,7 @@ class NutrientsClassifier {
             }
             
             /// Now do an inline search for any attribute that is still being extracted
-            if let observation = result.observationBeingExtracted {
+            if let observation = observationBeingExtracted {
                 
                 /// If we have a value1 for this observation, make sure we add the recognized text it was added from to the discarded list before checking the inline ones
                 if let value1Id = observation.valueText1?.textId,
@@ -66,8 +69,8 @@ class NutrientsClassifier {
                     let result = extractNutrientObservation(&observationBeingExtracted, from: inlineText)
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
                     if result.didExtract,
-                       inlineText.artefacts.count >= 1,
-                       let _ = inlineText.artefacts.first?.value
+                       inlineText.nutrientArtefacts.count >= 1,
+                       let _ = inlineText.nutrientArtefacts.first?.value
                     {
                         discarded.append(inlineText)
                     }
@@ -90,29 +93,28 @@ class NutrientsClassifier {
         recognizedText.string.lowercased() == "vitamin"
     }
     
-    private func processArtefactsOfRecognizedTextByJoiningWithNextInlineRecognizedText(_ recognizedText: RecognizedText) ->  ProcessArtefactsResult
+    private func extractObservationsOfRecognizedTextByJoiningWithNextInlineRecognizedText(_ recognizedText: RecognizedText)
     {
         guard let nextRecognizedText = recognizedTexts.inlineTextColumns(as: recognizedText).first?.first else {
-            return ProcessArtefactsResult(
-                observations: observations,
-                observationBeingExtracted: nil
-            )
+            pendingObservations = observations
+            observationBeingExtracted = nil
+            return
         }
         let combinedRecognizedText = RecognizedText(
             id: nextRecognizedText.id,
             rectString: NSCoder.string(for: nextRecognizedText.rect),
             boundingBoxString: NSCoder.string(for: nextRecognizedText.boundingBox),
             candidates: ["\(recognizedText.string) \(nextRecognizedText.string)"])
-        return processArtefacts(of: combinedRecognizedText)
+        extractObservations(of: combinedRecognizedText)
     }
     
-    private func processArtefacts(of recognizedText: RecognizedText) -> ProcessArtefactsResult {
+    private func extractObservations(of recognizedText: RecognizedText) {
         
-        let artefacts = recognizedText.artefacts
+        let artefacts = recognizedText.nutrientArtefacts
         let id = recognizedText.id
 
         var observations: [Observation] = []
-        var identifiableAttributeBeingExtracted: AttributeText? = nil
+        var attributeTextBeingExtracted: AttributeText? = nil
         var value1BeingExtracted: Value? = nil
         
         var ignoreNextValueDueToPerPreposition = false
@@ -121,15 +123,15 @@ class NutrientsClassifier {
             let artefact = artefacts[i]
             if let extractedAttribute = artefact.attribute {
                 /// if we're in the process of extracting a value, save it as an observation
-                if let attributeBeingExtracted = identifiableAttributeBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
+                if let attributeBeingExtracted = attributeTextBeingExtracted, let valueBeingExtracted = value1BeingExtracted {
                     observations.append(Observation(attributeText: attributeBeingExtracted,
                                             valueText1: ValueText(value: valueBeingExtracted, textId: id),
                                             valueText2: nil))
                     value1BeingExtracted = nil
                 }
-                identifiableAttributeBeingExtracted = AttributeText(attribute: extractedAttribute, textId: recognizedText.id)
+                attributeTextBeingExtracted = AttributeText(attribute: extractedAttribute, textId: recognizedText.id)
                 
-            } else if let value = artefact.value, let attributeWithId = identifiableAttributeBeingExtracted {
+            } else if let value = artefact.value, let attributeWithId = attributeTextBeingExtracted {
                 
                 var unit = value.unit
                 var value = value
@@ -165,7 +167,7 @@ class NutrientsClassifier {
                     observations.append(Observation(attributeText: attributeWithId,
                                             valueText1: ValueText(value: value1, textId: id),
                                             valueText2: ValueText(value: value, textId: id)))
-                    identifiableAttributeBeingExtracted = nil
+                    attributeTextBeingExtracted = nil
                     value1BeingExtracted = nil
                 } else {
                     /// Before setting this as the first value, check that the attribute supports the unit, and that we don't have the RI (required intake) preposition immediately following it
@@ -197,7 +199,7 @@ class NutrientsClassifier {
                                                 valueText1: ValueText(value: value, textId: id),
                                                 valueText2: nil))
                         value1BeingExtracted = nil
-                        identifiableAttributeBeingExtracted = nil
+                        attributeTextBeingExtracted = nil
                     }
                 }
             } else if let preposition = artefact.preposition {
@@ -207,37 +209,34 @@ class NutrientsClassifier {
             }
         }
         
-        if let attributeBeingExtracted = identifiableAttributeBeingExtracted {
+        if let attributeBeingExtracted = attributeTextBeingExtracted {
             if let value1BeingExtracted = value1BeingExtracted {
-                return ProcessArtefactsResult(
-                    observations: observations,
-                    observationBeingExtracted: Observation(attributeText: attributeBeingExtracted,
-                                                   valueText1: ValueText(value: value1BeingExtracted, textId: id),
-                                                   valueText2: nil)
+                pendingObservations = observations
+                observationBeingExtracted =  Observation(
+                    attributeText: attributeBeingExtracted,
+                    valueText1: ValueText(value: value1BeingExtracted, textId: id),
+                    valueText2: nil
                 )
             } else {
                 if attributeBeingExtracted.attribute.supportsPrecedingValue,
                    let value = artefacts.valuePreceding(attributeBeingExtracted.attribute) {
-                    return ProcessArtefactsResult(
-                        observations: observations,
-                        observationBeingExtracted: Observation(attributeText: attributeBeingExtracted,
-                                                       valueText1: ValueText(value: value, textId: id),
-                                                       valueText2: nil)
+                    pendingObservations = observations
+                    observationBeingExtracted = Observation(
+                        attributeText: attributeBeingExtracted,
+                        valueText1: ValueText(value: value, textId: id),
+                        valueText2: nil
                     )
                 } else {
-                    return ProcessArtefactsResult(
-                        observations: observations,
-                        observationBeingExtracted: Observation(attributeText: attributeBeingExtracted,
-                                                       valueText1: nil,
-                                                       valueText2: nil)
-                    )
+                    pendingObservations = observations
+                    observationBeingExtracted = Observation(
+                        attributeText: attributeBeingExtracted,
+                        valueText1: nil,
+                        valueText2: nil)
                 }
             }
         } else {
-            return ProcessArtefactsResult(
-                observations: observations,
-                observationBeingExtracted: nil
-            )
+            pendingObservations = observations
+            observationBeingExtracted = nil
         }
         /// Get the artefacts
         /// For each artefact
@@ -259,7 +258,7 @@ class NutrientsClassifier {
         var inlineValueCount = 0
         for column in inlineTextColumns {
             guard let inlineText = pickInlineText(fromColumn: column, for: attribute) else { continue }
-            if inlineText.artefacts.contains(where: { $0.value != nil }) {
+            if inlineText.nutrientArtefacts.contains(where: { $0.value != nil }) {
                 inlineValueCount += 1
             }
         }
@@ -276,7 +275,7 @@ class NutrientsClassifier {
         
         /// **Heuristic** Remove any texts that contain no artefacts before returning the closest one, if we have more than 1 in a column (see Test Case 22 for how `Alimentaires` and `1.5 g` fall in the same column, with the former overlapping with `Protein` more, and thus `1.5 g` getting ignored
         var column = column.filter {
-            $0.artefacts.count > 0
+            $0.nutrientArtefacts.count > 0
 //            Value(fromString: $0.string) != nil
         }
         
@@ -295,7 +294,7 @@ class NutrientsClassifier {
     func extractNutrientObservation(_ observation: inout Observation, from recognizedText: RecognizedText) -> (didExtract: Bool, shouldContinue: Bool) {
         
         var didExtract = false
-        for artefact in recognizedText.getArtefacts(for: observation.attributeText.attribute, observationBeingExtracted: observation, extractedObservations: observations) {
+        for artefact in recognizedText.getNutrientArtefacts(for: observation.attributeText.attribute, observationBeingExtracted: observation, extractedObservations: observations) {
             if let value = artefact.value {
                 
                 /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it

@@ -1,6 +1,6 @@
 import Foundation
 
-extension Array where Element == Artefact {
+extension Array where Element == NutrientArtefact {
     func valuePreceding(_ attribute: Attribute) -> Value? {
         guard let attributeIndex = firstIndex(where: { $0.attribute == attribute }),
               attributeIndex > 0,

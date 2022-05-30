@@ -174,10 +174,36 @@ public enum Attribute: String, CaseIterable {
         }
     }
     
+    func supportsServingArtefact(_ servingArtefact: ServingArtefact) -> Bool {
+        switch self {
+        case .servingsPerContainerName, .servingUnitSize, .servingEquivalentUnitSize:
+            return servingArtefact.string != nil
+        case .servingAmount, .servingEquivalentAmount:
+            return servingArtefact.double != nil
+        case .servingUnit, .servingEquivalentUnit:
+            return servingArtefact.unit != nil
+        default:
+            return false
+        }
+    }
+    
+    var nextAttributes: [Attribute]? {
+        switch self {
+        case .servingAmount:
+            return [.servingUnit, .servingUnitSize]
+        case .servingUnit, .servingUnitSize:
+            return [.servingEquivalentAmount]
+        case .servingEquivalentAmount:
+            return [.servingEquivalentUnit, .servingUnitSize]
+        default:
+            return nil
+        }
+    }
+    
     var regex: String? {
         switch self {
         case .servingsPerContainerAmount:
-            return #"(servings |)per (container|package|tub|pot)"#
+            return #"(?:servings |)per (container|package|tub|pot)"#
         case .servingAmount:
             return #"serving size"#
         case .nutritionFacts:

@@ -12,7 +12,7 @@ extension RecognizedText {
         var shouldHoldNextValueForAttribute = false
 
         // For each artefact
-        for artefact in artefacts {
+        for artefact in nutrientArtefacts {
             if let attribute = artefact.attribute {
                 /// if we're holding onto a value for the next attribute (due to the `includes` preposition), create the feature and reset the holding variable
                 if let value = currentValueWaitingForAttribute {

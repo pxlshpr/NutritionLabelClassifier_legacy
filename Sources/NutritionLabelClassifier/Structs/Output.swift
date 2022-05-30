@@ -22,19 +22,30 @@ public struct DoubleText {
 }
 
 extension DoubleText {
-    init(_ valueWithId: ValueText) {
-        self.double = valueWithId.value.amount
-        self.textId = valueWithId.textId
+    init(_ valueText: ValueText) {
+        self.double = valueText.value.amount
+        self.textId = valueText.textId
+    }
+    init(_ doubleText: DoubleText) {
+        self.double = doubleText.double
+        self.textId = doubleText.textId
     }
 }
 
 extension UnitText {
-    init?(_ valueWithId: ValueText) {
-        guard let unit = valueWithId.value.unit else {
+    init?(_ valueText: ValueText) {
+        guard let unit = valueText.value.unit else {
             return nil
         }
         self.unit = unit
-        self.textId = valueWithId.textId
+        self.textId = valueText.textId
+    }
+    init?(_ stringText: StringText) {
+        guard let unit = NutritionUnit(string: stringText.string) else {
+            return nil
+        }
+        self.unit = unit
+        self.textId = stringText.textId
     }
 }
 

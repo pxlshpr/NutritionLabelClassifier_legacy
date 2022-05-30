@@ -2,14 +2,14 @@ import Foundation
 import VisionSugar
 
 extension RecognizedText {
-    var artefacts: [Artefact] {
-        getArtefacts()
+    var nutrientArtefacts: [NutrientArtefact] {
+        getNutrientArtefacts()
     }
     
-    func getArtefacts(for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [Artefact] {
-        var arrays: [[Artefact]] = []
+    func getNutrientArtefacts(for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [NutrientArtefact] {
+        var arrays: [[NutrientArtefact]] = []
         for candidate in candidates {
-            arrays.append(artefacts(for: candidate))
+            arrays.append(nutrientArtefacts(for: candidate))
         }
         
         if let selection = heuristicSelectionOfValueWithUnit(from: arrays) {
@@ -24,8 +24,8 @@ extension RecognizedText {
         return arrays.first(where: { $0.count > 0 }) ?? []
     }
     
-    func artefacts(for string: String) -> [Artefact] {
-        var array: [Artefact] = []
+    func nutrientArtefacts(for string: String) -> [NutrientArtefact] {
+        var array: [NutrientArtefact] = []
         var string = string
         while string.count > 0 {
             /// First check if we have a value at the start of the string
@@ -34,21 +34,21 @@ extension RecognizedText {
                 let value = Value(fromString: valueSubstring) {
                 string = string.replacingFirstOccurrence(of: valueSubstring, with: "").trimmingWhitespaces
                 
-                let artefact = Artefact(value: value, observationId: id)
+                let artefact = NutrientArtefact(value: value, textId: id)
                 array.append(artefact)
 
             /// Otherwise, get the string component up to and including the next numeral
             } else if let substring = string.substringUpToFirstNumeral {
                 /// Check if it matches any prepositions or attributes (currently picks prepositions over attributes for the entire substring)
                 if let attribute = Attribute(fromString: substring) {
-                    let artefact = Artefact(attribute: attribute, observationId: id)
+                    let artefact = NutrientArtefact(attribute: attribute, textId: id)
                     array.append(artefact)
                 } else  if let preposition = Preposition(fromString: substring) {
-                    let artefact = Artefact(preposition: preposition, observationId: id)
+                    let artefact = NutrientArtefact(preposition: preposition, textId: id)
                     array.append(artefact)
                 }
 //                } else if let attribute = Attribute(fromString: substring) {
-//                    let artefact = Artefact(attribute: attribute, observationId: id)
+//                    let artefact = Artefact(attribute: attribute, textId: id)
 //                    array.append(artefact)
 //                }
                 string = string.replacingFirstOccurrence(of: substring, with: "").trimmingWhitespaces
@@ -65,7 +65,7 @@ extension RecognizedText {
     
     /** If the first array's first element is a value without a unit, but one of the next candidates has a single value *with a unit*—pick the first one we encounter
      */
-    func heuristicSelectionOfValueWithUnit(from arrays: [[Artefact]]) -> [Artefact]? {
+    func heuristicSelectionOfValueWithUnit(from arrays: [[NutrientArtefact]]) -> [NutrientArtefact]? {
         guard arrays.count > 1 else { return nil }
         guard let value = arrays.first?.first?.value, value.unit == nil else {
             return nil
@@ -82,7 +82,7 @@ extension RecognizedText {
      
         For example: if VisionKit misreads `1.4g` as `11.4g` for `.saturatedFat`, and submits both strings as candidates, and we happen to have `.fat` set as `2.2g`—we would choose `1.4g` over `11.4g`
      */
-    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[Artefact]], for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [Artefact]?
+    func heuristicSelectionOfValidValueForChildAttribute(from arrays: [[NutrientArtefact]], for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [NutrientArtefact]?
     {
         guard arrays.count > 1 else { return nil }
         

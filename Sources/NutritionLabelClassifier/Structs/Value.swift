@@ -27,7 +27,7 @@ public struct Value {
             .replacingOccurrences(of: ":", with: ".") /// Fix Vision errors of misreading decimal places as `:`
         
         
-        if cleanedAmount.matchesRegex(Regex.usingCommaAsDecimalPlace) {
+        if cleanedAmount.matchesRegex(NumberRegex.usingCommaAsDecimalPlace) {
             cleanedAmount = cleanedAmount.replacingOccurrences(of: ",", with: ".")
         } else {
             /// It's been used as a thousand separator in that case
@@ -61,13 +61,16 @@ public struct Value {
         static let atStartOfString_legacy1 = #"^(\#(number)(?:(?:\#(units)(?: |\)|$))| |$))"#
         static let fromString = #"^(\#(number))(?:(\#(units)(?: |\)|$))| |\/|$)"#
         
-        /// Recognizes number in a string using comma as decimal place (matches `39,3` and `2,05` but not `2,000` or `1,2,3`)
-        static let usingCommaAsDecimalPlace = #"^[0-9]*,[0-9][0-9]?([^0-9]|$)"#
-        
         //TODO: Remove this
         static let standardPattern =
         #"^(?:[^0-9.:]*(?: |\()|^\/?)([0-9.:]+)[ ]*(\#(units))+(?: .*|\).*$|\/?$)$"#
     }
+}
+
+struct NumberRegex {
+    /// Recognizes number in a string using comma as decimal place (matches `39,3` and `2,05` but not `2,000` or `1,2,3`)
+    static let usingCommaAsDecimalPlace = #"^[0-9]*,[0-9][0-9]?([^0-9]|$)"#
+    static let isFraction = #"^([0-9]+)\/([0-9]+)"#
 }
 
 extension Value: Equatable {

@@ -2,7 +2,7 @@ import XCTest
 
 @testable import NutritionLabelClassifier
 
-let testCasesStringsWithArtefacts: [(input: String, artefacts: [Artefact])] = [
+let testCasesStringsWithArtefacts: [(input: String, artefacts: [NutrientArtefact])] = [
     ("ENERGY", [aa(.energy)]),
     ("Energy", [aa(.energy)]),
     ("Energy 116kcal 96kcal", [aa(.energy), av(116, .kcal), av(96, .kcal)]),

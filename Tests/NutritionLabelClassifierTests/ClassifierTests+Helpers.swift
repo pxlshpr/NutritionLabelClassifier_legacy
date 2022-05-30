@@ -6,12 +6,6 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = true
-let ClassifierTestCases = 1...23
-let ClassifierOutputTestCases = 3...3
-//let ClassifierTestCases = 100...100
-//let ClassifierOutputTestCases = 100...100
-
 let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Double])] = [
     ("Brennwert Energi 735 kJ (177 kcal) 412 kJ (99 kcal)", [177, 99], [735, 412]),
     ("384kJ/91kcal 284kJ/67 kcal", [91, 67], [384, 284]),
@@ -105,14 +99,23 @@ extension NutritionLabelClassifierTests {
         return [withLC, withoutLC]
     }
 
-    func dataFrameWithObservationIdsRemoved(from dataFrame: DataFrame) -> DataFrame {
-        var newDataFrame = dataFrame
-        newDataFrame.transformColumn("value1") { (valueWithId: ValueText?) -> Value? in
-            return valueWithId?.value
+    func dataFrameWithTextIdsRemoved(from sourceDataFrame: DataFrame) -> DataFrame {
+        var dataFrame = sourceDataFrame
+        dataFrame.transformColumn("attribute") { (attributeText: AttributeText?) -> Attribute? in
+            return attributeText?.attribute
         }
-        newDataFrame.transformColumn("value2") { (valueWithId: ValueText?) -> Value? in
-            return valueWithId?.value
+        dataFrame.transformColumn("value1") { (valueText: ValueText?) -> Value? in
+            return valueText?.value
         }
-        return newDataFrame
+        dataFrame.transformColumn("value2") { (valueText: ValueText?) -> Value? in
+            return valueText?.value
+        }
+        dataFrame.transformColumn("double") { (doubleText: DoubleText?) -> Double? in
+            return doubleText?.double
+        }
+        dataFrame.transformColumn("string") { (stringText: StringText?) -> String? in
+            return stringText?.string
+        }
+        return dataFrame
     }
 }
