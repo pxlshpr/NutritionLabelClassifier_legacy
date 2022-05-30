@@ -23,6 +23,10 @@ class NutrientsClassifier {
         
         for recognizedText in recognizedTexts {
             
+            guard !recognizedText.string.containsServingAttribute else {
+                continue
+            }
+            
             let result: ProcessArtefactsResult
             if heuristicRecognizedTextIsPartOfAttribute(recognizedText) {
                 result = processArtefactsOfRecognizedTextByJoiningWithNextInlineRecognizedText(recognizedText)

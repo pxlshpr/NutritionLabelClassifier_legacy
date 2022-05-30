@@ -57,3 +57,14 @@ extension String {
         trimmingCharacters(in: .whitespaces)
     }
 }
+
+extension String {
+    var containsServingAttribute: Bool {
+        for attribute in Attribute.allCases.filter({$0.isServingAttribute}) {
+            if let regex = attribute.regex, lowercased().matchesRegex(regex) {
+                return true
+            }
+        }
+        return false
+    }
+}

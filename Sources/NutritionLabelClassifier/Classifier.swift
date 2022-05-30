@@ -32,6 +32,7 @@ public class NutritionLabelClassifier {
     public func dataFrameOfNutrients() -> DataFrame {
         for recognizedTexts in arrayOfRecognizedTexts {
             observations = NutrientsClassifier.classify(recognizedTexts, into: observations)
+            observations = ServingClassifier.classify(recognizedTexts, into: observations)
         }
 
         /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
