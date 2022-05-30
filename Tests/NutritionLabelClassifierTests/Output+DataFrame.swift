@@ -126,7 +126,7 @@ extension Output.Nutrients {
            let type = HeaderType(rawValue: Int(typeDouble))
         {
             let unitName: String?
-            if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Size),
+            if let row = dataFrame.rowForExpectedAttribute(.header1Size),
                let string = row[.string] as? String {
                 unitName = string
             } else {
@@ -143,7 +143,7 @@ extension Output.Nutrients {
            let type = HeaderType(rawValue: Int(typeDouble))
         {
             let unitName: String?
-            if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Size),
+            if let row = dataFrame.rowForExpectedAttribute(.header2Size),
                let string = row[.string] as? String {
                 unitName = string
             } else {
