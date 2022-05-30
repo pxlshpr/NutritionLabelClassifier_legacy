@@ -5,15 +5,8 @@ import TabularData
 
 extension Output {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
-        var primaryColumnIndex = 0
-        if let row = dataFrame.rowForExpectedAttribute(.primaryColumnIndex),
-           let double = row[.double] as? Double
-        {
-            primaryColumnIndex = Int(double)
-        }
         self.init(serving: Serving(fromExpectedDataFrame: dataFrame),
-                  nutrients: Nutrients(fromExpectedDataFrame: dataFrame),
-                  primaryColumnIndex: primaryColumnIndex)
+                  nutrients: Nutrients(fromExpectedDataFrame: dataFrame))
     }
 }
 
@@ -116,42 +109,73 @@ extension DataFrame {
             return attr == attribute
         })
     }
+    
+    func doubleForAttribute(_ attribute: Attribute) -> Double? {
+        guard let row = rowForExpectedAttribute(attribute) else { return nil }
+        return row[.double] as? Double
+    }
+
+    func stringForAttribute(_ attribute: Attribute) -> String? {
+        guard let row = rowForExpectedAttribute(attribute) else { return nil }
+        return row[.string] as? String
+    }
+
+    func unitForAttribute(_ attribute: Attribute) -> NutritionUnit? {
+        guard let string = stringForAttribute(attribute) else { return nil }
+        return NutritionUnit(string: string)
+    }
+    
+    func headerTypeForAttribute(_ attribute: Attribute) -> HeaderType? {
+        guard let double = doubleForAttribute(attribute) else { return nil }
+        return HeaderType(rawValue: Int(double))
+    }
+}
+extension DataFrame {
+    var headerServingEquivalentSize: HeaderText.Serving.EquivalentSize? {
+        guard let amount = doubleForAttribute(.headerServingEquivalentAmount) else {
+            return nil
+        }
+        let unit = unitForAttribute(.headerServingEquivalentUnit)
+        let unitName = stringForAttribute(.headerServingEquivalentUnitSize)
+        return HeaderText.Serving.EquivalentSize(amount: amount, unit: unit, unitName: unitName)
+    }
+    
+    var headerServing: HeaderText.Serving? {
+        let amount = doubleForAttribute(.headerServingAmount)
+        let unit = unitForAttribute(.headerServingUnit)
+        let unitName = stringForAttribute(.headerServingUnitSize)
+        let equivalentSize = headerServingEquivalentSize
+        
+        guard amount != nil || equivalentSize != nil else {
+            return nil
+        }
+        return HeaderText.Serving(
+            amount: amount, unit: unit, unitName: unitName, equivalentSize: equivalentSize)
+    }
 }
 extension Output.Nutrients {
     init(fromExpectedDataFrame dataFrame: DataFrame) {
         
-        let columnHeader1: HeaderText?
-        if let row = dataFrame.rowForExpectedAttribute(.header1Type),
-           let typeDouble = row[.double] as? Double,
-           let type = HeaderType(rawValue: Int(typeDouble))
-        {
-            let unitName: String?
-            if let row = dataFrame.rowForExpectedAttribute(.header1Size),
-               let string = row[.string] as? String {
-                unitName = string
+        let headerText1: HeaderText?
+        if let type = dataFrame.headerTypeForAttribute(.headerType1) {
+            if type == .perServing {
+                headerText1 = HeaderText(type: type, textId: defaultUUID, serving: dataFrame.headerServing)
             } else {
-                unitName = nil
+                headerText1 = HeaderText(type: type, textId: defaultUUID, serving: nil)
             }
-            columnHeader1 = HeaderText(type: type, unitName: unitName, id: defaultUUID)
         } else {
-            columnHeader1 = nil
+            headerText1 = nil
         }
 
-        let columnHeader2: HeaderText?
-        if let row = dataFrame.rowForExpectedAttribute(.header2Type),
-           let typeDouble = row[.double] as? Double,
-           let type = HeaderType(rawValue: Int(typeDouble))
-        {
-            let unitName: String?
-            if let row = dataFrame.rowForExpectedAttribute(.header2Size),
-               let string = row[.string] as? String {
-                unitName = string
+        let headerText2: HeaderText?
+        if let type = dataFrame.headerTypeForAttribute(.headerType2) {
+            if type == .perServing {
+                headerText2 = HeaderText(type: type, textId: defaultUUID, serving: dataFrame.headerServing)
             } else {
-                unitName = nil
+                headerText2 = HeaderText(type: type, textId: defaultUUID, serving: nil)
             }
-            columnHeader2 = HeaderText(type: type, unitName: unitName, id: defaultUUID)
         } else {
-            columnHeader2 = nil
+            headerText2 = nil
         }
 
         /// Rows
@@ -199,8 +223,8 @@ extension Output.Nutrients {
         }
 
         self.init(
-            headerText1: columnHeader1,
-            headerText2: columnHeader2,
+            headerText1: headerText1,
+            headerText2: headerText2,
             rows: nutrientRows
         )
     }

@@ -4,6 +4,7 @@ public enum Attribute: String, CaseIterable {
     
     case nutritionFacts
     
+    //MARK: - Serving
     case servingAmount                 /// Double
     case servingUnit                  /// NutritionUnit
     case servingUnitSize              /// String
@@ -14,14 +15,20 @@ public enum Attribute: String, CaseIterable {
     case servingsPerContainerAmount
     case servingsPerContainerName
 
-    case header1Type
-    case header1Size
-    case header2Type
-    case header2Size
+    //MARK: - Header
+    /// Header type for column 1 and 2, which indicates if they are a `per100g` or `perServing` column
+    case headerType1
+    case headerType2
 
-    case primaryColumnIndex
-    
-    //MARK: Nutrients
+    /// Header serving attributes which gets assigned to whichever column has the `perServing` type
+    case headerServingAmount
+    case headerServingUnit
+    case headerServingUnitSize
+    case headerServingEquivalentAmount
+    case headerServingEquivalentUnit
+    case headerServingEquivalentUnitSize
+
+    //MARK: - Nutrient
     case energy
     
     case protein
@@ -50,9 +57,9 @@ public enum Attribute: String, CaseIterable {
     case vitaminD
     
     
-    public var isColumnAttribute: Bool {
+    public var isHeaderAttribute: Bool {
         switch self {
-        case .header1Type, .header2Type, .header1Size, .header2Size, .primaryColumnIndex:
+        case .headerServingAmount, .headerServingUnit, .headerServingUnitSize, .headerServingEquivalentAmount, .headerServingEquivalentUnit, .headerServingEquivalentUnitSize, .headerType1, .headerType2:
             return true
         default:
             return false
@@ -69,7 +76,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsDouble: Bool {
         switch self {
-        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount, .primaryColumnIndex:
+        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount, .headerServingAmount, .headerServingEquivalentAmount:
             return true
         default:
             return false
@@ -78,7 +85,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsNutritionUnit: Bool {
         switch self {
-        case .servingUnit, .servingEquivalentUnit:
+        case .servingUnit, .servingEquivalentUnit, .headerServingUnit, .headerServingEquivalentUnit:
             return true
         default:
             return false
@@ -87,7 +94,7 @@ public enum Attribute: String, CaseIterable {
     
     public var expectsString: Bool {
         switch self {
-        case .servingUnitSize, .servingEquivalentUnitSize, .servingsPerContainerName:
+        case .servingUnitSize, .servingEquivalentUnitSize, .servingsPerContainerName, .headerServingUnitSize, .headerServingEquivalentUnitSize:
             return true
         default:
             return false
@@ -104,7 +111,7 @@ public enum Attribute: String, CaseIterable {
     }
     
     public var isNutrientAttribute: Bool {
-        !isColumnAttribute && !isServingAttribute && !isIrrelevant
+        !isHeaderAttribute && !isServingAttribute && !isIrrelevant
     }
 
     
@@ -150,11 +157,7 @@ public enum Attribute: String, CaseIterable {
     }
     
     var isNutrient: Bool {
-        switch self {
-        case .servingAmount, .servingUnit, .servingUnitSize, .servingEquivalentAmount, .servingEquivalentUnit, .servingEquivalentUnitSize, .servingsPerContainerAmount, .servingsPerContainerName, .header1Type, .header1Size, .header2Type, .header2Size, .primaryColumnIndex: return false
-        default:
-            return true
-        }
+        !isServingAttribute && !isHeaderAttribute
     }
     
     var supportedUnits: [NutritionUnit] {
@@ -349,16 +352,23 @@ extension Attribute: CustomStringConvertible {
             return "Servings Per Container Amount"
         case .servingsPerContainerName:
             return "Servings Per Container Name"
-        case .header1Type:
-            return "Column Header 1 Type"
-        case .header2Type:
-            return "Column Header 2 Type"
-        case .header1Size:
-            return "Column Header 1 Size"
-        case .header2Size:
-            return "Column Header 2 Size"
-        case .primaryColumnIndex:
-            return "Primary Column (1 or 2)"
+        case .headerType1:
+            return "Header Type 1"
+        case .headerType2:
+            return "Header Type 2"
+        case .headerServingAmount:
+            return "Header Serving Amount"
+        case .headerServingUnit:
+            return "Header Serving Unit"
+        case .headerServingUnitSize:
+            return "Header Serving Unit Name"
+        case .headerServingEquivalentAmount:
+            return "Header Serv.Equiv. Amount"
+        case .headerServingEquivalentUnit:
+            return "Header Serv.Equiv. Unit"
+        case .headerServingEquivalentUnitSize:
+            return "Header Serv.Equiv. Unit Name"
+            
         case .energy:
             return "Energy"
         case .protein:

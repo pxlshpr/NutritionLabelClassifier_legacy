@@ -34,11 +34,8 @@ public extension Output.Nutrients {
     var header1Type: HeaderType? { headerText1?.type }
     var header2Type: HeaderType? { headerText2?.type }
 
-    var header1UnitName: String? { headerText1?.unitName }
-    var header2UnitName: String? { headerText2?.unitName }
-
-    var header1Id: UUID? { headerText1?.id }
-    var header2Id: UUID? { headerText2?.id }
+    var header1Id: UUID? { headerText1?.textId }
+    var header2Id: UUID? { headerText2?.textId }
 }
 
 public extension Output.Nutrients.Row {

@@ -133,10 +133,11 @@ extension NutritionLabelClassifierTests {
             return false
         }
 
-        guard observedHeaderText.unitName == expectedHeaderText.unitName else {
-            print("⚠️ Column header 1 sizeName doesn't match")
-            return false
-        }
+        //TODO: Check Header Serving here too
+//        guard observedHeaderText.serving == expectedHeaderText.serving else {
+//            print("⚠️ Column header 1 sizeName doesn't match")
+//            return false
+//        }
 
         return true
     }

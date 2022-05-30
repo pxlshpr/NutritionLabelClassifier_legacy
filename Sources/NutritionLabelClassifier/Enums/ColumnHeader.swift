@@ -3,7 +3,6 @@ import Foundation
 public enum HeaderType: Int, CaseIterable {
     case per100g = 1
     case perServing = 1000
-    case perCustomSize = 2000
 }
 
 extension HeaderType: CustomStringConvertible {
@@ -13,8 +12,6 @@ extension HeaderType: CustomStringConvertible {
             return "Per 100g"
         case .perServing:
             return "Per Serving"
-        case .perCustomSize:
-            return "Per Custom Size"
         }
     }
     
@@ -22,8 +19,6 @@ extension HeaderType: CustomStringConvertible {
         switch self {
         case .perServing:
             return "Serving"
-        case .perCustomSize:
-            return "Custom Size"
         default:
             return ""
         }

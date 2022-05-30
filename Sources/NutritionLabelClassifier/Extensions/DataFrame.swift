@@ -24,12 +24,12 @@ extension DataFrame {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
         return row[.double] as? DoubleText
     }
-    
+
     func stringTextForAttribute(_ attribute: Attribute) -> StringText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
         return row[.string] as? StringText
     }
-    
+
     func unitTextForAttribute(_ attribute: Attribute) -> UnitText? {
         guard let stringText = stringTextForAttribute(attribute),
               let unit = NutritionUnit(string: stringText.string) else {
@@ -120,8 +120,7 @@ extension DataFrame {
     var classifierOutput: Output {
         Output(
             serving: serving,
-            nutrients: nutrients,
-            primaryColumnIndex: 0
+            nutrients: nutrients
         )
     }
 }

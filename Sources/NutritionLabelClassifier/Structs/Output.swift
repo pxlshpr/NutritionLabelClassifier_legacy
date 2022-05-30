@@ -3,7 +3,6 @@ import Foundation
 public struct Output {
     public let serving: Serving?
     public let nutrients: Nutrients
-    public let primaryColumnIndex: Int
 }
 
 public struct AttributeText {
@@ -61,8 +60,21 @@ public struct StringText {
 
 public struct HeaderText {
     public let type: HeaderType
-    public let unitName: String?
-    public let id: UUID
+    public let textId: UUID
+    public let serving: Serving?
+    
+    public struct Serving {
+        public let amount: Double?
+        public let unit: NutritionUnit?
+        public let unitName: String?
+        public let equivalentSize: EquivalentSize?
+        
+        public struct EquivalentSize {
+            public let amount: Double
+            public let unit: NutritionUnit?
+            public let unitName: String?
+        }
+    }
 }
 
 extension Output {
@@ -92,6 +104,7 @@ extension Output {
     public struct Nutrients {
         public let headerText1: HeaderText?
         public let headerText2: HeaderText?
+        
         public let rows: [Row]
         
         public struct Row {
