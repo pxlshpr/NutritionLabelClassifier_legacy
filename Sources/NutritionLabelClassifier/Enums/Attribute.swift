@@ -83,6 +83,14 @@ public enum Attribute: String, CaseIterable {
         }
     }
     
+    public var expectsHeaderType: Bool {
+        switch self {
+        case .headerType1, .headerType2:
+            return true
+        default:
+            return false
+        }
+    }
     public var expectsNutritionUnit: Bool {
         switch self {
         case .servingUnit, .servingEquivalentUnit, .headerServingUnit, .headerServingEquivalentUnit:
