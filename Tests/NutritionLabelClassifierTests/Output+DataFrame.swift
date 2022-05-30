@@ -7,7 +7,7 @@ extension Output {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
         var primaryColumnIndex = 0
         if let row = dataFrame.rowForExpectedAttribute(.primaryColumnIndex),
-           let double = row["double"] as? Double
+           let double = row[.double] as? Double
         {
             primaryColumnIndex = Int(double)
         }
@@ -35,11 +35,11 @@ extension Output.Serving {
         var perContainer: PerContainer? = nil
         
         for row in dataFrame.rows {
-            guard let attributeName = row["attributeString"] as? String,
+            guard let attributeName = row[.attributeString] as? String,
                   let attribute = Attribute(rawValue: attributeName),
                   attribute.isServingAttribute,
-                  let double = row["double"] as? Double?,
-                  let string = row["string"] as? String?
+                  let double = row[.double] as? Double?,
+                  let string = row[.string] as? String?
             else {
                 continue
             }
@@ -109,7 +109,7 @@ extension Output.Serving {
 extension DataFrame {
     func rowForExpectedAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let attributeName = $0["attributeString"] as? String,
+            guard let attributeName = $0[.attributeString] as? String,
                   let attr = Attribute(rawValue: attributeName) else {
                 return false
             }
@@ -122,12 +122,12 @@ extension Output.Nutrients {
         
         let columnHeader1: HeaderText?
         if let row = dataFrame.rowForExpectedAttribute(.header1Type),
-           let typeDouble = row["double"] as? Double,
+           let typeDouble = row[.double] as? Double,
            let type = HeaderType(rawValue: Int(typeDouble))
         {
             let unitName: String?
             if let row = dataFrame.rowForExpectedAttribute(.columnHeader1Size),
-               let string = row["string"] as? String {
+               let string = row[.string] as? String {
                 unitName = string
             } else {
                 unitName = nil
@@ -139,12 +139,12 @@ extension Output.Nutrients {
 
         let columnHeader2: HeaderText?
         if let row = dataFrame.rowForExpectedAttribute(.header2Type),
-           let typeDouble = row["double"] as? Double,
+           let typeDouble = row[.double] as? Double,
            let type = HeaderType(rawValue: Int(typeDouble))
         {
             let unitName: String?
             if let row = dataFrame.rowForExpectedAttribute(.columnHeader2Size),
-               let string = row["string"] as? String {
+               let string = row[.string] as? String {
                 unitName = string
             } else {
                 unitName = nil
@@ -157,10 +157,10 @@ extension Output.Nutrients {
         /// Rows
         var nutrientRows: [Row] = []
         for row in dataFrame.rows {
-            guard let attributeName = row["attributeString"] as? String,
+            guard let attributeName = row[.attributeString] as? String,
                   let attribute = Attribute(rawValue: attributeName),
-                  let value1String = row["value1String"] as? String?,
-                  let value2String = row["value2String"] as? String?
+                  let value1String = row[.value1String] as? String?,
+                  let value2String = row[.value2String] as? String?
             else {
                 continue
             }

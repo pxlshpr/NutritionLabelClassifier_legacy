@@ -37,9 +37,9 @@ extension NutritionLabelClassifierTests {
             /// Extract `processedNutrients` from data frame
             var processedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in observationsDataFrame.rows {
-                guard let attributeWithId = row["attribute"] as? AttributeText,
-                      let valueWithId1 = row["value1"] as? ValueText?,
-                      let valueWithId2 = row["value2"] as? ValueText?
+                guard let attributeWithId = row[.attribute] as? AttributeText,
+                      let valueWithId1 = row[.value1] as? ValueText?,
+                      let valueWithId2 = row[.value2] as? ValueText?
                 else {
                     XCTFail("Failed to get a processed nutrient for \(testCase)")
                     return
@@ -61,10 +61,10 @@ extension NutritionLabelClassifierTests {
 
             var expectedNutrients: [Attribute: (value1: Value?, value2: Value?)] = [:]
             for row in expectedNutrientsDataFrame.rows {
-                guard let attributeName = row["attributeString"] as? String,
+                guard let attributeName = row[.attributeString] as? String,
                       let attribute = Attribute(rawValue: attributeName),
-                      let value1String = row["value1String"] as? String?,
-                      let value2String = row["value2String"] as? String?
+                      let value1String = row[.value1String] as? String?,
+                      let value2String = row[.value2String] as? String?
                 else {
                     XCTFail("Failed to read an expected nutrient for \(row) in Test Case: \(testCase)")
                     return

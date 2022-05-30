@@ -43,7 +43,7 @@ enum TestCaseFileType: String {
 func dataFrameForTestCase(withId id: UUID, testCaseFileType type: TestCaseFileType = .input) -> DataFrame? {
     let csvUrl = type.directoryUrl.appendingPathComponent("\(id).csv", isDirectory: false)
     do {
-        return try DataFrame(contentsOfCSVFile: csvUrl, types: ["double":.double])
+        return try DataFrame(contentsOfCSVFile: csvUrl, types: [.double:.double])
     } catch {
         print("Error reading CSV: \(error)")
         return nil
@@ -60,7 +60,7 @@ func dataFrameForTestCase(_ testCase: Int, testCaseFileType: TestCaseFileType = 
     do {
         return try DataFrame(
             contentsOfCSVFile: url,
-            types: ["double":.double]
+            types: [.double:.double]
         )
     } catch {
         print("Error reading CSV: \(error)")

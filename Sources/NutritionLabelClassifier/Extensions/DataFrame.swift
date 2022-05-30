@@ -5,29 +5,29 @@ import TabularData
 extension DataFrame {
     func rowForObservedAttribute(_ attribute: Attribute) -> DataFrame.Rows.Element? {
         rows.first(where: {
-            guard let attributeWithId = $0["attribute"] as? AttributeText else { return false }
+            guard let attributeWithId = $0[.attribute] as? AttributeText else { return false }
             return attributeWithId.attribute == attribute
         })
     }
     
     func valueText1ForAttribute(_ attribute: Attribute) -> ValueText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
-        return row["value1"] as? ValueText
+        return row[.value1] as? ValueText
     }
     
     func valueText2ForAttribute(_ attribute: Attribute) -> ValueText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
-        return row["value2"] as? ValueText
+        return row[.value2] as? ValueText
     }
     
     func doubleTextForAttribute(_ attribute: Attribute) -> DoubleText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
-        return row["double"] as? DoubleText
+        return row[.double] as? DoubleText
     }
     
     func stringTextForAttribute(_ attribute: Attribute) -> StringText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
-        return row["string"] as? StringText
+        return row[.string] as? StringText
     }
     
     func unitTextForAttribute(_ attribute: Attribute) -> UnitText? {
@@ -45,6 +45,11 @@ extension String {
     static let value2 = "value2"
     static let double = "double"
     static let string = "string"
+    
+    static let attributeString = "attributeString"
+    static let value1String = "value1String"
+    static let value2String = "value2String"
+    static let doubleString = "doubleString"
 }
 extension DataFrame {
     
