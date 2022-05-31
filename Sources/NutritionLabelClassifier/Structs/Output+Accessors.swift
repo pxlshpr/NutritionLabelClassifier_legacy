@@ -50,13 +50,17 @@ public extension Output.Nutrients.Row {
 
 public extension Output {
     var headerServing: HeaderText.Serving? {
+        servingHeaderText?.serving
+    }
+    
+    var servingHeaderText: HeaderText? {
         if let type = nutrients.header1Type,
            type == .perServing {
-            return nutrients.headerText1?.serving
+            return nutrients.headerText1
         }
         if let type = nutrients.header2Type,
            type == .perServing {
-            return nutrients.headerText2?.serving
+            return nutrients.headerText2
         }
         return nil
     }
