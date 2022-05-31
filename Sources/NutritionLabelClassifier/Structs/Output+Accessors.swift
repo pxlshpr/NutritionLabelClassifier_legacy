@@ -47,3 +47,17 @@ public extension Output.Nutrients.Row {
     var value1Id: UUID? { valueText1?.textId }
     var value2Id: UUID? { valueText2?.textId }
 }
+
+public extension Output {
+    var headerServing: HeaderText.Serving? {
+        if let type = nutrients.header1Type,
+           type == .perServing {
+            return nutrients.headerText1?.serving
+        }
+        if let type = nutrients.header2Type,
+           type == .perServing {
+            return nutrients.headerText2?.serving
+        }
+        return nil
+    }
+}
