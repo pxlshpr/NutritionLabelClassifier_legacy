@@ -10,6 +10,30 @@ extension Output {
     }
 }
 
+extension DoubleText {
+    init(fromExpectedDouble double: Double) {
+        self.init(double: double, textId: defaultUUID, attributeTextId: defaultUUID)
+    }
+}
+
+extension UnitText {
+    init(fromExpectedUnit unit: NutritionUnit) {
+        self.init(unit: unit, textId: defaultUUID, attributeTextId: defaultUUID)
+    }
+}
+
+extension StringText {
+    init(fromExpectedString string: String) {
+        self.init(string: string, textId: defaultUUID, attributeTextId: defaultUUID)
+    }
+}
+
+extension HeaderText {
+    init(fromExpectedType type: HeaderType, serving: HeaderText.Serving?) {
+        self.init(type: type, textId: defaultUUID, attributeTextId: defaultUUID, serving: serving)
+    }
+}
+
 extension Output.Serving {
     init?(fromExpectedDataFrame dataFrame: DataFrame) {
 
@@ -38,36 +62,34 @@ extension Output.Serving {
             }
             
             if attribute == .servingAmount, let double = double {
-                amountText = DoubleText(double: double, textId: defaultUUID)
+                amountText = DoubleText(fromExpectedDouble: double)
             }
             
             if attribute == .servingUnit, let string = string, let unit = NutritionUnit(string: string) {
-                unitText = UnitText(unit: unit, textId: defaultUUID)
+                unitText = UnitText(fromExpectedUnit: unit)
             }
 
             if attribute == .servingUnitSize, let string = string {
-                unitNameText = StringText(string: string, textId: defaultUUID)
+                unitNameText = StringText(fromExpectedString: string)
             }
             
             //MARK: Equivalent Amount
             if attribute == .servingEquivalentAmount, let double = double {
-                identifiableEquivalentAmount = DoubleText(double: double, textId: defaultUUID)
+                identifiableEquivalentAmount = DoubleText(fromExpectedDouble: double)
             }
             if attribute == .servingEquivalentUnit, let string = string, let unit = NutritionUnit(string: string) {
-                identifiableEquivalentUnit = UnitText(unit: unit, textId: defaultUUID)
+                identifiableEquivalentUnit = UnitText(fromExpectedUnit: unit)
             }
             if attribute == .servingEquivalentUnitSize, let string = string {
-                identifiableEquivalentUnitSizeName = StringText(string: string, textId: defaultUUID)
+                identifiableEquivalentUnitSizeName = StringText(fromExpectedString: string)
             }
             
             //MARK: Per Container
             if attribute == .servingsPerContainerAmount, let double = double {
-                identifiablePerContainerAmount = DoubleText(double: double, textId: defaultUUID)
+                identifiablePerContainerAmount = DoubleText(fromExpectedDouble: double)
             }
             if attribute == .servingsPerContainerName, let string = string {
-                identifiablePerContainerName = StringText(
-                    string: string,
-                    textId: defaultUUID)
+                identifiablePerContainerName = StringText(fromExpectedString: string)
             }
         }
         
@@ -153,15 +175,16 @@ extension DataFrame {
             amount: amount, unit: unit, unitName: unitName, equivalentSize: equivalentSize)
     }
 }
+
 extension Output.Nutrients {
     init(fromExpectedDataFrame dataFrame: DataFrame) {
         
         let headerText1: HeaderText?
         if let type = dataFrame.headerTypeForAttribute(.headerType1) {
             if type == .perServing {
-                headerText1 = HeaderText(type: type, textId: defaultUUID, serving: dataFrame.headerServing)
+                headerText1 = HeaderText(fromExpectedType: type, serving: dataFrame.headerServing)
             } else {
-                headerText1 = HeaderText(type: type, textId: defaultUUID, serving: nil)
+                headerText1 = HeaderText(fromExpectedType: type, serving: nil)
             }
         } else {
             headerText1 = nil
@@ -170,9 +193,9 @@ extension Output.Nutrients {
         let headerText2: HeaderText?
         if let type = dataFrame.headerTypeForAttribute(.headerType2) {
             if type == .perServing {
-                headerText2 = HeaderText(type: type, textId: defaultUUID, serving: dataFrame.headerServing)
+                headerText2 = HeaderText(fromExpectedType: type, serving: dataFrame.headerServing)
             } else {
-                headerText2 = HeaderText(type: type, textId: defaultUUID, serving: nil)
+                headerText2 = HeaderText(fromExpectedType: type, serving: nil)
             }
         } else {
             headerText2 = nil

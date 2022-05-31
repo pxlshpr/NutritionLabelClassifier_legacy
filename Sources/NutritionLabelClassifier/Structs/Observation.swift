@@ -22,16 +22,27 @@ extension Observation {
         self.attributeText = attributeText
         self.valueText1 = nil
         self.valueText2 = nil
-        let textId = attributeText.textId
         if let unit = servingArtefact.unit {
-            self.stringText = StringText(string: unit.description, textId: textId)
+            self.stringText = StringText(
+                string: unit.description,
+                textId: servingArtefact.textId,
+                attributeTextId: attributeText.textId
+            )
         } else if let string = servingArtefact.string {
-            self.stringText = StringText(string: string, textId: textId)
+            self.stringText = StringText(
+                string: string,
+                textId: servingArtefact.textId,
+                attributeTextId: attributeText.textId
+            )
         } else {
             self.stringText = nil
         }
         if let double = servingArtefact.double {
-            self.doubleText = DoubleText(double: double, textId: textId)
+            self.doubleText = DoubleText(
+                double: double,
+                textId: servingArtefact.textId,
+                attributeTextId: attributeText.textId
+            )
         } else {
             self.doubleText = nil
         }

@@ -9,7 +9,12 @@ extension DataFrame {
             return attributeWithId.attribute == attribute
         })
     }
-    
+
+    func attributeText(for attribute: Attribute) -> AttributeText? {
+        guard let row = rowForObservedAttribute(attribute) else { return nil }
+        return row[.attribute] as? AttributeText
+    }
+
     func valueText1ForAttribute(_ attribute: Attribute) -> ValueText? {
         guard let row = rowForObservedAttribute(attribute) else { return nil }
         return row[.value1] as? ValueText
@@ -35,7 +40,11 @@ extension DataFrame {
               let unit = NutritionUnit(string: stringText.string) else {
             return nil
         }
-        return UnitText(unit: unit, textId: stringText.textId)
+        return UnitText(
+            unit: unit,
+            textId: stringText.textId,
+            attributeTextId: stringText.attributeTextId
+        )
     }
 }
 

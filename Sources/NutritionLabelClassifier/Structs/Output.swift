@@ -13,21 +13,25 @@ public struct AttributeText {
 public struct ValueText {
     public let value: Value
     public let textId: UUID
+    public let attributeTextId: UUID? = nil
 }
 
 public struct DoubleText {
     public let double: Double
     public let textId: UUID
+    public let attributeTextId: UUID
 }
 
 extension DoubleText {
     init(_ valueText: ValueText) {
         self.double = valueText.value.amount
         self.textId = valueText.textId
+        self.attributeTextId = valueText.textId
     }
     init(_ doubleText: DoubleText) {
         self.double = doubleText.double
         self.textId = doubleText.textId
+        self.attributeTextId = doubleText.textId
     }
 }
 
@@ -38,6 +42,7 @@ extension UnitText {
         }
         self.unit = unit
         self.textId = valueText.textId
+        self.attributeTextId = valueText.textId
     }
     init?(_ stringText: StringText) {
         guard let unit = NutritionUnit(string: stringText.string) else {
@@ -45,22 +50,26 @@ extension UnitText {
         }
         self.unit = unit
         self.textId = stringText.textId
+        self.attributeTextId = stringText.textId
     }
 }
 
 public struct UnitText {
     public let unit: NutritionUnit
     public let textId: UUID
+    public let attributeTextId: UUID
 }
 
 public struct StringText {
     public let string: String
     public let textId: UUID
+    public let attributeTextId: UUID
 }
 
 public struct HeaderText {
     public let type: HeaderType
     public let textId: UUID
+    public let attributeTextId: UUID
     public let serving: Serving?
     
     public struct Serving {
@@ -80,7 +89,7 @@ public struct HeaderText {
 extension Output {
     //MARK: Serving
     public struct Serving {
-        
+        //TODO: Add attribute texts for these too
         public let amountText: DoubleText?
         public let unitText: UnitText?
         public let unitNameText: StringText?
