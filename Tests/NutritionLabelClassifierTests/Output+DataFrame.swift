@@ -148,8 +148,9 @@ extension DataFrame {
     }
     
     func headerTypeForAttribute(_ attribute: Attribute) -> HeaderType? {
-        guard let double = doubleForAttribute(attribute) else { return nil }
-        return HeaderType(rawValue: Int(double))
+//        guard let double = doubleForAttribute(attribute) else { return nil }
+        guard let string = stringForAttribute(attribute) else { return nil}
+        return HeaderType(rawValue: string)
     }
 }
 extension DataFrame {

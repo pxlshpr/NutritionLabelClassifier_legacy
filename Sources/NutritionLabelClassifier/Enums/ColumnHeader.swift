@@ -1,8 +1,8 @@
 import Foundation
 
-public enum HeaderType: Int, CaseIterable {
-    case per100g = 1
-    case perServing = 1000
+public enum HeaderType: String, CaseIterable {
+    case per100g
+    case perServing
 }
 
 extension HeaderType: CustomStringConvertible {

@@ -108,6 +108,6 @@ public struct HeaderText {
             public let amount: Double
             public let unit: NutritionUnit?
             public let unitName: String?
-        }
+        }        
     }
 }
