@@ -1,12 +1,12 @@
 import Foundation
 
 extension DoubleText {
-    init(_ valueText: ValueText) {
+    public init(_ valueText: ValueText) {
         self.double = valueText.value.amount
         self.textId = valueText.textId
         self.attributeTextId = valueText.textId
     }
-    init(_ doubleText: DoubleText) {
+    public init(_ doubleText: DoubleText) {
         self.double = doubleText.double
         self.textId = doubleText.textId
         self.attributeTextId = doubleText.textId
@@ -14,7 +14,7 @@ extension DoubleText {
 }
 
 extension UnitText {
-    init?(_ valueText: ValueText) {
+    public init?(_ valueText: ValueText) {
         guard let unit = valueText.value.unit else {
             return nil
         }
@@ -22,7 +22,7 @@ extension UnitText {
         self.textId = valueText.textId
         self.attributeTextId = valueText.textId
     }
-    init?(_ stringText: StringText) {
+    public init?(_ stringText: StringText) {
         guard let unit = NutritionUnit(string: stringText.string) else {
             return nil
         }
