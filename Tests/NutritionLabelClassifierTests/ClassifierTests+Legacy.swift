@@ -2,7 +2,7 @@ import XCTest
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = true
+let RunLegacyTests = false
 let ClassifierTestCases = 1...23
 let ClassifierOutputTestCases = 3...3
 //let ClassifierTestCases = 100...100
