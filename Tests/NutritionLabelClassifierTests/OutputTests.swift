@@ -58,12 +58,12 @@ final class OutputTests: XCTestCase {
         }
         self.expectedOutput = expectedOutput
         
-        compareOutputs()
+        try compareOutputs()
     }
     
-    func compareOutputs() {
+    func compareOutputs() throws {
         compareServings()
-        compareNutrients()
+        try compareNutrients()
     }
     
     //MARK: - Helpers

@@ -1,7 +1,7 @@
 import Foundation
 import VisionSugar
 
-class NutrientsClassifier {
+class NutrientsClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]
     var observations: [Observation]
@@ -17,7 +17,7 @@ class NutrientsClassifier {
         self.observations = observations
     }
     
-    static func classify(_ recognizedTexts: [RecognizedText], into observations: [Observation]) -> [Observation] {
+    static func observations(from recognizedTexts: [RecognizedText], priorObservations observations: [Observation]) -> [Observation] {
         NutrientsClassifier(recognizedTexts: recognizedTexts, observations: observations).getObservations()
     }
 

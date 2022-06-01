@@ -61,6 +61,55 @@ extension String {
     static let doubleString = "doubleString"
 }
 extension DataFrame {
+
+    var headerServingEquivalentSize: HeaderText.Serving.EquivalentSize? {
+        let amount: Double
+        guard let doubleText = doubleTextForAttribute(.headerServingEquivalentAmount) else {
+            return nil
+        }
+        amount = doubleText.double
+
+        let unit = unitTextForAttribute(.headerServingEquivalentUnit)?.unit
+        let unitName = stringTextForAttribute(.headerServingEquivalentUnitSize)?.string
+        return HeaderText.Serving.EquivalentSize(amount: amount, unit: unit, unitName: unitName)
+    }
+    
+    var headerServing: HeaderText.Serving? {
+        let amount = doubleTextForAttribute(.headerServingAmount)?.double
+        let unit = unitTextForAttribute(.headerServingUnit)?.unit
+        let unitName = stringTextForAttribute(.headerServingUnitSize)?.string
+        let equivalentSize = equivalentSize
+        
+        if amount != nil || unit != nil || unitName != nil || equivalentSize != nil {
+            return HeaderText.Serving(
+                amount: amount,
+                unit: unit,
+                unitName: unitName,
+                equivalentSize: headerServingEquivalentSize
+            )
+        } else {
+            return nil
+        }
+    }
+    
+    func headerText(for attribute: Attribute) -> HeaderText? {
+        guard let stringText = stringTextForAttribute(attribute),
+              let type = HeaderType(rawValue: stringText.string) else {
+            return nil
+        }
+        guard type == .perServing else {
+            return HeaderText(
+                type: .per100g,
+                textId: stringText.textId,
+                attributeTextId: stringText.attributeTextId,
+                serving: nil)
+        }
+        return HeaderText(
+            type: .perServing,
+            textId: stringText.textId,
+            attributeTextId: stringText.attributeTextId,
+            serving: headerServing)
+    }
     
     var nutrients: Output.Nutrients {
         /// Get all the `Output.Nutrient.Row`s
@@ -83,11 +132,9 @@ extension DataFrame {
             )
         }
         
-        //TODO: Get the Header rows if available
-        
         return Output.Nutrients(
-            headerText1: nil,
-            headerText2: nil,
+            headerText1: headerText(for: .headerType1),
+            headerText2: headerText(for: .headerType2),
             rows: rows.filter { $0.attributeText.attribute.isNutrient }
         )
     }

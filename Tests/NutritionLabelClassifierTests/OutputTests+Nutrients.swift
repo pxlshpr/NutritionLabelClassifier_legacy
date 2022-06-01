@@ -4,10 +4,10 @@ import XCTest
 
 extension OutputTests {
     
-    func compareNutrients() {
+    func compareNutrients() throws {
         compareRows()
-        compareHeader1()
-        compareHeader2()
+        try compareHeader1()
+        try compareHeader2()
     }
 
     func compareRows() {

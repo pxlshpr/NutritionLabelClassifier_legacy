@@ -1,6 +1,6 @@
 import VisionSugar
 
-class ServingClassifier {
+class ServingClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]
     var observations: [Observation]
@@ -14,7 +14,7 @@ class ServingClassifier {
         self.observations = observations
     }
     
-    static func classify(_ recognizedTexts: [RecognizedText], into observations: [Observation]) -> [Observation] {
+    static func observations(from recognizedTexts: [RecognizedText], priorObservations observations: [Observation]) -> [Observation] {
         ServingClassifier(recognizedTexts: recognizedTexts, observations: observations).getObservations()
     }
 

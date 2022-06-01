@@ -1,25 +1,139 @@
 import SwiftUI
 import VisionSugar
 
-//TODO: Move this to SwiftSugar
-extension CGRect {
-    func rectWithXValues(of rect: CGRect) -> CGRect {
-        CGRect(x: rect.origin.x, y: origin.y,
-               width: rect.size.width, height: size.height)
-    }
-    
-    func rectWithYValues(of rect: CGRect) -> CGRect {
-        CGRect(x: origin.x, y: rect.origin.y,
-               width: size.width, height: rect.size.height)
-    }
-}
-
 extension Array where Element == RecognizedText {
 
     var description: String {
         map { $0.string }.joined(separator: ", ")
     }
+
+    func inlineTextRows(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [[RecognizedText]] {
+        
+        var column: [[RecognizedText]] = []
+        var discarded: [RecognizedText] = []
+        let candidates = filter {
+            $0.isInSameColumnAs(recognizedText)
+            && !textsToIgnore.contains($0)
+            && (preceding ? $0.rect.maxY < recognizedText.rect.maxY : $0.rect.minY > recognizedText.rect.minY)
+            
+            /// Filter out empty `recognizedText`s
+            && $0.candidates.filter { !$0.isEmpty }.count > 0
+        }.sorted {
+            preceding ?
+                $0.rect.minY > $1.rect.minY
+                : $0.rect.minY < $1.rect.minY
+        }
+
+        /// Deal with multiple recognizedTexts we may have grabbed from the same row due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
+        for candidate in candidates {
+
+            guard !discarded.contains(candidate) else {
+                continue
+            }
+            let row = candidates.filter {
+                $0.isInSameRowAs(candidate)
+            }
+            guard row.count > 1 else {
+                column.append([candidate])
+                continue
+            }
+            
+            var rowElementsAndIntersections: [(recognizedText: RecognizedText,
+                                               intersection: CGRect)] = []
+            for rowElement in row {
+                /// first normalize the y values of both rects, `rowElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same y values (`origin.y` and `size.height`)
+                let yNormalizedRect = rowElement.rect.rectWithYValues(of: recognizedText.rect)
+//                let closestYNormalizedRect = closest.rect.rectWithYValues(of: recognizedText.rect)
+                let intersection = yNormalizedRect.intersection(recognizedText.rect)
+                rowElementsAndIntersections.append(
+                    (rowElement, intersection)
+                )
+                
+//                let closestIntersection = closestYNormalizedRect.intersection(recognizedText.rect)
+//
+//                let intersectionRatio = intersection.width / rowElement.rect.width
+//                let closestIntersectionRatio = closestIntersection.width / closest.rect.width
+//
+//                if intersectionRatio > closestIntersectionRatio {
+//                    closest = rowElement
+//                }
+                
+                discarded.append(rowElement)
+            }
+            
+            /// Now order the `rowElementsAndIntersections` in decreasing order of `intersection.width` — which indicates how far away from the source `recognizedText` they are
+            rowElementsAndIntersections.sort { $0.intersection.width > $1.intersection.width }
+            
+            /// Now that its sorted, map the recognized texts into an array and provide that in the result array
+            column.append(rowElementsAndIntersections.map { $0.recognizedText })
+        }
+        
+        return column
+    }
     
+    /** Returns an array of the inline `recognizedText`s to the one we specify, in the direction indicating by `preceding`—whilst ignoring those provided.
+     
+        The return array is 2-dimensional, where each element is another array of elements that appear in the same column as one another, in order of how much they intersect with the source `recognizedText`. These arrays are in the order of the how far away from the `recognizedText` they are.
+     */
+    func inlineTextColumns(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [[RecognizedText]] {
+        
+        let mininumHeightOverlapThreshold = 0.08
+        
+        var row: [[RecognizedText]] = []
+        var discarded: [RecognizedText] = []
+        let candidates = filter {
+            $0.isInSameRowAs(recognizedText)
+            && !textsToIgnore.contains($0)
+            && (preceding ? $0.rect.maxX < recognizedText.rect.minX : $0.rect.minX > recognizedText.rect.maxX)
+            
+            /// Filter out texts that overlap the recognized text by at least the minimum threshold
+            && $0.rect.rectWithXValues(of: recognizedText.rect).intersection(recognizedText.rect).height/recognizedText.rect.height >= mininumHeightOverlapThreshold
+            
+            /// Filter out empty `recognizedText`s
+            && $0.candidates.filter { !$0.isEmpty }.count > 0
+        }.sorted {
+            $0.rect.minX < $1.rect.minX
+        }
+        
+
+        /// Deal with multiple recognizedText we may have grabbed from the same column due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
+        for candidate in candidates {
+
+            guard !discarded.contains(candidate) else {
+                continue
+            }
+            let column = candidates.filter {
+                $0.isInSameColumnAs(candidate)
+            }
+            guard column.count > 1 else {
+                row.append([candidate])
+                continue
+            }
+            
+            var columnElementsAndIntersections: [(recognizedText: RecognizedText,
+                                                  intersection: CGRect)] = []
+            for columnElement in column {
+                /// first normalize the x values of both rects, `columnElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same x values (`origin.x` and `size.width`)
+                let xNormalizedRect = columnElement.rect.rectWithXValues(of: recognizedText.rect)
+                let intersection = xNormalizedRect.intersection(recognizedText.rect)
+                columnElementsAndIntersections.append(
+                    (columnElement, intersection)
+                )
+                discarded.append(columnElement)
+            }
+            
+            /// Now order the `columnElementsAndIntersections` in decreasing order of `intersection.height` — which indicates how far away from the source `recognizedText` they are
+            columnElementsAndIntersections.sort { $0.intersection.height > $1.intersection.height }
+            
+            /// Now that its sorted, map the recognized texts into an array and provide that in the result array
+            row.append(columnElementsAndIntersections.map { $0.recognizedText })
+        }
+        
+        return row
+    }
+    
+    //MARK: - Legacy
+
     func filterSameColumn(as recognizedText: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
         var column: [RecognizedText] = []
         var discarded: [RecognizedText] = []
@@ -69,12 +183,9 @@ extension Array where Element == RecognizedText {
         
         return column
     }
-    
-    /** Returns an array of the inline `recognizedText`s to the one we specify, in the direction indicating by `preceding`—whilst ignoring those provided.
-     
-        The return array is 2-dimensional, where each element is another array of elements that appear in the same column as one another, in order of how much they intersect with the source `recognizedText`. These arrays are in the order of the how far away from the `recognizedText` they are.
-     */
-    func inlineTextColumns(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [[RecognizedText]] {
+
+    /// Same as `inlineTextColumns(as:preceding:ignoring)`, but with commented out code included
+    func inlineTextColumns_legacy(as recognizedText: RecognizedText, preceding: Bool = false, ignoring textsToIgnore: [RecognizedText] = []) -> [[RecognizedText]] {
 //        log.verbose(" ")
 //        log.verbose("******")
 //        log.verbose("Finding recognizedTextsOnSameLine as: \(recognizedText.string)")
@@ -115,7 +226,8 @@ extension Array where Element == RecognizedText {
             let column = candidates.filter {
                 $0.isInSameColumnAs(candidate)
             }
-            guard column.count > 1, let first = column.first else {
+            guard column.count > 1, let _ = column.first else {
+//            guard column.count > 1, let first = column.first else {
 //                log.verbose("  no recognizedTexts in same column, so adding this to the final array and continuing")
                 row.append([candidate])
                 continue
@@ -174,30 +286,5 @@ extension Array where Element == RecognizedText {
         
         return row
     }
-    
-//    func valueOnSameLine(as recognizedText: RecognizedText, inSecondColumn: Bool = false) -> RecognizedText? {
-//        /// Set this bool to true if we're looking for the second value so that the first value gets ignored
-//        var ignoreNextValue = inSecondColumn
-//        var returnNilIfNextRecognizedTextDoesNotContainValue = false
-//        let recognizedTextsOnSameLine = filterSameRow(as: recognizedText)
-//        for recognizedText in recognizedTextsOnSameLine {
-//            if recognizedText.containsValue {
-//                /// Keep looking if we're after the second column
-//                guard !ignoreNextValue else {
-//                    /// Reset this so that we actually grab the next value
-//                    ignoreNextValue = false
-//                    continue
-//                }
-//                return recognizedText
-//            } else if returnNilIfNextRecognizedTextDoesNotContainValue {
-//                return nil
-//            }
-//            if recognizedText.containsPercentage {
-//                returnNilIfNextRecognizedTextDoesNotContainValue = true
-//            } else {
-//                return nil
-//            }
-//        }
-//        return nil
-//    }
 }
+
