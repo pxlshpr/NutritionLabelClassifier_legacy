@@ -78,7 +78,7 @@ extension DataFrame {
         let amount = doubleTextForAttribute(.headerServingAmount)?.double
         let unit = unitTextForAttribute(.headerServingUnit)?.unit
         let unitName = stringTextForAttribute(.headerServingUnitSize)?.string
-        let equivalentSize = equivalentSize
+        let equivalentSize = headerServingEquivalentSize
         
         if amount != nil || unit != nil || unitName != nil || equivalentSize != nil {
             return HeaderText.Serving(

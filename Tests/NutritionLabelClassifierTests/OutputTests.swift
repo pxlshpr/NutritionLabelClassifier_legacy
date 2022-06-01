@@ -52,19 +52,24 @@ final class OutputTests: XCTestCase {
             XCTFail("Couldn't get expected nutrients for Test Case \(id)")
             return
         }
-        
+
+        print("📃 Expectations:")
+        print(expectedDataFrame)
+
         /// Create `Output` from test case file too
         guard let expectedOutput = Output(fromExpectedDataFrame: expectedDataFrame) else {
             XCTFail("Couldn't create expected Output from DataFrame for Test Case \(id)")
             return
         }
         self.expectedOutput = expectedOutput
+
+        let dataFrame = NutritionLabelClassifier(arrayOfRecognizedTexts: array).dataFrameOfObservations()
+        print("👀 Observations:")
+        print(dataFrameWithTextIdsRemoved(from: dataFrame))
         
         try compareOutputs()
         
-        print("✅ Passed with observations:")
-        let dataFrame = NutritionLabelClassifier(arrayOfRecognizedTexts: array).dataFrameOfObservations()
-        print(dataFrameWithTextIdsRemoved(from: dataFrame))
+        print("✅ Passed")
     }
     
     func compareOutputs() throws {

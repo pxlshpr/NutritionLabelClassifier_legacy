@@ -31,12 +31,12 @@ extension OutputTests {
             return
         }
         
-        guard let observedHeaderText = observedOutput?.nutrients.headerText2 else {
+        guard let observed = observedOutput?.nutrients.headerText2 else {
             XCTFail(m("Expected headerText2 (of type \(expected.type.rawValue)) wasn't observed"))
             return
         }
 
-        try compareHeaderTexts(observed: observedHeaderText, expected: expected, headerNumber: 2)
+        try compareHeaderTexts(observed: observed, expected: expected, headerNumber: 2)
     }
 
     func compareHeaderTexts(observed: HeaderText, expected: HeaderText, headerNumber i: Int) throws {
