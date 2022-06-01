@@ -21,11 +21,11 @@ public extension Output.Serving.EquivalentSize {
 }
 
 public extension Output.Serving.PerContainer {
-    var amount: Double { amountText.double }
+    var amount: Double? { amountText?.double }
     var name: String? { nameText?.string }
 //    var containerName: ContainerName? { identifiableContainerName?.containerName }
     
-    var amountId: UUID { amountText.textId }
+    var amountId: UUID? { amountText?.textId }
     var nameId: UUID? { nameText?.textId }
 //    var containerNameId: UUID? { identifiableContainerName?.id }
 }

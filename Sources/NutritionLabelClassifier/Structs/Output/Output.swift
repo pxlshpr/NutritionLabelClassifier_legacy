@@ -23,7 +23,7 @@ extension Output {
         }
 
         public struct PerContainer {
-            public let amountText: DoubleText
+            public let amountText: DoubleText?
             public let nameText: StringText?
         }
     }
