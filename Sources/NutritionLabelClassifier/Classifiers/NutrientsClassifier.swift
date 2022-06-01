@@ -2,8 +2,25 @@ import Foundation
 import VisionSugar
 
 extension Array where Element == Observation {
-    mutating func appendIfAttributeIsNotPresent(_ observation: Observation) {
-        if !contains(where: { $0.attributeText.attribute == observation.attributeText.attribute }) {
+    
+    func contains(attribute: Attribute) -> Bool {
+        contains(where: { $0.attributeText.attribute == attribute })
+    }
+
+    func containsConflictingAttribute(to attribute: Attribute) -> Bool {
+        for conflictingAttribute in attribute.conflictingAttributes {
+            if contains(attribute: conflictingAttribute) {
+                return true
+            }
+        }
+        return false
+    }
+
+    mutating func appendIfValid(_ observation: Observation) {
+        let attribute = observation.attributeText.attribute
+        let containsAttribute = contains(attribute: attribute)
+        let containsConflictingAttribute = containsConflictingAttribute(to: attribute)
+        if !containsAttribute && !containsConflictingAttribute {
             append(observation)
         }
     }
@@ -48,7 +65,7 @@ class NutrientsClassifier: Classifier {
             /// Process any attributes that were extracted
             for observation in pendingObservations {
                 /// Only add attributes that haven't already been added
-                observations.appendIfAttributeIsNotPresent(observation)
+                observations.appendIfValid(observation)
             }
             
             /// Now do an inline search for any attribute that is still being extracted
@@ -90,7 +107,7 @@ class NutrientsClassifier: Classifier {
                     continue
                 }
 //                observations.append(observationBeingExtracted)
-                observations.appendIfAttributeIsNotPresent(observationBeingExtracted)
+                observations.appendIfValid(observationBeingExtracted)
             }
         }
         return observations

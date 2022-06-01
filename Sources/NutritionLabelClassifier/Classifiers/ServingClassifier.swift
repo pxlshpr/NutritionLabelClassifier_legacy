@@ -31,7 +31,7 @@ class ServingClassifier: Classifier {
             /// Process any attributes that were extracted
             for observation in pendingObservations {
                 /// Only add attributes that haven't already been added
-                observations.appendIfAttributeIsNotPresent(observation)
+                observations.appendIfValid(observation)
 //                if !observations.contains(where: { $0.attributeText.attribute == observation.attributeText.attribute }) {
 //                    observations.append(observation)
 //                }
@@ -69,7 +69,7 @@ class ServingClassifier: Classifier {
                     continue
                 }
 //                observations.append(observationBeingExtracted)
-                observations.appendIfAttributeIsNotPresent(observationBeingExtracted)
+                observations.appendIfValid(observationBeingExtracted)
             }
         }
         return observations

@@ -85,14 +85,14 @@ class HeaderClassifier: Classifier {
                     guard let header1Type = Observation(headerType: .per100g,for: .headerType1, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfAttributeIsNotPresent(header1Type)
+                    observations.appendIfValid(header1Type)
 //                    observations.append(header1Type)
                     extractedHeader1 = true
                 case .perServing:
                     guard let header1Type = Observation(headerType: .perServing,for: .headerType1, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfAttributeIsNotPresent(header1Type)
+                    observations.appendIfValid(header1Type)
 //                    observations.append(header1Type)
                     extractedHeader1 = true
                 case .per100gAndPerServing:
@@ -100,8 +100,8 @@ class HeaderClassifier: Classifier {
                           let header2Type = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfAttributeIsNotPresent(header1Type)
-                    observations.appendIfAttributeIsNotPresent(header2Type)
+                    observations.appendIfValid(header1Type)
+                    observations.appendIfValid(header2Type)
 //                    observations.append(header1Type)
 //                    observations.append(header2Type)
                     extractedHeader1 = true
@@ -111,8 +111,8 @@ class HeaderClassifier: Classifier {
                           let header2Type = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfAttributeIsNotPresent(header1Type)
-                    observations.appendIfAttributeIsNotPresent(header2Type)
+                    observations.appendIfValid(header1Type)
+                    observations.appendIfValid(header2Type)
 //                    observations.append(header1Type)
 //                    observations.append(header2Type)
                     extractedHeader1 = true
@@ -125,30 +125,30 @@ class HeaderClassifier: Classifier {
                         break
                     }
                     if let amount = serving.amount, let observation = Observation(double: amount, attribute: .headerServingAmount, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                        observations.append(observation)
                     }
                     if let unit = serving.unit, let observation = Observation(unit: unit, attribute: .headerServingUnit, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                        observations.append(observation)
                     }
                     if let string = serving.unitName, let observation = Observation(string: string, attribute: .headerServingUnitSize, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                        observations.append(observation)
                     }
                     guard let equivalentSize = serving.equivalentSize else {
                         break
                     }
                     if let observation = Observation(double: equivalentSize.amount, attribute: .headerServingEquivalentAmount, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                        observations.append(observation)
                     }
                     if let unit = equivalentSize.unit, let observation = Observation(unit: unit, attribute: .headerServingEquivalentUnit, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                      observations.append(observation)
                     }
                     if let string = equivalentSize.unitName, let observation = Observation(string: string, attribute: .headerServingEquivalentUnitSize, recognizedText: recognizedText) {
-                        observations.appendIfAttributeIsNotPresent(observation)
+                        observations.appendIfValid(observation)
 //                      observations.append(observation)
                     }
                 default:

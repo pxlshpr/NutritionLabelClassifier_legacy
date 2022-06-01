@@ -57,6 +57,29 @@ public enum Attribute: String, CaseIterable {
     case vitaminD
     
     
+    public var conflictingAttributes: [Attribute] {
+        switch self {
+        case .servingUnit:
+            return [.servingUnitSize]
+        case .servingUnitSize:
+            return [.servingUnit]
+        case .servingEquivalentUnit:
+            return [.servingEquivalentUnitSize]
+        case .servingEquivalentUnitSize:
+            return [.servingEquivalentUnit]
+        case .headerServingUnit:
+            return [.headerServingUnitSize]
+        case .headerServingUnitSize:
+            return [.headerServingUnit]
+        case .headerServingEquivalentUnit:
+            return [.headerServingEquivalentUnitSize]
+        case .headerServingEquivalentUnitSize:
+            return [.headerServingEquivalentUnit]
+        default:
+            return []
+        }
+    }
+    
     public var isHeaderAttribute: Bool {
         switch self {
         case .headerServingAmount, .headerServingUnit, .headerServingUnitSize, .headerServingEquivalentAmount, .headerServingEquivalentUnit, .headerServingEquivalentUnitSize, .headerType1, .headerType2:
