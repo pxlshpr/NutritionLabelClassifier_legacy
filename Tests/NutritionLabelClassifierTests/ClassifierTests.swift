@@ -12,6 +12,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
     
     func testClassifier() throws {
         guard RunLegacyTests else { return }
+        print("🤖 Running Legacy Tests on Test Cases: \(ClassifierTestCases)")
         for testCase in ClassifierTestCases {
 
             guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {

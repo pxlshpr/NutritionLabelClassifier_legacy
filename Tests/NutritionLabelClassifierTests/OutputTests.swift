@@ -6,7 +6,7 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = false
+let RunLegacyTests = true
 
 final class OutputTests: XCTestCase {
 
@@ -19,8 +19,7 @@ final class OutputTests: XCTestCase {
 //    }
     
     func testClassifierUsingZipFile() throws {
-        guard !RunLegacyTests else { return }
-        print(URL.documents)
+        print("🤖 Running Tests on Zip File")
         let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
         let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)
         
@@ -62,6 +61,10 @@ final class OutputTests: XCTestCase {
         self.expectedOutput = expectedOutput
         
         try compareOutputs()
+        
+        print("✅ Passed with observations:")
+        let dataFrame = NutritionLabelClassifier(arrayOfRecognizedTexts: array).dataFrameOfObservations()
+        print(dataFrameWithTextIdsRemoved(from: dataFrame))
     }
     
     func compareOutputs() throws {

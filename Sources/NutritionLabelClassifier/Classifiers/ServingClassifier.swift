@@ -240,7 +240,8 @@ class ServingClassifier: Classifier {
     
     func extractServingObservation(_ observation: inout Observation, from recognizedText: RecognizedText) -> (didExtract: Bool, shouldContinue: Bool) {
         
-        var didExtract = false
+        let didExtract = false
+//        var didExtract = false
         for artefact in recognizedText.getServingArtefacts(for: observation.attributeText.attribute, observationBeingExtracted: observation, extractedObservations: observations) {
             
 //            if let value = artefact.value {

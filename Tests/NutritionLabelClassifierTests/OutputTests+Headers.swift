@@ -40,11 +40,7 @@ extension OutputTests {
     }
 
     func compareHeaderTexts(observed: HeaderText, expected: HeaderText, headerNumber i: Int) throws {
-        XCTAssertEqual(
-            observed.type,
-            expected.type,
-            m("headerText\(i).type")
-        )
+        XCTAssertEqual(observed.type, expected.type, m("headerText\(i).type"))
         try compareHeaderServings(observed: observed.serving, expected: expected.serving, headerNumber: i)
     }
     
@@ -56,23 +52,9 @@ extension OutputTests {
         
         let observed = try XCTUnwrap(observed, m("expectedOutput.nutrients.headerText\(i).serving"))
 
-        XCTAssertEqual(
-            observed.amount,
-            expected.amount,
-            m("headerText\(i).serving.amount — observed: \(observed.amount?.clean ?? "(nil)") ≠ expected: \(expected.amount?.clean ?? "(nil)")")
-        )
-
-        XCTAssertEqual(
-            observed.unit,
-            expected.unit,
-            m("headerText\(i).serving.unit — observed: \(observed.unit?.description ?? "(nil)") ≠ expected: \(expected.unit?.description ?? "(nil)")")
-        )
-
-        XCTAssertEqual(
-            observed.unitName,
-            expected.unitName,
-            m("headerText\(i).serving.unitName — observed: \(observed.unitName ?? "(nil)") ≠ expected: \(expected.unitName ?? "(nil)")")
-        )
+        XCTAssertEqual(observed.amount, expected.amount, m("headerText\(i).serving.amount"))
+        XCTAssertEqual(observed.unit, expected.unit, m("headerText\(i).serving.unit"))
+        XCTAssertEqual(observed.unitName, expected.unitName, m("headerText\(i).serving.unitName"))
 
         try compareHeaderServingEquivalentSizes(
             observed: observed.equivalentSize,
@@ -88,19 +70,8 @@ extension OutputTests {
         
         let observed = try XCTUnwrap(observed, m("Expected expectedOutput.nutrients.headerText\(i).serving.equivalent wasn't observed"))
 
-        XCTAssertEqual(
-            observed.amount, expected.amount,
-            m("headerText\(i).serving.equivalentSize.amount — observed: \(observed.amount.clean) ≠ expected: \(expected.amount.clean)")
-        )
-
-        XCTAssertEqual(
-            observed.unit, expected.unit,
-            m("headerText\(i).serving.equivalentSize.unit — observed: \(observed.unit?.description ?? "(nil)") ≠ expected: \(expected.unit?.description ?? "(nil)")")
-        )
-
-        XCTAssertEqual(
-            observed.unitName, expected.unitName,
-            m("headerText\(i).serving.equivalentSize.unitName — observed: \(observed.unitName ?? "(nil)") ≠ expected: \(expected.unitName ?? "(nil)")")
-        )
+        XCTAssertEqual(observed.amount, expected.amount, m("headerText\(i).serving.equivalentSize.amount"))
+        XCTAssertEqual(observed.unit, expected.unit, m("headerText\(i).serving.equivalentSize.unit"))
+        XCTAssertEqual(observed.unitName, expected.unitName, m("headerText\(i).serving.equivalentSize.unitName"))
     }
 }
