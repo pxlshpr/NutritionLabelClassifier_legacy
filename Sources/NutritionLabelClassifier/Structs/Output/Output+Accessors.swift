@@ -13,11 +13,11 @@ public extension Output.Serving {
 public extension Output.Serving.EquivalentSize {
     var amount: Double { amountText.double }
     var unit: NutritionUnit? { unitText?.unit }
-    var sizeName: String? { unitNameText?.string }
+    var unitName: String? { unitNameText?.string }
     
     var amountId: UUID { amountText.textId }
     var unitId: UUID? { unitText?.textId }
-    var sizeNameId: UUID? { unitNameText?.textId }
+    var unitNameId: UUID? { unitNameText?.textId }
 }
 
 public extension Output.Serving.PerContainer {

@@ -57,7 +57,7 @@ public extension Output {
         case .servingEquivalentUnit:
             return serving?.equivalentSize?.unit != nil
         case .servingEquivalentUnitSize:
-            return serving?.equivalentSize?.sizeName != nil
+            return serving?.equivalentSize?.unitName != nil
         case .servingsPerContainerAmount:
             return serving?.perContainer != nil
         case .servingsPerContainerName:

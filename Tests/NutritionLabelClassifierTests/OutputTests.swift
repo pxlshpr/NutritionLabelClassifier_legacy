@@ -12,9 +12,9 @@ final class OutputTests: XCTestCase {
     var observedOutput: Output? = nil
     var expectedOutput: Output? = nil
 
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
+//    override func setUpWithError() throws {
+//        continueAfterFailure = false
+//    }
     
     func testClassifierUsingZipFile() throws {
         print(URL.documents)
@@ -63,6 +63,12 @@ final class OutputTests: XCTestCase {
     
     func compareOutputs() {
         compareServings()
-//        compare(observedNutrients: observed.nutrients, toExpectedNutrients: expected.nutrients)
+        compareNutrients()
+    }
+    
+    //MARK: - Helpers
+    
+    func m(_ message: String) -> String {
+        "\(message) (\(currentTestCaseId))"
     }
 }

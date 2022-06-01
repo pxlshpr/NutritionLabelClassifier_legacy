@@ -6,94 +6,89 @@ extension OutputTests {
 
     func compareServings() {
         
-        guard let expectedServing = expectedOutput?.serving else {
+        guard let expected = expectedOutput?.serving else {
             if observedOutput?.serving != nil {
-                XCTFail("Serving was observed without an expectation (\(currentTestCaseId))")
+                XCTFail(m("Observed observedOutput.serving without an expectation"))
             }
             return
         }
         
-        guard let observedServing = observedOutput?.serving else {
-            XCTFail("Expected Output.Serving wasn't observed (\(currentTestCaseId))")
+        guard let observed = observedOutput?.serving else {
+            XCTFail(m("Expected expectedOutput.serving wasn't observed"))
             return
         }
         
-        guard observedServing.amount == expectedServing.amount else {
-            XCTFail("Observed serving amount \(observedServing.amount ?? 0) ≠ Expected serving amount \(expectedServing.amount ?? 0)")
-            return
-        }
+        XCTAssertEqual(
+            observed.amount, expected.amount,
+            m("serving.amount — observed: \(observed.amount?.clean ?? "(nil)") ≠ expected: \(expected.amount?.clean ?? "(nil)")")
+        )
 
-        guard observedServing.unit == expectedServing.unit else {
-            XCTFail("Serving units do not match")
-            return
-        }
+        XCTAssertEqual(
+            observed.unit,
+            expected.unit,
+            m("serving.unit — observed: \(observed.unit?.description ?? "(nil)") ≠ expected: \(expected.unit?.description ?? "(nil)")")
+        )
+
+        XCTAssertEqual(
+            observed.unitName,
+            expected.unitName,
+            m("serving.unitName — observed: \(observed.unitName ?? "(nil)") ≠ expected: \(expected.unitName ?? "(nil)")")
+        )
         
-        guard observedServing.unitName == expectedServing.unitName else {
-            XCTFail("Serving unit name's do not match")
-            return
-        }
-        
-        guard compare(observedEquivalentSize: observedServing.equivalentSize,
-                      toExpectedEquivalentSize: expectedServing.equivalentSize) else {
-            return
-        }
-        print("✅ Serving: Equivalent Size")
-
-        guard compare(observedPerContainer: observedServing.perContainer,
-                      toExpectedPerContainer: expectedServing.perContainer) else {
-            return
-        }
-        print("✅ Serving: Per Container")
-
-        print("✅ Serving")
+        compareServingEquivalentSizes()
+        compareServingPerContainers()
     }
     
-    func compare(observedEquivalentSize: Output.Serving.EquivalentSize?, toExpectedEquivalentSize expectedEquivalentSize: Output.Serving.EquivalentSize?) -> Bool {
-        guard let expectedEquivalentSize = expectedEquivalentSize else {
-            return true
-        }
-        guard let observedEquivalentSize = observedEquivalentSize else {
-            XCTFail("Missing equivalent size")
-            return false
-        }
-        
-        guard observedEquivalentSize.amount == expectedEquivalentSize.amount else {
-            XCTFail("Equivalent size amount's do not match")
-            return false
+    func compareServingEquivalentSizes() {
+        guard let expected = expectedOutput?.serving?.equivalentSize else {
+            if observedOutput?.serving?.equivalentSize != nil {
+                XCTFail(m("Observed observedOutput.serving.equivalentSize without an expectation"))
+            }
+            return
         }
         
-        guard observedEquivalentSize.unit == expectedEquivalentSize.unit else {
-            XCTFail("Equivalent size unit's do not match")
-            return false
+        guard let equivalent = observedOutput?.serving?.equivalentSize else {
+            XCTFail(m("Expected expectedOutput.serving.equivalentSize wasn't observed"))
+            return
         }
-        
-        guard observedEquivalentSize.sizeName == expectedEquivalentSize.sizeName else {
-            XCTFail("Equivalent size unit name's do not match")
-            return false
-        }
-        return true
+
+        XCTAssertEqual(
+            equivalent.amount, expected.amount,
+            m("serving.equivalentSize.amount — observed: \(equivalent.amount.clean) ≠ expected: \(expected.amount.clean)")
+        )
+
+        XCTAssertEqual(
+            equivalent.unit, expected.unit,
+            m("serving.equivalentSize.unit — observed: \(equivalent.unit?.description ?? "(nil)") ≠ expected: \(expected.unit?.description ?? "(nil)")")
+        )
+
+        XCTAssertEqual(
+            equivalent.unitName, expected.unitName,
+            m("serving.equivalentSize.unitName — observed: \(equivalent.unitName ?? "(nil)") ≠ expected: \(expected.unitName ?? "(nil)")")
+        )
     }
     
-    func compare(observedPerContainer: Output.Serving.PerContainer?, toExpectedPerContainer expectedPerContainer: Output.Serving.PerContainer?) -> Bool {
-        guard let expectedPerContainer = expectedPerContainer else {
-            return true
+    func compareServingPerContainers() {
+        guard let expected = expectedOutput?.serving?.perContainer else {
+            if observedOutput?.serving?.perContainer != nil {
+                XCTFail(m("Observed observedOutput.serving.perContainer without an expectation"))
+            }
+            return
         }
         
-        guard let observedPerContainer = observedPerContainer else {
-            XCTFail("Missing per container")
-            return false
+        guard let observed = observedOutput?.serving?.perContainer else {
+            XCTFail(m("Expected expectedOutput.serving.perContainer wasn't observed"))
+            return
         }
+
+        XCTAssertEqual(
+            observed.amount, expected.amount,
+            m("serving.perContainer.amount — observed: \(observed.amount.clean) ≠ expected: \(expected.amount.clean)")
+        )
         
-        guard observedPerContainer.amount == expectedPerContainer.amount else {
-            XCTFail("Per Container amount's do not match")
-            return false
-        }
-        
-        guard observedPerContainer.name == expectedPerContainer.name else {
-            XCTFail("Per Container name's do not match")
-            return false
-        }
-        
-        return true
+        XCTAssertEqual(
+            observed.name, expected.name,
+            m("serving.perContainer.name — observed: \(observed.name ?? "(nil)") ≠ expected: \(expected.name ?? "(nil)")")
+        )
     }
 }
