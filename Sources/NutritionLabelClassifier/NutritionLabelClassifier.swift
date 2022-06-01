@@ -2,6 +2,12 @@ import Foundation
 import VisionSugar
 import TabularData
 
+//TODO: Rename this to
+/// `NutritionLabelRecognizer`
+/// `NutritionFactRecognizer`
+/// `NutritionFactsRecognizer` likely candidate—maybe name `output` to `facts`
+/// `NuritionFactsLabelRecognizer` too long
+/// `LabelRecognizer` too short
 public class NutritionLabelClassifier {
     
     var arrayOfRecognizedTexts: [[RecognizedText]]
@@ -33,6 +39,7 @@ public class NutritionLabelClassifier {
         for recognizedTexts in arrayOfRecognizedTexts {
             observations = NutrientsClassifier.classify(recognizedTexts, into: observations)
             observations = ServingClassifier.classify(recognizedTexts, into: observations)
+            
         }
 
         /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
@@ -51,7 +58,6 @@ public class NutritionLabelClassifier {
         }
         
         /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
-        
         return Self.dataFrameOfNutrients(from: observations)
     }
     
@@ -70,4 +76,3 @@ public class NutritionLabelClassifier {
         return dataFrame
     }
 }
-
