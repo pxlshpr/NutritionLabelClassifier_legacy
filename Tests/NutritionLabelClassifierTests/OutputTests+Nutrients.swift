@@ -5,23 +5,18 @@ import XCTest
 extension OutputTests {
     
     func compareNutrients() throws {
-        compareRows()
+        try compareRows()
         try compareHeader1()
         try compareHeader2()
     }
 
-    func compareRows() {
+    func compareRows() throws {
         guard let expectedNutrients = expectedOutput?.nutrients else {
-            if observedOutput?.nutrients != nil {
-                XCTFail(m("Observed observedOutput.nutrients without an expectation"))
-            }
+            XCTAssertNotNil(observedOutput?.nutrients, m("Observed observedOutput.nutrients without an expectation"))
             return
         }
         
-        guard let observedNutrients = observedOutput?.nutrients else {
-            XCTFail(m("Expected expectedOutput.nutrients wasn't observed"))
-            return
-        }
+        let observedNutrients = try XCTUnwrap(observedOutput?.nutrients, m("Expected expectedOutput.nutrients wasn't observed"))
 
         /// For each expected row
         for expectedRow in expectedNutrients.rows {
@@ -30,17 +25,8 @@ extension OutputTests {
                 continue
             }
             
-            XCTAssertEqual(
-                observedRow.value1,
-                expectedRow.value1,
-                m("\(observedRow.attribute).value1 Observation: \(observedRow.value1?.description ?? "(nil)") ≠ Expectation: \(expectedRow.value1?.description ?? "(nil)")")
-            )
-            
-            XCTAssertEqual(
-                observedRow.value2,
-                expectedRow.value2,
-                m("\(observedRow.attribute).value2 Observation: \(observedRow.value2?.description ?? "(nil)") ≠ Expectation: \(expectedRow.value2?.description ?? "(nil)")")
-            )
+            XCTAssertEqual(observedRow.value1, expectedRow.value1, m("\(observedRow.attribute).value1"))
+            XCTAssertEqual(observedRow.value2, expectedRow.value2, m("\(observedRow.attribute).value2"))
         }
         
         /// Filter out observed rows that weren't expected

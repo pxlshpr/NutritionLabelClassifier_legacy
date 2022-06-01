@@ -31,9 +31,10 @@ class ServingClassifier: Classifier {
             /// Process any attributes that were extracted
             for observation in pendingObservations {
                 /// Only add attributes that haven't already been added
-                if !observations.contains(where: { $0.attributeText.attribute == observation.attributeText.attribute }) {
-                    observations.append(observation)
-                }
+                observations.appendIfAttributeIsNotPresent(observation)
+//                if !observations.contains(where: { $0.attributeText.attribute == observation.attributeText.attribute }) {
+//                    observations.append(observation)
+//                }
             }
 
             /// Now do an inline search for any attribute that is still being extracted
@@ -67,8 +68,8 @@ class ServingClassifier: Classifier {
                 guard observationBeingExtracted.valueText1 != nil || observationBeingExtracted.valueText2 != nil else {
                     continue
                 }
-                observations.append(observationBeingExtracted)
-
+//                observations.append(observationBeingExtracted)
+                observations.appendIfAttributeIsNotPresent(observationBeingExtracted)
             }
         }
         return observations

@@ -68,7 +68,7 @@ final class OutputTests: XCTestCase {
     }
     
     func compareOutputs() throws {
-        compareServings()
+        try compareServings()
         try compareNutrients()
     }
     
