@@ -7,7 +7,16 @@ import Zip
 @testable import NutritionLabelClassifier
 
 final class OutputTests: XCTestCase {
-    func _testClassifierUsingZipFile() throws {
+    
+    var currentTestCaseId: UUID = defaultUUID
+    var observedOutput: Output? = nil
+    var expectedOutput: Output? = nil
+
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+    
+    func testClassifierUsingZipFile() throws {
         print(URL.documents)
         let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
         let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)
@@ -17,17 +26,16 @@ final class OutputTests: XCTestCase {
         try FileManager.default.createDirectory(at: testDataUrl, withIntermediateDirectories: true)
 
         /// Unzip Test Data contents
-        try Zip.unzipFile(filePath, destination: testDataUrl, overwrite: true, password: nil, progress: { (progress) -> () in
-            print(progress)
-        })
+        try Zip.unzipFile(filePath, destination: testDataUrl, overwrite: true, password: nil)
         
         /// For each UUID in Test Cases/With Lanugage Correction
         for testCaseId in testCaseIds {
-            try testCase(withId: testCaseId)
+            try runTestsForTestCase(withId: testCaseId)
         }        
     }
     
-    func testCase(withId id: UUID) throws {
+    func runTestsForTestCase(withId id: UUID) throws {
+        currentTestCaseId = id
         print("🧪 Test Case: \(id)")
         
         guard let array = arrayOfRecognizedTextsForTestCase(withId: id) else {
@@ -35,7 +43,7 @@ final class OutputTests: XCTestCase {
             return
         }
 
-        let classifierOutput = NutritionLabelClassifier.classify(array)
+        observedOutput = NutritionLabelClassifier.classify(array)
         
         /// Extract `expectedNutrients` from data frame
         guard let expectedDataFrame = dataFrameForTestCase(withId: id, testCaseFileType: .expectedNutrients) else {
@@ -48,13 +56,13 @@ final class OutputTests: XCTestCase {
             XCTFail("Couldn't create expected Output from DataFrame for Test Case \(id)")
             return
         }
+        self.expectedOutput = expectedOutput
         
-        /// Now use a specialized function that compares the values between what was generated and what was expected
-        compare(classifierOutput: classifierOutput, withExpectedOutput: expectedOutput)
+        compareOutputs()
     }
     
-    func compare(classifierOutput observed: Output, withExpectedOutput expected: Output) {
-        compare(observedServing: observed.serving, withExpectedServing: expected.serving)
-        compare(observedNutrients: observed.nutrients, toExpectedNutrients: expected.nutrients)
+    func compareOutputs() {
+        compareServings()
+//        compare(observedNutrients: observed.nutrients, toExpectedNutrients: expected.nutrients)
     }
 }

@@ -11,7 +11,7 @@ let ClassifierTestCases = 1...23
 
 final class NutritionLabelClassifierTests: XCTestCase {
     
-    func testClassifier() throws {
+    func _testClassifier() throws {
         guard RunLegacyTests else { return }
         for testCase in ClassifierTestCases {
 
