@@ -6,12 +6,11 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = true
 let ClassifierTestCases = 1...23
 
 final class NutritionLabelClassifierTests: XCTestCase {
     
-    func _testClassifier() throws {
+    func testClassifier() throws {
         guard RunLegacyTests else { return }
         for testCase in ClassifierTestCases {
 

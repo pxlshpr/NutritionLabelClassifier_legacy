@@ -37,10 +37,10 @@ class HeaderClassifier: Classifier {
                     continue
                 }
                 switch columnHeaderText {
-                case .per100g:
-                    fatalError("TODO per100g")
-                case .perServing(let serving):
-                    fatalError("TODO perServing: \(serving ?? "")")
+//                case .per100g:
+//                    fatalError("TODO per100g")
+//                case .perServing(let serving):
+//                    fatalError("TODO perServing: \(serving ?? "")")
                 case .per100gAndPerServing(let serving):
                     let header1Type = Observation(
                         attributeText: AttributeText(attribute: .headerType1,
@@ -59,8 +59,10 @@ class HeaderClassifier: Classifier {
                                                attributeTextId: recognizedText.id)
                     )
                     observations.append(header2Type)
-                case .perServingAnd100g(let serving):
-                    fatalError("TODO perServingAnd100g: \(serving ?? "")")
+//                case .perServingAnd100g(let serving):
+//                    fatalError("TODO perServingAnd100g: \(serving ?? "")")
+                default:
+                    break
                 }
             }
         }
