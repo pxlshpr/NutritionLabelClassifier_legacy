@@ -212,7 +212,7 @@ public enum Attribute: String, CaseIterable {
         switch self {
         case .servingsPerContainerName, .servingUnitSize, .servingEquivalentUnitSize:
             return servingArtefact.string != nil
-        case .servingAmount, .servingEquivalentAmount:
+        case .servingAmount, .servingEquivalentAmount, .servingsPerContainerAmount:
             return servingArtefact.double != nil
         case .servingUnit, .servingEquivalentUnit:
             return servingArtefact.unit != nil
