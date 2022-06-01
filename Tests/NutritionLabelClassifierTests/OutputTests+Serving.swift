@@ -2,13 +2,8 @@ import Foundation
 import NutritionLabelClassifier
 import XCTest
 
-extension NutritionLabelClassifierTests {
+extension OutputTests {
 
-    func compare(classifierOutput observed: Output, withExpectedOutput expected: Output) {
-        compare(observedServing: observed.serving, withExpectedServing: expected.serving)
-        compare(observedNutrients: observed.nutrients, toExpectedNutrients: expected.nutrients)
-    }
-    
     func compare(observedServing: Output.Serving?, withExpectedServing expectedServing: Output.Serving?) {
         guard let expectedServing = expectedServing else {
             return
@@ -124,20 +119,72 @@ extension NutritionLabelClassifierTests {
             return true
         }
         guard let observedHeaderText = observedHeaderText else {
-            print("⚠️ Missing observed column header 1")
+            print("⚠️ Missing observed column header")
             return false
         }
         
         guard observedHeaderText.type == expectedHeaderText.type else {
-            print("⚠️ Column header 1 type doesn't match")
+            print("⚠️ Column header type doesn't match")
             return false
         }
 
-        //TODO: Check Header Serving here too
-//        guard observedHeaderText.serving == expectedHeaderText.serving else {
-//            print("⚠️ Column header 1 sizeName doesn't match")
-//            return false
+        guard isEqual(observedHeaderServing: observedHeaderText.serving, toExpectedHeaderServing: expectedHeaderText.serving) else {
+            print("⚠️ Header Servings do not match")
+            return false
+        }
+
+//        if let expectedHeaderServing = expectedHeaderText.serving {
+//            guard let observedHeaderServing = observedHeaderText.serving else {
+//                print("⚠️ Missing observed column header")
+//                return false
+//            }
+//
 //        }
+//
+        return true
+    }
+    
+    func isEqual(observedHeaderServing: HeaderText.Serving?, toExpectedHeaderServing expectedHeaderServing: HeaderText.Serving?) -> Bool {
+
+        guard observedHeaderServing?.amount == expectedHeaderServing?.amount else {
+            print("⚠️ Header serving amounts do not match")
+            return false
+        }
+
+        guard observedHeaderServing?.unit == expectedHeaderServing?.unit else {
+            print("⚠️ Header serving units do not match")
+            return false
+        }
+
+        guard observedHeaderServing?.unitName == expectedHeaderServing?.unitName else {
+            print("⚠️ Header serving unit names do not match")
+            return false
+        }
+        
+        guard isEqual(observedHeaderServingEquivalentSize: observedHeaderServing?.equivalentSize, expectedHeaderServingEquivalentSize: expectedHeaderServing?.equivalentSize) else {
+            print("⚠️ Header serving equivalent sizes do not match")
+            return false
+        }
+
+        return true
+    }
+    
+    func isEqual(observedHeaderServingEquivalentSize observedEquivalentSize: HeaderText.Serving.EquivalentSize?, expectedHeaderServingEquivalentSize expectedEquivalentSize: HeaderText.Serving.EquivalentSize?) -> Bool
+    {
+        guard observedEquivalentSize?.amount == expectedEquivalentSize?.amount else {
+            print("⚠️ Header serving equivalent size amounts do not match")
+            return false
+        }
+
+        guard observedEquivalentSize?.unit == expectedEquivalentSize?.unit else {
+            print("⚠️ Header serving equivalent size units do not match")
+            return false
+        }
+
+        guard observedEquivalentSize?.unitName == expectedEquivalentSize?.unitName else {
+            print("⚠️ Header serving equivalent size unit names do not match")
+            return false
+        }
 
         return true
     }

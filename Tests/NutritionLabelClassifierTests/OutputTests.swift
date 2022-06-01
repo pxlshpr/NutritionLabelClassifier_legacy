@@ -6,8 +6,8 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-final class NutritionLabelClassifierTests: XCTestCase {
-    func testClassifierUsingZipFile() throws {
+final class OutputTests: XCTestCase {
+    func _testClassifierUsingZipFile() throws {
         print(URL.documents)
         let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
         let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)
@@ -24,19 +24,7 @@ final class NutritionLabelClassifierTests: XCTestCase {
         /// For each UUID in Test Cases/With Lanugage Correction
         for testCaseId in testCaseIds {
             try testCase(withId: testCaseId)
-        }
-        /// Get its associated recognized texts file, and expectations file and feed these to a test function
-
-//        let zipFilePath = documentsFolder.appendingPathComponent("archive.zip")
-//        try Zip.zipFiles([filePath], zipFilePath: zipFilePath, password: "password", progress: { (progress) -> () in
-//            print(progress)
-//        }) //Zip
-//
-//        }
-//        catch {
-//          print("Something went wrong")
-//        }
-        
+        }        
     }
     
     func testCase(withId id: UUID) throws {
@@ -63,5 +51,10 @@ final class NutritionLabelClassifierTests: XCTestCase {
         
         /// Now use a specialized function that compares the values between what was generated and what was expected
         compare(classifierOutput: classifierOutput, withExpectedOutput: expectedOutput)
+    }
+    
+    func compare(classifierOutput observed: Output, withExpectedOutput expected: Output) {
+        compare(observedServing: observed.serving, withExpectedServing: expected.serving)
+        compare(observedNutrients: observed.nutrients, toExpectedNutrients: expected.nutrients)
     }
 }
