@@ -305,10 +305,11 @@ public enum Attribute: String, CaseIterable {
     }
     
     init?(fromString string: String) {
+        
         var pickedAttribute: Attribute? = nil
         for attribute in Self.allCases {
             guard let regex = attribute.regex else { continue }
-            if string.trimmingWhitespaces.matchesRegex(regex) {
+            if string.cleanedAttributeString.matchesRegex(regex) {
                 guard pickedAttribute == nil else {
                     /// Fail strings that contain more than one match (since the order shouldn't dictate what we choose)
                     return nil
@@ -342,6 +343,14 @@ public enum Attribute: String, CaseIterable {
         static func vitamin(_ letter: String) -> String {
             #"vit(amin[ ]+|\.[ ]*|[ ]+)\#(letter)"#
         }
+    }
+}
+
+extension String {
+    var cleanedAttributeString: String {
+        trimmingWhitespaces
+            .lowercased()
+            .replacingOccurrences(of: "serving5", with: "servings") /// For cases where Vision misreads this (especially in fast recognition mode)
     }
 }
 
