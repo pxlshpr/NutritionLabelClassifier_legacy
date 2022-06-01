@@ -18,7 +18,7 @@ final class OutputTests: XCTestCase {
 //        continueAfterFailure = false
 //    }
     
-    func testClassifierUsingZipFile() throws {
+    func _testClassifierUsingZipFile() throws {
         print("🤖 Running Tests on Zip File")
         let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
         let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)

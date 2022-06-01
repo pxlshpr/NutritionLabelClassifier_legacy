@@ -237,7 +237,7 @@ public enum Attribute: String, CaseIterable {
     var regex: String? {
         switch self {
         case .servingsPerContainerAmount:
-            return #"(?:servings |)per (container|package|tub|pot)"#
+            return #"(?:servings |serving5 |)per (container|package|tub|pot)"#
         case .servingAmount:
             return #"serving size"#
         case .nutritionFacts:
