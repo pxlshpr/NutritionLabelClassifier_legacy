@@ -1,8 +1,9 @@
 import Foundation
 
 enum TestCaseFileType: String {
-    case input
+    case input /// With Accurate Recognition and Language Correction
     case inputWithoutLanguageCorrection
+    case inputWithFastRecognition
     case expectedNutrients
     case expectedFeatures
     
@@ -12,6 +13,8 @@ enum TestCaseFileType: String {
             return "\(testCase)"
         case .inputWithoutLanguageCorrection:
             return "\(testCase)-without_language_correction"
+        case .inputWithFastRecognition:
+            return "\(testCase)-with_fast_recognition"
         case .expectedNutrients:
             return "\(testCase)-nutrients"
         case .expectedFeatures:
@@ -27,6 +30,8 @@ enum TestCaseFileType: String {
             return testCasesUrl.appendingPathComponent("With Language Correction", isDirectory: true)
         case .inputWithoutLanguageCorrection:
             return testCasesUrl.appendingPathComponent("Without Language Correction", isDirectory: true)
+        case .inputWithFastRecognition:
+            return testCasesUrl.appendingPathComponent("With Fast Recognition", isDirectory: true)
         case .expectedNutrients:
             return testDataUrl.appendingPathComponent("Expectations", isDirectory: true)
         default:

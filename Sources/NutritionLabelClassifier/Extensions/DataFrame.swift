@@ -140,7 +140,9 @@ extension DataFrame {
     }
     
     var perContainer: Output.Serving.PerContainer? {
-        let doubleText = doubleTextForAttribute(.servingsPerContainerAmount)
+        guard let doubleText = doubleTextForAttribute(.servingsPerContainerAmount) else {
+            return nil
+        }
         let stringText = stringTextForAttribute(.servingsPerContainerName)
         
         return Output.Serving.PerContainer(

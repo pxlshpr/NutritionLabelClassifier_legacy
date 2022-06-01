@@ -47,6 +47,11 @@ func arrayOfRecognizedTextsForTestCase(_ testCase: Int) -> [[RecognizedText]]? {
         return nil
     }
 
+//    guard let recognizedTextsWithFastRecognition = dataFrameForTestCase(testCase, testCaseFileType: .inputWithFastRecognition)?.recognizedTexts else {
+//        XCTFail("Couldn't read file for Test Case \(testCase) (With Fast Recognition)")
+//        return nil
+//    }
+
     return [recognizedTexts, recognizedTextsWithoutLanugageCorrection]
 }
 
@@ -61,7 +66,12 @@ func arrayOfRecognizedTextsForTestCase(withId id: UUID) -> [[RecognizedText]]? {
         return nil
     }
 
-    return [withLC, withoutLC]
+    guard let withFastRecognition = dataFrameForTestCase(withId: id, testCaseFileType: .inputWithFastRecognition)?.recognizedTexts else {
+        XCTFail("Couldn't read file for Test Case \(id)")
+        return nil
+    }
+
+    return [withLC, withoutLC, withFastRecognition]
 }
 
 func dataFrameWithTextIdsRemoved(from sourceDataFrame: DataFrame) -> DataFrame {
