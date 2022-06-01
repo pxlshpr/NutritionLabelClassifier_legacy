@@ -104,6 +104,11 @@ extension String {
         return substring?.trimmingWhitespaces
     }
     
+    var substringUpToFirstNumeral_experimental: String? {
+        guard let index = indexOfFirstNumeral else { return self }
+        return String(prefix(index)).trimmingWhitespaces
+    }
+    
     var trimmingWhitespaces: String {
         trimmingCharacters(in: .whitespaces)
     }
@@ -117,5 +122,31 @@ extension String {
             }
         }
         return false
+    }
+}
+
+//
+extension String {
+    var indexOfFirstNumeral: Int? {
+        guard let firstNumeral = firstNumeral,
+              let range: Range<String.Index> = range(of: firstNumeral)
+        else { return nil }
+        
+        let index: Int = distance(from: startIndex, to: range.lowerBound)
+        return index
+    }
+    
+    var firstNumeral: String? {
+        let regex = #"(?:^|\b\s+|\(|<)([0-9]+[0-9./\%]*)\s*"#
+        let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)
+        let substring: String?
+        if groups.count > 1 {
+            substring = groups[1]
+        } else if groups.count == 1 {
+            substring = groups[0]
+        } else {
+            substring = nil
+        }
+        return substring?.trimmingWhitespaces
     }
 }

@@ -48,7 +48,7 @@ extension RecognizedText {
     }
     
     func servingArtefacts(for string: String) -> [ServingArtefact] {
-        let originalString = string
+        let originalString = string.cleanedAttributeString
         var array: [ServingArtefact] = []
         var string = string
         while string.count > 0 {
