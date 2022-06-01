@@ -8,35 +8,35 @@ import NutritionLabelClassifier
 extension OutputTests {
     
     func compareHeader1() {
-        guard let expectedHeaderText = expectedOutput?.nutrients.headerText1 else {
-            if observedOutput?.nutrients.headerText1 != nil {
-                XCTFail(m("Observed observedOutput.nutrients.headerText1 without an expectation"))
+        guard let expected = expectedOutput?.nutrients.headerText1 else {
+            if let observed = observedOutput?.nutrients.headerText1 {
+                XCTFail(m("Observed headerText1 (of type \(observed.type.rawValue)) without an expectation"))
             }
             return
         }
         
-        guard let observedHeaderText = observedOutput?.nutrients.headerText1 else {
-            XCTFail(m("Expected expectedOutput.nutrients.headerText1 wasn't observed"))
+        guard let observed = observedOutput?.nutrients.headerText1 else {
+            XCTFail(m("Expected headerText1 (of type \(expected.type.rawValue)) wasn't observed"))
             return
         }
 
-        compareHeaderTexts(observed: observedHeaderText, expected: expectedHeaderText, headerNumber: 1)
+        compareHeaderTexts(observed: observed, expected: expected, headerNumber: 1)
     }
 
     func compareHeader2() {
-        guard let expectedHeaderText = expectedOutput?.nutrients.headerText2 else {
-            if observedOutput?.nutrients.headerText2 != nil {
-                XCTFail(m("Observed observedOutput.nutrients.headerText2 without an expectation"))
+        guard let expected = expectedOutput?.nutrients.headerText2 else {
+            if let observed = observedOutput?.nutrients.headerText2 {
+                XCTFail(m("Observed headerText2 (of type \(observed.type.rawValue)) without an expectation"))
             }
             return
         }
         
         guard let observedHeaderText = observedOutput?.nutrients.headerText2 else {
-            XCTFail(m("Expected expectedOutput.nutrients.headerText2 wasn't observed"))
+            XCTFail(m("Expected headerText2 (of type \(expected.type.rawValue)) wasn't observed"))
             return
         }
 
-        compareHeaderTexts(observed: observedHeaderText, expected: expectedHeaderText, headerNumber: 2)
+        compareHeaderTexts(observed: observedHeaderText, expected: expected, headerNumber: 2)
     }
 
     func compareHeaderTexts(observed: HeaderText, expected: HeaderText, headerNumber i: Int) {
