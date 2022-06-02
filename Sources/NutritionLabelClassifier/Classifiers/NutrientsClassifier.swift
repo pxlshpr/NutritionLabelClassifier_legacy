@@ -1,31 +1,6 @@
 import Foundation
 import VisionSugar
 
-extension Array where Element == Observation {
-    
-    func contains(attribute: Attribute) -> Bool {
-        contains(where: { $0.attributeText.attribute == attribute })
-    }
-
-    func containsConflictingAttribute(to attribute: Attribute) -> Bool {
-        for conflictingAttribute in attribute.conflictingAttributes {
-            if contains(attribute: conflictingAttribute) {
-                return true
-            }
-        }
-        return false
-    }
-
-    mutating func appendIfValid(_ observation: Observation) {
-        let attribute = observation.attributeText.attribute
-        let containsAttribute = contains(attribute: attribute)
-        let containsConflictingAttribute = containsConflictingAttribute(to: attribute)
-        if !containsAttribute && !containsConflictingAttribute {
-            append(observation)
-        }
-    }
-}
-
 class NutrientsClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]
@@ -46,7 +21,6 @@ class NutrientsClassifier: Classifier {
         NutrientsClassifier(recognizedTexts: recognizedTexts, observations: observations).getObservations()
     }
 
-    //MARK: - Helpers
     func getObservations() -> [Observation] {
         
         for recognizedText in recognizedTexts {
@@ -55,7 +29,6 @@ class NutrientsClassifier: Classifier {
                 continue
             }
             
-//            let result: ProcessArtefactsResult
             if heuristicRecognizedTextIsPartOfAttribute(recognizedText) {
                 extractObservationsOfRecognizedTextByJoiningWithNextInlineRecognizedText(recognizedText)
             } else {
@@ -111,10 +84,6 @@ class NutrientsClassifier: Classifier {
             }
         }
         return observations
-    }
-    
-    private func heuristicRecognizedTextIsPartOfAttribute(_ recognizedText: RecognizedText) -> Bool {
-        recognizedText.string.lowercased() == "vitamin"
     }
     
     private func extractObservationsOfRecognizedTextByJoiningWithNextInlineRecognizedText(_ recognizedText: RecognizedText)
@@ -337,7 +306,12 @@ class NutrientsClassifier: Classifier {
                     guard let unit1 = value1.value.unit, unit == unit1 else {
                         continue
                     }
-                    observation.valueText2 = ValueText(value: value, textId: recognizedText.id)
+                    
+                    /// **Heuristic** If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
+                    let correctedValue = heuristicCorrectedValue2(value, forValue1: value1.value)
+                    observation.valueText2 = ValueText(value: correctedValue,
+                                                       textId: recognizedText.id)
+                    
                     didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the observation
                     return (didExtract: didExtract, shouldContinue: false)
@@ -363,5 +337,36 @@ class NutrientsClassifier: Classifier {
         ///                         Reset `attributeBeingExtracted` and `value1`
         ///             Else if it is (another) `Attribute`
         ///                 return false
+    }
+    
+    //MARK: - Heuristics
+    private func heuristicRecognizedTextIsPartOfAttribute(_ recognizedText: RecognizedText) -> Bool {
+        recognizedText.string.lowercased() == "vitamin"
+    }
+    
+    /// **Heuristic** If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
+    private func heuristicCorrectedValue2(_ value2: Value, forValue1 value1: Value) -> Value {
+        let valueIsTwoDigitInt = value2.amount >= 10
+            && value2.amount < 100
+            && value2.amount.isInt
+
+        guard value2.amount >= value1.amount, valueIsTwoDigitInt else {
+            return value2
+        }
+
+        var value2String = "\(Int(value2.amount))"
+        value2String.insert(".", at: value2String.index(value2String.startIndex, offsetBy: 1))
+        
+        guard let newAmount = Double(value2String) else {
+            return value2
+        }
+        
+        return Value(amount: newAmount, unit: value2.unit)
+    }
+}
+
+extension FloatingPoint {
+    var isInt: Bool {
+        return floor(self) == self
     }
 }

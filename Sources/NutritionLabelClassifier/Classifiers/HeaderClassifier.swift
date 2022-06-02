@@ -1,23 +1,6 @@
 import Foundation
 import VisionSugar
 
-extension Array where Element == Observation {
-    var containsSeparateValue2Observations: Bool {
-        !filterContainingSeparateValue2.isEmpty
-    }
-    
-    /// Filters out observations that contains separate `recognizedText`s for value 1 and 2 (if present)
-    var filterContainingSeparateValues: [Observation] {
-        filter { $0.valueText1?.textId != $0.valueText2?.textId }
-    }
-    /// Filters out observations that contains a separate value 1 observation (that is not the same as value 2)
-    var filterContainingSeparateValue1: [Observation] {
-        filterContainingSeparateValues.filter { $0.valueText1 != nil }
-    }
-    var filterContainingSeparateValue2: [Observation] {
-        filterContainingSeparateValues.filter { $0.valueText2 != nil }
-    }
-}
 class HeaderClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]

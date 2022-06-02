@@ -64,10 +64,3 @@ extension Observation: CustomStringConvertible {
         return ".\(attribute.rawValue): \(suffix)"
     }
 }
-extension Array where Element == Observation {
-    func printDescription() {
-        for i in indices {
-            print("[\(i)] → \(self[i].description)")
-        }
-    }
-}

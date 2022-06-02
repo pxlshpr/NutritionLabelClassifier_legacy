@@ -11,8 +11,16 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 - Observation: `43g`
 
 #### Possible Heuristic
-- Check if we have any other candidates for the recognized text for `value2` that equals the correct value.
-- If we do, add a heuristic that makes sure `value2 < value1`, and if not, it goes through other candidates till a valid `Value` is found
+- Add a heuristic at the end of getting all the nutrients that
+  - First determines whether `value1` or `value2` is larger (by checking what the majority of the rows return)
+  - Goes through each nutrient row and make sure `value2` is `<` or `>` `value1` depending on what was determined
+  - If it fails this check
+    - First if we have a 2-digit `Int` `Value` for `value2` or `value1`
+		- See if placing a decimal place in between the numbers satisfies the comparison condition.
+		- If it does, correct the value to this
+	- As a fallback
+		- Get the average ratio between all the valid rows (ie. that satisfy the comparison condition)
+		- Now apply this ratio to the incorrect observations to correct the values.
 
 #### Changes
 - 
