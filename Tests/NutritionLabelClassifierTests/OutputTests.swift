@@ -7,6 +7,8 @@ import Zip
 @testable import NutritionLabelClassifier
 
 let RunLegacyTests = true
+//let SingledOutTestCaseId: UUID? = UUID(uuidString: "6BAD0EB1-8BED-4DD9-8FD8-C9861A267A3D")
+let SingledOutTestCaseId: UUID? = nil
 
 final class OutputTests: XCTestCase {
 
@@ -32,6 +34,12 @@ final class OutputTests: XCTestCase {
         
         /// For each UUID in Test Cases/With Lanugage Correction
         for testCaseId in testCaseIds {
+            if let singledOutTestCaseId = SingledOutTestCaseId {
+                guard testCaseId == singledOutTestCaseId else {
+                    continue
+                }
+            }
+            
             try runTestsForTestCase(withId: testCaseId)
         }        
     }

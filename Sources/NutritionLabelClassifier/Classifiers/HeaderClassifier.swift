@@ -1,42 +1,23 @@
 import Foundation
 import VisionSugar
 
-extension Observation {
-    init?(headerType: HeaderType, for attribute: Attribute, recognizedText: RecognizedText) {
-        guard attribute == .headerType1 || attribute == .headerType2 else {
-            return nil
-        }
-        self.init(
-            attributeText: AttributeText(attribute: attribute,
-                                         textId: recognizedText.id),
-            stringText: StringText(string: headerType.rawValue,
-                                   textId: recognizedText.id,
-                                   attributeTextId: recognizedText.id)
-        )
+extension Array where Element == Observation {
+    var containsSeparateValue2Observations: Bool {
+        !filterContainingSeparateValue2.isEmpty
     }
     
-    init?(double: Double, attribute: Attribute, recognizedText: RecognizedText) {
-        guard attribute.expectsDouble else { return nil }
-        self.init(
-            attributeText: AttributeText(attribute: attribute, textId: recognizedText.id),
-            doubleText: DoubleText(double: double, textId: recognizedText.id, attributeTextId: recognizedText.id))
+    /// Filters out observations that contains separate `recognizedText`s for value 1 and 2 (if present)
+    var filterContainingSeparateValues: [Observation] {
+        filter { $0.valueText1?.textId != $0.valueText2?.textId }
     }
-    
-    init?(unit: NutritionUnit, attribute: Attribute, recognizedText: RecognizedText) {
-        guard attribute.expectsNutritionUnit else { return nil }
-        self.init(
-            attributeText: AttributeText(attribute: attribute, textId: recognizedText.id),
-            stringText: StringText(string: unit.description, textId: recognizedText.id, attributeTextId: recognizedText.id))
+    /// Filters out observations that contains a separate value 1 observation (that is not the same as value 2)
+    var filterContainingSeparateValue1: [Observation] {
+        filterContainingSeparateValues.filter { $0.valueText1 != nil }
     }
-
-    init?(string: String, attribute: Attribute, recognizedText: RecognizedText) {
-        guard attribute.expectsString else { return nil }
-        self.init(
-            attributeText: AttributeText(attribute: attribute, textId: recognizedText.id),
-            stringText: StringText(string: string, textId: recognizedText.id, attributeTextId: recognizedText.id))
+    var filterContainingSeparateValue2: [Observation] {
+        filterContainingSeparateValues.filter { $0.valueText2 != nil }
     }
 }
-
 class HeaderClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]
@@ -63,18 +44,47 @@ class HeaderClassifier: Classifier {
         }
 
         /// Get preceding recognized texts in that column
-        let _ = extractHeaders(inSameColumnAs: topMostValue1RecognizedText)
+        let result = extractHeaders(inSameColumnAs: topMostValue1RecognizedText)
+        guard result.extractedHeader1 else {
+            //TODO: Try other methods for header 1
+            return observations
+        }
+        
+        /// Make sure we haven't extracted header 2 yet before attempting to do it
+        guard !result.extractedHeader2 else {
+            return observations
+        }
         
         /// If we haven't extracted header 2 yet, and are expecting it (by checking if we have any value 2's)
-            /// Now look into the first inline text we have that's also in the same column as value 2's
+        guard observations.containsSeparateValue2Observations else {
+            return observations
+        }
+        
+        guard let topMostValue2RecognizedText = topMostValue2RecognizedText else {
+            //TODO: Try first inline text to header1 that's also in the same column as value 2's
+            return observations
+        }
+        
+        let _ = extractHeaders(inSameColumnAs: topMostValue2RecognizedText, forHeaderNumber: 2)
 
         return observations
     }
     
-    func extractHeaders(inSameColumnAs topRecognizedText: RecognizedText) -> (extractedHeader1: Bool, extractedHeader2: Bool) {
+    func extractHeaders(inSameColumnAs topRecognizedText: RecognizedText, forHeaderNumber headerNumber: Int = 1) -> (extractedHeader1: Bool, extractedHeader2: Bool)
+    {
         let inlineTextRows = recognizedTexts.inlineTextRows(as: topRecognizedText, preceding: true, ignoring: discarded)
         var extractedHeader1: Bool = false
         var extractedHeader2: Bool = false
+        let headerAttribute: Attribute = headerNumber == 1 ? .headerType1 : .headerType2
+        
+        func extractedFirstHeader() {
+            if headerNumber == 1 {
+                extractedHeader1 = true
+            } else {
+                extractedHeader2 = true
+            }
+        }
+        
         for row in inlineTextRows {
             for recognizedText in row {
                 guard let columnHeaderText = ColumnHeaderText(string: recognizedText.string) else {
@@ -82,40 +92,40 @@ class HeaderClassifier: Classifier {
                 }
                 switch columnHeaderText {
                 case .per100g:
-                    guard let header1Type = Observation(headerType: .per100g,for: .headerType1, recognizedText: recognizedText) else {
+                    guard let observation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfValid(header1Type)
-//                    observations.append(header1Type)
-                    extractedHeader1 = true
+                    observations.appendIfValid(observation)
+                    extractedFirstHeader()
                 case .perServing:
-                    guard let header1Type = Observation(headerType: .perServing,for: .headerType1, recognizedText: recognizedText) else {
+                    guard let observation = Observation(headerType: .perServing,for: headerAttribute, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfValid(header1Type)
-//                    observations.append(header1Type)
-                    extractedHeader1 = true
+                    observations.appendIfValid(observation)
+                    extractedFirstHeader()
                 case .per100gAndPerServing:
-                    guard let header1Type = Observation(headerType: .per100g,for: .headerType1, recognizedText: recognizedText),
-                          let header2Type = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+                    guard let firstObservation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfValid(header1Type)
-                    observations.appendIfValid(header2Type)
-//                    observations.append(header1Type)
-//                    observations.append(header2Type)
-                    extractedHeader1 = true
+                    observations.appendIfValid(firstObservation)
+                    extractedFirstHeader()
+                    
+                    guard headerNumber == 1, let secondObservation = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+                        continue
+                    }
+                    observations.appendIfValid(secondObservation)
                     extractedHeader2 = true
                 case .perServingAnd100g:
-                    guard let header1Type = Observation(headerType: .per100g,for: .headerType1, recognizedText: recognizedText),
-                          let header2Type = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+                    guard let firstObservation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
                         continue
                     }
-                    observations.appendIfValid(header1Type)
-                    observations.appendIfValid(header2Type)
-//                    observations.append(header1Type)
-//                    observations.append(header2Type)
-                    extractedHeader1 = true
+                    observations.appendIfValid(firstObservation)
+                    extractedFirstHeader()
+
+                    guard headerNumber == 1, let secondObservation = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+                        continue
+                    }
+                    observations.appendIfValid(secondObservation)
                     extractedHeader2 = true
                 }
                 
@@ -126,30 +136,24 @@ class HeaderClassifier: Classifier {
                     }
                     if let amount = serving.amount, let observation = Observation(double: amount, attribute: .headerServingAmount, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                        observations.append(observation)
                     }
                     if let unit = serving.unit, let observation = Observation(unit: unit, attribute: .headerServingUnit, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                        observations.append(observation)
                     }
                     if let string = serving.unitName, let observation = Observation(string: string, attribute: .headerServingUnitSize, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                        observations.append(observation)
                     }
                     guard let equivalentSize = serving.equivalentSize else {
                         break
                     }
                     if let observation = Observation(double: equivalentSize.amount, attribute: .headerServingEquivalentAmount, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                        observations.append(observation)
                     }
                     if let unit = equivalentSize.unit, let observation = Observation(unit: unit, attribute: .headerServingEquivalentUnit, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                      observations.append(observation)
                     }
                     if let string = equivalentSize.unitName, let observation = Observation(string: string, attribute: .headerServingEquivalentUnitSize, recognizedText: recognizedText) {
                         observations.appendIfValid(observation)
-//                      observations.append(observation)
                     }
                 default:
                     break
@@ -172,8 +176,23 @@ class HeaderClassifier: Classifier {
     }
     
     var value1RecognizedTextIds: [UUID] {
-        observations.compactMap { $0.valueText1?.textId }
+        observations.filterContainingSeparateValue1.compactMap { $0.valueText1?.textId }
     }
+    
+    var topMostValue2RecognizedText: RecognizedText? {
+        value2RecognizedTexts.sorted { $0.rect.minY < $1.rect.minY }.first
+    }
+    
+    var value2RecognizedTexts: [RecognizedText] {
+        value2RecognizedTextIds.compactMap { id in
+            recognizedTexts.first { $0.id == id }
+        }
+    }
+    
+    var value2RecognizedTextIds: [UUID] {
+        observations.filterContainingSeparateValue2.compactMap { $0.valueText2?.textId }
+    }
+
 }
 
 extension HeaderText.Serving {
