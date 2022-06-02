@@ -24,12 +24,13 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 
 #### Changes
 - A post-extraction heuristic was added specifically to cater for this test case.
-	- The heuristic first determines if most of the nutrient observations have a smaller `value2`
-	- If this is the case, each of the invalid nutrient observations (ie. having a smaller `value1`), are corrected by:
-		- Determining if we have a 2 digit `Value` for `value2`
-		- If so, placing a decimal place between them to form a smaller number
-		- Checking if this number now satisfies the condition of `value2 < value1`
-		- If so, assigning this corrected `Value` to the observation
+	- The heuristic first determines which column has the smaller value (by checking what most nutrient observations demonstrate)
+	- An assumption is then made that the smaller column is correct (as we're correcting for the decimal place missing)
+	- We then filter out the invalid nutrient observations (which have the incorrect smaller value), and for each of these we:
+		- Determine if we have a 2-digit Integer for the larger value
+		- If so, place a decimal place between the digits to form a smaller value
+		- Check if this number now makes this value smaller than its counterpart
+		- If it does, assigning this corrected value to the observation.
 
 #### Future Work
 - A note-worthy and arbitrary assumption we're making here is that smaller column always holds the correctly recognized `Value`.
@@ -38,3 +39,6 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 	- We may want to fix this at a later point in the future if we do encounter cases where the larger column is correctly recognized one, by doing something like:
 		- Using the macro and energy observations to determine which column is in fact correct (by seeing which one is closest to being equal once plugged into the equation)
 			- This would however, have the sidefect of us only being able to correct macro and energy observations, unless we discover a heuristic that can determine which column of a micronutrient is valid.
+- We're currently only correcting the values that are 2-digit integers by the addition of a decimal place to the middle of it (which may still not satisfy the condition).
+	- It would be worthwhile to add a fallback that calculates the average ratio between the correct values in both columns, and uses that to extrapolate what the correct value should be.
+	- We could also wait till the headers have been observed, and if we have serving information there (or in tandem with the `serving` data—use those values to deterministically calculate what the values should in fact be)

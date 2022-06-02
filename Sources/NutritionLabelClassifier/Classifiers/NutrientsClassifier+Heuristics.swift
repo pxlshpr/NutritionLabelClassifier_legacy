@@ -71,25 +71,14 @@ extension NutrientsClassifier {
     func checkPostExtractionHeuristics() {
         clearErraneousValue2Extractions()
         copyMissingZeroValues()
-        correctValuesMismatchingAverageComparisionCondition()
+        correctMissingDecimalPlaces()
     }
 
-    //FIXME: (INCOMPLETE) — Remove the (incorrect) assumption we're making that the incorrect value is value2. To facilitate this, we may need to restrict these corrections to macros and energy values, as we can determine which column has the correct values (if any) by using the energy calculation based off the macros (with room for slight errors).
-    /// Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
-    func correctValuesMismatchingAverageComparisionCondition() {
-        /**
-         Initial Pseudocode:
-         - Add a heuristic at the end of getting all the nutrients that
-           - First determines whether `value1` or `value2` is larger (by checking what the majority of the rows return)
-           - Goes through each nutrient row and make sure `value2` is `<` or `>` `value1` depending on what was determined
-           - If it fails this check
-             - First if we have a 2-digit `Int` `Value` for `value2` or `value1`
-                 - See if placing a decimal place in between the numbers satisfies the comparison condition.
-                 - If it does, correct the value to this
-             - As a fallback
-                 - Get the average ratio between all the valid rows (ie. that satisfy the comparison condition)
-                 - Now apply this ratio to the incorrect observations to correct the values.
-         */
+    /** **Release 0.0.117** Correct missing decimal places by first finding values that don't compare to the other column as does the average observation (ie. its smalle or larger than the other, while most others are the opposite)—then attempting to correct these values by either:
+     1. Appending a decimal place in the middle if it happens to be a 2-digit integer
+     2. Using the average ratio of the values between both columns (in the correct observations) to extrapolate what the value should be
+     */
+    func correctMissingDecimalPlaces() {
         if observations.mostNutrientsHaveSmallerValue2 {
             for index in observations.indices {
                 guard observations[index].smallerValue1,
@@ -97,8 +86,15 @@ extension NutrientsClassifier {
                       let value1 = observations[index].value1
                 else { continue }
                 
-                let newValue = value2.decrementByAdditionOfDecimalPlace(toBeLessThan: value1)
-                observations[index].valueText2?.value = newValue
+                if let newValue = value2.decrementByAdditionOfDecimalPlace(toBeLessThan: value1) {
+                    observations[index].valueText2?.value = newValue
+                }
+                //TODO: Implement fallback
+                /**
+                 - As a fallback
+                     - Get the average ratio between all the valid rows (ie. that satisfy the comparison condition)
+                     - Now apply this ratio to the incorrect observations to correct the values.
+                 */
             }
         }
         
@@ -109,8 +105,10 @@ extension NutrientsClassifier {
                       let value1 = observations[index].value1
                 else { continue }
                 
-                let newValue = value1.decrementByAdditionOfDecimalPlace(toBeLessThan: value2)
-                observations[index].valueText2?.value = newValue
+                if let newValue = value1.decrementByAdditionOfDecimalPlace(toBeLessThan: value2) {
+                    observations[index].valueText2?.value = newValue
+                }
+                //TODO: Implement fallback (see above case)
             }
         }
     }
@@ -140,16 +138,18 @@ extension NutrientsClassifier {
 }
 
 extension Value {
-    func decrementByAdditionOfDecimalPlace(toBeLessThan value: Value) -> Value {
+    func decrementByAdditionOfDecimalPlace(toBeLessThan value: Value) -> Value? {
+        /// If the `amount` is not a two-digit Integer, or its already less than or equal to `value`, return `nil`
         guard amount >= value.amount, amount >= 10, amount < 100, amount.isInt else {
-            return self
+            return nil
         }
 
         var string = "\(Int(amount))"
         string.insert(".", at: string.index(string.startIndex, offsetBy: 1))
         
+        /// If we've somehow muddled up the numerical value in its string representation, or the `newAmount` is *still* not less than `value`, return `nil`
         guard let newAmount = Double(string), newAmount < value.amount else {
-            return self
+            return nil
         }
         
         return Value(amount: newAmount, unit: self.unit)
