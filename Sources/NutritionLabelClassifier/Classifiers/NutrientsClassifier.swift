@@ -338,52 +338,6 @@ class NutrientsClassifier: Classifier {
         ///             Else if it is (another) `Attribute`
         ///                 return false
     }
-    
-    //MARK: - Heuristics
-    private func heuristicRecognizedTextIsPartOfAttribute(_ recognizedText: RecognizedText) -> Bool {
-        recognizedText.string.lowercased() == "vitamin"
-    }
-    
-    //MARK: Post-extraction Heuristics
-    func checkPostExtractionHeuristics() {
-        /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
-        if observations.percentageOfNilValue2 > 0.5 {
-            observations = observations.clearingValue2
-        }
-
-        /// **Heuristic** If we have two values worth of data and any of the cells are missing where one value is 0, simply copy that across
-        if observations.hasTwoColumnsOfValues {
-            for index in observations.indices {
-                let observation = observations[index]
-                if observation.valueText2 == nil, let value1 = observation.valueText1, value1.value.amount == 0 {
-                    observations[index].valueText2 = value1
-                }
-            }
-        }
-        
-        /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
-    }
-    
-
-    /// **Heuristic** If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
-    private func heuristicCorrectedValue2(_ value2: Value, forValue1 value1: Value) -> Value {
-        let valueIsTwoDigitInt = value2.amount >= 10
-            && value2.amount < 100
-            && value2.amount.isInt
-
-        guard value2.amount >= value1.amount, valueIsTwoDigitInt else {
-            return value2
-        }
-
-        var value2String = "\(Int(value2.amount))"
-        value2String.insert(".", at: value2String.index(value2String.startIndex, offsetBy: 1))
-        
-        guard let newAmount = Double(value2String) else {
-            return value2
-        }
-        
-        return Value(amount: newAmount, unit: value2.unit)
-    }
 }
 
 extension FloatingPoint {

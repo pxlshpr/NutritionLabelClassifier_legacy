@@ -51,7 +51,7 @@ public struct AttributeText {
 }
 
 public struct ValueText {
-    public let value: Value
+    public var value: Value
     public let textId: UUID
     public let attributeTextId: UUID? = nil
 }

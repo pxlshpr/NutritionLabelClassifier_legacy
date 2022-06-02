@@ -7,14 +7,19 @@ import Zip
 @testable import NutritionLabelClassifier
 
 let ClassifierTestCases = 1...23
+let ClassifierTestCasesToIgnore: [Int] = []
 
 final class NutritionLabelClassifierTests: XCTestCase {
     
     func testClassifier() throws {
         guard RunLegacyTests else { return }
+        
         print("🤖 Running Legacy Tests on Test Cases: \(ClassifierTestCases)")
+        
         for testCase in ClassifierTestCases {
-
+            
+            guard !ClassifierTestCasesToIgnore.contains(testCase) else { continue }
+            
             guard let arrayOfRecognizedTexts = arrayOfRecognizedTextsForTestCase(testCase) else {
                 XCTFail("Couldn't get array of recognized texts for Test Case \(testCase)")
                 return
