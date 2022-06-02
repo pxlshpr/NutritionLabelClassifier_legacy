@@ -83,6 +83,9 @@ class NutrientsClassifier: Classifier {
                 observations.appendIfValid(observationBeingExtracted)
             }
         }
+        
+        checkPostExtractionHeuristics()
+        
         return observations
     }
     
@@ -307,10 +310,7 @@ class NutrientsClassifier: Classifier {
                         continue
                     }
                     
-                    /// **Heuristic** If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
-                    let correctedValue = heuristicCorrectedValue2(value, forValue1: value1.value)
-                    observation.valueText2 = ValueText(value: correctedValue,
-                                                       textId: recognizedText.id)
+                    observation.valueText2 = ValueText(value: value, textId: recognizedText.id)
                     
                     didExtract = true
                     /// Send `false` for algorithm to stop searching inline texts once we have completed the observation
@@ -344,6 +344,27 @@ class NutrientsClassifier: Classifier {
         recognizedText.string.lowercased() == "vitamin"
     }
     
+    //MARK: Post-extraction Heuristics
+    func checkPostExtractionHeuristics() {
+        /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
+        if observations.percentageOfNilValue2 > 0.5 {
+            observations = observations.clearingValue2
+        }
+
+        /// **Heuristic** If we have two values worth of data and any of the cells are missing where one value is 0, simply copy that across
+        if observations.hasTwoColumnsOfValues {
+            for index in observations.indices {
+                let observation = observations[index]
+                if observation.valueText2 == nil, let value1 = observation.valueText1, value1.value.amount == 0 {
+                    observations[index].valueText2 = value1
+                }
+            }
+        }
+        
+        /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
+    }
+    
+
     /// **Heuristic** If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
     private func heuristicCorrectedValue2(_ value2: Value, forValue1 value1: Value) -> Value {
         let valueIsTwoDigitInt = value2.amount >= 10

@@ -44,23 +44,6 @@ public class NutritionLabelClassifier {
             observations = HeaderClassifier.observations(from: recognizedTexts,
                                                           priorObservations: observations)
         }
-
-        /// **Heuristic** If more than half of value2 is empty, clear it all, assuming we have erraneous reads
-        if observations.percentageOfNilValue2 > 0.5 {
-            observations = observations.clearingValue2
-        }
-
-        /// **Heuristic** If we have two values worth of data and any of the cells are missing where one value is 0, simply copy that across
-        if observations.hasTwoColumnsOfValues {
-            for index in observations.indices {
-                let observation = observations[index]
-                if observation.valueText2 == nil, let value1 = observation.valueText1, value1.value.amount == 0 {
-                    observations[index].valueText2 = value1
-                }
-            }
-        }
-        
-        /// TODO: **Heursitic** Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
         return Self.dataFrameOfNutrients(from: observations)
     }
     
