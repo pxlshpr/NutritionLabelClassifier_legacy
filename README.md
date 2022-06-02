@@ -42,3 +42,5 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 - We're currently only correcting the values that are 2-digit integers by the addition of a decimal place to the middle of it (which may still not satisfy the condition).
 	- It would be worthwhile to add a fallback that calculates the average ratio between the correct values in both columns, and uses that to extrapolate what the correct value should be.
 	- We could also wait till the headers have been observed, and if we have serving information there (or in tandem with the `serving` data—use those values to deterministically calculate what the values should in fact be)
+- We're also completely disregarding the other candidates that might be available for the `RecognizedText`.
+	- It would be ideal to initially check if we have an alternative candidates that, when used, suffice the comparison condition we are after—and if so, use that as the correction instead.
