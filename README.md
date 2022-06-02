@@ -44,3 +44,16 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 	- We could also wait till the headers have been observed, and if we have serving information there (or in tandem with the `serving` data—use those values to deterministically calculate what the values should in fact be)
 - We're also completely disregarding the other candidates that might be available for the `RecognizedText`.
 	- It would be ideal to initially check if we have an alternative candidates that, when used, suffice the comparison condition we are after—and if so, use that as the correction instead.
+
+
+### 0.0.118 (Haribo Label)
+- [ ] Heuristic to see if there’s another line below the attribute that matches it (especially for multi-lingual multi-line cases), and finding the inline elements to the combined box.
+- [ ] Make sure all multi lingual versions of attribute names are included
+- [ ] Fill in missing column values by determining ratio, between:
+  - [ ] header values, if serving exists
+  - [ ] otherwise get the average of other two column values
+- [ ] Make sure multi line/lingual “perServing” column headers are also read to grab as much information as possible
+- [ ] Try extract serving equivalent size that may be present elsewhere in the label (in this case, 25g = 11 Goldbears) by looking for the serving value followed by a candidate for the equivalent size, given that it hasn’t been used already
+
+### 0.0.119 (other cases)
+- [ ] Make sure “Serving Size” isn’t mis-attributed to “Per Serving”
