@@ -23,4 +23,18 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 		- Now apply this ratio to the incorrect observations to correct the values.
 
 #### Changes
-- 
+- A post-extraction heuristic was added specifically to cater for this test case.
+	- The heuristic first determines if most of the nutrient observations have a smaller `value2`
+	- If this is the case, each of the invalid nutrient observations (ie. having a smaller `value1`), are corrected by:
+		- Determining if we have a 2 digit `Value` for `value2`
+		- If so, placing a decimal place between them to form a smaller number
+		- Checking if this number now satisfies the condition of `value2 < value1`
+		- If so, assigning this corrected `Value` to the observation
+
+#### Future Work
+- A note-worthy and arbitrary assumption we're making here is that smaller column always holds the correctly recognized `Value`.
+	- However, what if it were the smaller column that needed to be increased instead?
+		- **Keep in mind that this is less probable than the assumption we're making—as a misread is more likely to result in the decimal place being removed as opposed to additional incorrect digits being recognized.**
+	- We may want to fix this at a later point in the future if we do encounter cases where the larger column is correctly recognized one, by doing something like:
+		- Using the macro and energy observations to determine which column is in fact correct (by seeing which one is closest to being equal once plugged into the equation)
+			- This would however, have the sidefect of us only being able to correct macro and energy observations, unless we discover a heuristic that can determine which column of a micronutrient is valid.

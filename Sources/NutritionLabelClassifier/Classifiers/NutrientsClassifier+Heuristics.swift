@@ -74,10 +74,11 @@ extension NutrientsClassifier {
         correctValuesMismatchingAverageComparisionCondition()
     }
 
+    //FIXME: (INCOMPLETE) — Remove the (incorrect) assumption we're making that the incorrect value is value2. To facilitate this, we may need to restrict these corrections to macros and energy values, as we can determine which column has the correct values (if any) by using the energy calculation based off the macros (with room for slight errors).
     /// Fill in the other missing values by simply using the ratio of values for what we had extracted successfully
-    //TODO: Remove the (incorrect) assumption we're making that the incorrect value is value2. To facilitate this, we may need to restrict these corrections to macros and energy values, as we can determine which column has the correct values (if any) by using the energy calculation based off the macros (with room for slight errors).
     func correctValuesMismatchingAverageComparisionCondition() {
         /**
+         Initial Pseudocode:
          - Add a heuristic at the end of getting all the nutrients that
            - First determines whether `value1` or `value2` is larger (by checking what the majority of the rows return)
            - Goes through each nutrient row and make sure `value2` is `<` or `>` `value1` depending on what was determined
@@ -89,20 +90,31 @@ extension NutrientsClassifier {
                  - Get the average ratio between all the valid rows (ie. that satisfy the comparison condition)
                  - Now apply this ratio to the incorrect observations to correct the values.
          */
-        let smallerValue2 = observations.mostNutrientsHaveSmallerValue2
-        if smallerValue2 {
+        if observations.mostNutrientsHaveSmallerValue2 {
             for index in observations.indices {
                 guard observations[index].smallerValue1,
                       let value2 = observations[index].value2,
                       let value1 = observations[index].value1
                 else { continue }
                 
-                let newValue = heuristicCorrectedValue2(value2, forValue1: value1)
+                let newValue = value2.decrementByAdditionOfDecimalPlace(toBeLessThan: value1)
+                observations[index].valueText2?.value = newValue
+            }
+        }
+        
+        if observations.mostNutrientsHaveSmallerValue1 {
+            for index in observations.indices {
+                guard observations[index].smallerValue2,
+                      let value2 = observations[index].value2,
+                      let value1 = observations[index].value1
+                else { continue }
+                
+                let newValue = value1.decrementByAdditionOfDecimalPlace(toBeLessThan: value2)
                 observations[index].valueText2?.value = newValue
             }
         }
     }
-    
+
     /// If more than half of value2 is empty, clear it all, assuming we have erraneous reads
     func clearErraneousValue2Extractions() {
         if observations.percentageOfNilValue2 > 0.5 {
@@ -122,30 +134,24 @@ extension NutrientsClassifier {
         }
     }
     
-    /// If `value2 > value1`, and we have a 2 digit `Value` for `value2`—see if placing a decimal place in between the numbers satisfies this condition and if so, use that value.
-    func heuristicCorrectedValue2(_ value2: Value, forValue1 value1: Value) -> Value {
-        let valueIsTwoDigitInt = value2.amount >= 10
-            && value2.amount < 100
-            && value2.amount.isInt
-
-        guard value2.amount >= value1.amount, valueIsTwoDigitInt else {
-            return value2
-        }
-
-        var value2String = "\(Int(value2.amount))"
-        value2String.insert(".", at: value2String.index(value2String.startIndex, offsetBy: 1))
-        
-        guard let newAmount = Double(value2String) else {
-            return value2
-        }
-        
-        return Value(amount: newAmount, unit: value2.unit)
-    }
-    
     func heuristicRecognizedTextIsPartOfAttribute(_ recognizedText: RecognizedText) -> Bool {
         recognizedText.string.lowercased() == "vitamin"
     }
-    
-    //MARK: - Helpers
-    
+}
+
+extension Value {
+    func decrementByAdditionOfDecimalPlace(toBeLessThan value: Value) -> Value {
+        guard amount >= value.amount, amount >= 10, amount < 100, amount.isInt else {
+            return self
+        }
+
+        var string = "\(Int(amount))"
+        string.insert(".", at: string.index(string.startIndex, offsetBy: 1))
+        
+        guard let newAmount = Double(string), newAmount < value.amount else {
+            return self
+        }
+        
+        return Value(amount: newAmount, unit: self.unit)
+    }
 }
