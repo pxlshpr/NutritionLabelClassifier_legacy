@@ -3,6 +3,19 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 
 ## Releases
 
-#### 0.0.117
+### 0.0.117
+#### Failed Test Case
+C132B648-8974-457A-8EE6-824688D901EA
+
+#### Failing Test
+- Attribute: `.protein.value2`
+- Expected: `4.3g`
+- Observation: `43g`
+
+#### Heuristic Needed
+- Check if we have any other candidates for the recognized text for `value2` that equals the correct value.
+- If we do, add a heuristic that makes sure `value2 < value1`, and if not, it goes through other candidates till a valid `Value` is found
+
+#### Changes
 - Changes go here
 - More changes go here
