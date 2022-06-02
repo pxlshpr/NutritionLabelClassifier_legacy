@@ -57,3 +57,5 @@ A Swift framework that classifies Nutrition Label features from [recognized text
 
 ### 0.0.119 (other cases)
 - [ ] Make sure “Serving Size” isn’t mis-attributed to “Per Serving”
+- [ ] Correct nutrients that have only value 1 read in when there is two columns, after doing a post extraction heuristic check to make sure that those value 1 boxes actually lie in line with the other value 1’s, and if it’s closer to value 2, reassign it to that, setting value 1 to nil
+  - [ ] Do this before filling in the blank values so that we can fill in the missing value (see Kraft cheese in iPhone album for example of this)
