@@ -115,6 +115,9 @@ class NutrientsClassifier: Classifier {
         
         var ignoreNextValueDueToPerPreposition = false
         
+        var saveNextValueDueToIncludesPreposition = false
+        var savedValueDueToIncludesPreposition: Value? = nil
+        
         for i in artefacts.indices {
             let artefact = artefacts[i]
             if let extractedAttribute = artefact.attribute {
@@ -127,7 +130,27 @@ class NutrientsClassifier: Classifier {
                 }
                 attributeTextBeingExtracted = AttributeText(attribute: extractedAttribute, textId: recognizedText.id)
                 
-            } else if let value = artefact.value, let attributeWithId = attributeTextBeingExtracted {
+                if let savedValue = savedValueDueToIncludesPreposition, let attributeText = attributeTextBeingExtracted {
+                    observations.append(Observation(
+                        attributeText: attributeText,
+                        valueText1: ValueText(value: savedValue, textId: id),
+                        valueText2: nil)
+                    )
+                    attributeTextBeingExtracted = nil
+                    savedValueDueToIncludesPreposition = nil
+                }
+                
+            } else if let value = artefact.value {
+                
+                if saveNextValueDueToIncludesPreposition {
+                    savedValueDueToIncludesPreposition = value
+                    saveNextValueDueToIncludesPreposition = false
+                    continue
+                }
+                
+                guard let attributeWithId = attributeTextBeingExtracted else {
+                    continue
+                }
                 
                 var unit = value.unit
                 var value = value
@@ -201,6 +224,9 @@ class NutrientsClassifier: Classifier {
             } else if let preposition = artefact.preposition {
                 if preposition.containsPer {
                     ignoreNextValueDueToPerPreposition = true
+                }
+                if preposition == .includes {
+                    saveNextValueDueToIncludesPreposition = true
                 }
             }
         }

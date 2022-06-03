@@ -1,0 +1,19 @@
+attributeString,value1String,value2String,double,string
+energy,94.0 kcal,75.0 kcal,,
+fat,0.1 g,0.1 g,,
+saturatedFat,0.1 g,0.1 g,,
+transFat,0.0 g,0.0 g,,
+cholesterol,4.0 mg,3.0 mg,,
+carbohydrate,17.8 g,14.2 g,,
+dietaryFibre,0.1 g,0.1 g,,
+sodium,84.0 mg,67.0 mg,,
+calcium,225.0 mg,180.0 mg,,
+servingAmount,,,125,
+servingUnit,,,,g
+servingEquivalentAmount,,,1,
+servingEquivalentUnit,,,,cup
+servingsPerContainerAmount,,,8,
+servingsPerContainerName,,,,package
+headerType1,,,,perServing
+headerType2,,,,per100g
+protein,5.4 g,4.3 g,,

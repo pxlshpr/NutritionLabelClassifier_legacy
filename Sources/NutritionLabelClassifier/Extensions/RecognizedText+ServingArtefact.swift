@@ -49,16 +49,31 @@ extension RecognizedText {
 //                   let attribute = Attribute(fromString: attributeSubstring)
                 if let attribute = Attribute(fromString: substring)
                 {
+                    /// Save this for the heuristic later on
+                    let previousArtefact = array.last
+                    let previousIndex = array.count - 1
+                    
                     /// **Heuristic** If this is the `.servingsPerContainerAmount`, also try and grab the `.servingsPerContainerName` from the substring, and add that as an artefact before proceeding
-                    if attribute == .servingsPerContainerAmount,
-                       let containerName = string.servingsPerContainerName
-                    {
-                        array.append(ServingArtefact(attribute: .servingsPerContainerName, textId: id))
-                        array.append(ServingArtefact(string: containerName, textId: id))
+                    if attribute == .servingsPerContainerAmount {
+                        if let containerName = string.servingsPerContainerName {
+                            array.append(ServingArtefact(attribute: .servingsPerContainerName, textId: id))
+                            array.append(ServingArtefact(string: containerName, textId: id))
+                        }
                     }
 
                     let artefact = ServingArtefact(attribute: attribute, textId: id)
-                    array.append(artefact)
+                    
+                    /// If this was the `.servingsPerContainerAmount` attribute, and we have a unit-less value before it—use that as the amount by inserting the attribute artefact before it—otherwise append it here in hopes that we extract it further down the line.
+                    if attribute == .servingsPerContainerAmount,
+                       let previousArtefact = previousArtefact,
+                       previousArtefact.double != nil,
+                       previousIndex > 0
+                    {
+                        array.insert(artefact, at: previousIndex)
+                    } else {
+                        array.append(artefact)
+                    }
+                    
                     
 //                    string = string.replacingFirstOccurrence(of: attributeSubstring, with: "").trimmingWhitespaces
                     string = string.replacingFirstOccurrence(of: substring, with: "").trimmingWhitespaces
