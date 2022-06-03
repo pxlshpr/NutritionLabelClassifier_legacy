@@ -7,7 +7,7 @@ extension OutputTests {
     func compareServings() throws {
         
         guard let expected = expectedOutput?.serving else {
-            XCTAssertNotNil(observedOutput?.serving != nil, m("Observed observedOutput.serving without an expectation"))
+            XCTAssertNil(observedOutput?.serving, m("Observed observedOutput.serving without an expectation"))
             return
         }
         
@@ -23,7 +23,7 @@ extension OutputTests {
     
     func compareServingEquivalentSizes() throws {
         guard let expected = expectedOutput?.serving?.equivalentSize else {
-            XCTAssertNotNil(observedOutput?.serving?.equivalentSize, m("Observed observedOutput.serving.equivalentSize without an expectation"))
+            XCTAssertNil(observedOutput?.serving?.equivalentSize, m("Observed observedOutput.serving.equivalentSize without an expectation"))
             return
         }
         

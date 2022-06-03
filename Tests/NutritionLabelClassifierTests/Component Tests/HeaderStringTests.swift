@@ -4,14 +4,15 @@ import TabularData
 @testable import NutritionLabelClassifier
 
 //TODO: Remove this
-final class NutritionLabelColumnHeaderTests: XCTestCase {
+final class HeaderStringTests: XCTestCase {
 
-    let testCases: [(input: String, header: ColumnHeaderText?)] = [
+    let testCases: [(input: String, header: HeaderString?)] = [
         /// per100g
         ("Per 100 g", .per100g),
         ("Per 100g", .per100g),
         ("100g", .per100g),
         ("Per 100g", .per100g),
+        ("SERVE PER 100g", .per100g),
 
         /// perServing(nil)
         ("Per serving", .perServing(serving: nil)),
@@ -26,8 +27,6 @@ final class NutritionLabelColumnHeaderTests: XCTestCase {
 
         /// perServing
         ("Per 1 pot", .perServing(serving: "1 pot")),
-        ("Serving size: 130g (1 cup)", .perServing(serving: "130g (1 cup)")),
-        ("SERVING SIZE: 150g", .perServing(serving: "150g")),
 
         /// perServingAnd100g
         ("INFORMATION Per 120g Per 100g", .perServingAnd100g(serving: "120g")),
@@ -37,9 +36,13 @@ final class NutritionLabelColumnHeaderTests: XCTestCase {
         ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100gAndPerServing(serving: "serving (125 g)")),
     ]
     
-    func _testColumnHeaders() throws {
+    func testColumnHeaders() throws {
         for testCase in testCases {
-            XCTAssertEqual(ColumnHeaderText(string: testCase.input), testCase.header)
+            XCTAssertEqual(
+                HeaderString(string: testCase.input),
+                testCase.header,
+                "for '\(testCase.input)'"
+            )
         }
     }
 }

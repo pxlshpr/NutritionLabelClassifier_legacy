@@ -1,7 +1,7 @@
 import Foundation
 
 //TODO: Rename this, particularly to remove the `Text` suffix
-public enum ColumnHeaderText {
+public enum HeaderString {
     case per100g
     case perServing(serving: String?)
     case per100gAndPerServing(serving: String?)
@@ -24,21 +24,22 @@ public enum ColumnHeaderText {
     }
 }
 
-extension ColumnHeaderText {
+extension HeaderString {
     struct Regex {
-        static let per100 = #"^(per |)100[ ]*g$"#
+        static let per100 = #"^((serve |)per |)100[ ]*g$"#
         static let perServing = #"^(?=^.*(amount|)[ ]*(per |\/)serv(ing|e).*$)(?!^.*100[ ]*g.*$).*$"#
         static let perServingWithSize = #"^(?=^.*(?:per )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
         static let per100gAndPerServing = #"(?:.*per 100[ ]*g[ ])(?:per[ ])?(.*)"#
         static let perServingAndPer100g = #"^.*(?:(?:per|)[ ]+([0-9]+g).*per 100[ ]*g).*$"#
         
         /// Deprecated patterns
+//        static let per100 = #"^(per |)100[ ]*g$"#
 //        static let perServingWithSize = #"^(?=^.*(?:per |serving size[:]* )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
    }
 }
 
-extension ColumnHeaderText: Equatable {
-    public static func ==(lhs: ColumnHeaderText, rhs: ColumnHeaderText) -> Bool {
+extension HeaderString: Equatable {
+    public static func ==(lhs: HeaderString, rhs: HeaderString) -> Bool {
         switch (lhs, rhs) {
         case (.per100g, .per100g):
             return true

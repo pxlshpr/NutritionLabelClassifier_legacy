@@ -12,7 +12,7 @@ extension OutputTests {
 
     func compareRows() throws {
         guard let expectedNutrients = expectedOutput?.nutrients else {
-            XCTAssertNotNil(observedOutput?.nutrients, m("Observed observedOutput.nutrients without an expectation"))
+            XCTAssertNil(observedOutput?.nutrients, m("Observed observedOutput.nutrients without an expectation"))
             return
         }
         

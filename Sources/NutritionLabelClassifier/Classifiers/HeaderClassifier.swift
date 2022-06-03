@@ -70,10 +70,10 @@ class HeaderClassifier: Classifier {
         
         for row in inlineTextRows {
             for recognizedText in row {
-                guard let columnHeaderText = ColumnHeaderText(string: recognizedText.string) else {
+                guard let headerString = HeaderString(string: recognizedText.string) else {
                     continue
                 }
-                switch columnHeaderText {
+                switch headerString {
                 case .per100g:
                     guard let observation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
                         continue
@@ -112,7 +112,7 @@ class HeaderClassifier: Classifier {
                     extractedHeader2 = true
                 }
                 
-                switch columnHeaderText {
+                switch headerString {
                 case .perServing(let string), .per100gAndPerServing(let string), .perServingAnd100g(let string):
                     guard let string = string, let serving = HeaderText.Serving(string: string) else {
                         break

@@ -23,18 +23,18 @@ extension NutritionLabelClassifier {
     
     //MARK: - Sort these
     
-    static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: ColumnHeaderText?, header2: ColumnHeaderText?) {
+    static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: HeaderString?, header2: HeaderString?) {
         if let rightColumn = string.firstCapturedGroup(using: Regex.twoColumnHeadersWithPer100OnLeft) {
             return (.per100g, .perServing(serving: rightColumn))
         }
         return (nil, nil)
     }
     
-    static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> ColumnHeaderText? {
+    static func columnHeader(fromRecognizedText recognizedText: RecognizedText?) -> HeaderString? {
         guard let recognizedText = recognizedText else {
             return nil
         }
-        return ColumnHeaderText(string: recognizedText.string)
+        return HeaderString(string: recognizedText.string)
     }
     
     static func columnHeaderRecognizedText(for dataFrame: DataFrame, withColumnName columnName: String, in recognizedTexts: [RecognizedText]) -> RecognizedText? {
@@ -55,7 +55,7 @@ extension NutritionLabelClassifier {
         return nil
     }
 
-    static func columnHeaders(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (ColumnHeaderText?, ColumnHeaderText?) {
+    static func columnHeaders(from recognizedTexts: [RecognizedText], using dataFrame: DataFrame) -> (HeaderString?, HeaderString?) {
         guard dataFrame.columns.count == 3 else {
             return (nil, nil)
         }

@@ -16,7 +16,7 @@ let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Doub
     ("113 kcal (475 kJ) 90 kcal (378 kJ)", [113, 90], [475, 378]),
 ]
 
-let testCasesForColumnSpanningHeader: [(input: String, header1: ColumnHeaderText?, header2: ColumnHeaderText?)] = [
+let testCasesForColumnSpanningHeader: [(input: String, header1: HeaderString?, header2: HeaderString?)] = [
     ("PER 100g 74g (2 tubes)", .per100g, .perServing(serving: "74g (2 tubes)")),
     ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100g, .perServing(serving: "serving (125 g)"))
 ]

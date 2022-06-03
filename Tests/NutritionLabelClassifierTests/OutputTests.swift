@@ -6,10 +6,11 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = false
+let RunTests = true
+let RunLegacyTests = true
 
-//let SingledOutTestCaseId: UUID? = nil
-let SingledOutTestCaseId: UUID? = UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")
+let SingledOutTestCaseId: UUID? = nil
+//let SingledOutTestCaseId: UUID? = UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")
 
 let IgnoredTests: [UUID] = []
 //let IgnoredTests: [UUID] = [UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")!]
@@ -21,6 +22,7 @@ final class OutputTests: XCTestCase {
     var expectedOutput: Output? = nil
 
     func testClassifierUsingZipFile() throws {
+        guard RunTests else { return }
         print("🤖 Running Tests on Zip File")
         let filePath = Bundle.module.url(forResource: "NutritionClassifier-Test_Data", withExtension: "zip")!
         let testDataUrl = URL.documents.appendingPathComponent("Test Data", isDirectory: true)

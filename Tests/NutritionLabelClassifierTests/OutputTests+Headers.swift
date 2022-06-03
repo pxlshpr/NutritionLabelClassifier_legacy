@@ -64,7 +64,7 @@ extension OutputTests {
     
     func compareHeaderServingEquivalentSizes(observed: HeaderText.Serving.EquivalentSize?, expected: HeaderText.Serving.EquivalentSize?, headerNumber i: Int) throws {
         guard let expected = expected else {
-            XCTAssertNotNil(observed, m("Observed observedOutput.nutrients.headerText\(i).serving.equivalentSize without an expectation"))
+            XCTAssertNil(observed, m("Observed observedOutput.nutrients.headerText\(i).serving.equivalentSize without an expectation"))
             return
         }
         
