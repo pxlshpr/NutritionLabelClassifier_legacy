@@ -2,7 +2,7 @@ import Foundation
 
 public struct Value {
     public let amount: Double
-    public let unit: NutritionUnit?
+    public var unit: NutritionUnit?
     
     init?(fromString string: String) {
         

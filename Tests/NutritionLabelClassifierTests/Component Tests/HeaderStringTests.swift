@@ -37,6 +37,7 @@ final class HeaderStringTests: XCTestCase {
     ]
     
     func testColumnHeaders() throws {
+        guard SingledOutTestCaseId == nil else { return }
         for testCase in testCases {
             XCTAssertEqual(
                 HeaderString(string: testCase.input),

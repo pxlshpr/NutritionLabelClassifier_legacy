@@ -163,13 +163,23 @@ extension DataFrame {
     }
     
     var serving: Output.Serving? {
-        Output.Serving(
-            amountText: doubleTextForAttribute(.servingAmount),
-            unitText: unitTextForAttribute(.servingUnit),
-            unitNameText: stringTextForAttribute(.servingUnitSize),
-            equivalentSize: equivalentSize,
-            perContainer: perContainer
-        )
+        let amountText = doubleTextForAttribute(.servingAmount)
+        let unitText = unitTextForAttribute(.servingUnit)
+        let unitNameText = stringTextForAttribute(.servingUnitSize)
+        
+        let allFieldsEmpty = amountText == nil && unitText == nil && unitNameText == nil && equivalentSize == nil && perContainer == nil
+        
+        if allFieldsEmpty {
+            return nil
+        } else {
+            return Output.Serving(
+                amountText: amountText,
+                unitText: unitText,
+                unitNameText: unitNameText,
+                equivalentSize: equivalentSize,
+                perContainer: perContainer
+            )
+        }
     }
     
     var classifierOutput: Output {

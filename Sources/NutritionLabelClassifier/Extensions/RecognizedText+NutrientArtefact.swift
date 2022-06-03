@@ -25,13 +25,27 @@ extension RecognizedText {
     }
     
     func nutrientArtefacts(for string: String) -> [NutrientArtefact] {
+        
         var array: [NutrientArtefact] = []
         var string = string
+        
+        var isExpectingCalories: Bool = false
+        
         while string.count > 0 {
             /// First check if we have a value at the start of the string
             if let valueSubstring = string.valueSubstringAtStart,
                /// If we do, extract it from the string and add its corresponding `Value` to the array
-                let value = Value(fromString: valueSubstring) {
+                var value = Value(fromString: valueSubstring) {
+                
+                /// **Heuristic** for detecting when energy is detected with the phrase "Calories", in which case we manually assign the `kcal` unit to the `Value` matched later.
+                if isExpectingCalories {
+                    if value.unit == nil {
+                        value.unit = .kcal
+                    }
+                    /// Reset this once a value has been read after the energy attribute
+                    isExpectingCalories = false
+                }
+                
                 string = string.replacingFirstOccurrence(of: valueSubstring, with: "").trimmingWhitespaces
                 
                 let artefact = NutrientArtefact(value: value, textId: id)
@@ -43,6 +57,15 @@ extension RecognizedText {
                 if let attribute = Attribute(fromString: substring) {
                     let artefact = NutrientArtefact(attribute: attribute, textId: id)
                     array.append(artefact)
+                    
+                    /// Reset this whenever a new attribute is reached
+                    isExpectingCalories = false
+
+                    /// **Heuristic** for detecting when energy is detected with the phrase "Calories", in which case we manually assign the `kcal` unit to the `Value` matched later.
+                    if attribute == .energy && substring.matchesRegex(Attribute.Regex.calories) {
+                        isExpectingCalories = true
+                    }
+                    
                 } else  if let preposition = Preposition(fromString: substring) {
                     let artefact = NutrientArtefact(preposition: preposition, textId: id)
                     array.append(artefact)

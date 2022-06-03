@@ -14,7 +14,7 @@ let testCasesValueAtStartOfString: [(input: String, value: Value?)] = [
     ("regulators citric acid, calcium citrate), Flavouring,", nil),
     ("Saturated Fat 0g", nil),
 
-    ("2000 calorie diet. Vitamin A 0% PRONE ALONE PASTEREONOGAYMAKLIMEANOACINECTRESSERENIOPLIS.LAUSRSLISONER Vitamin C 0% Calcium 30% • Iron", Value(amount: 2000)),
+    ("2000 calorie diet. Vitamin A 0% PRONE ALONE PASTEREONOGAYMAKLIMEANOACINECTRESSERENIOPLIS.LAUSRSLISONER Vitamin C 0% Calcium 30% • Iron", Value(amount: 2000, unit: .kcal)),
 
     ("0% Total Carbohydrate 20g 7%", Value(amount: 0, unit: .p)),
     ("0% Protein 14g", Value(amount: 0, unit: .p)),

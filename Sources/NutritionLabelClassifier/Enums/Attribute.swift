@@ -334,6 +334,7 @@ public enum Attribute: String, CaseIterable {
     }
     
     struct Regex {
+        static let calories = #"calories"#
         static let fat = #"^(?=^.*(fa(t|i)|fett|grassi).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
         static let saturatedFat = #"^.*(saturated|of which saturates|saturi).*$"#
         static let transFat = #"^.*trans.*$"#
