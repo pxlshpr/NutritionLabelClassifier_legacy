@@ -99,7 +99,7 @@ extension DataFrame {
         }
         guard type == .perServing else {
             return HeaderText(
-                type: .per100g,
+                type: type,
                 textId: stringText.textId,
                 attributeTextId: stringText.attributeTextId,
                 serving: nil)
