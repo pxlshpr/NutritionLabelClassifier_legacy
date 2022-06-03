@@ -14,6 +14,8 @@ final class NutritionLabelClassifierTests: XCTestCase {
     func testClassifier() throws {
         guard RunLegacyTests else { return }
         
+        guard SingledOutTestCaseId == nil else { return }
+        
         print("🤖 Running Legacy Tests on Test Cases: \(ClassifierTestCases)")
         
         for testCase in ClassifierTestCases {

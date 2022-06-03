@@ -21,7 +21,24 @@ class EdgeCasesClassifier: Classifier {
     
     func getObservations() -> [Observation] {
         findMissedServingAmount()
+        findMissingHeaderType1()
         return observations
+    }
+    
+    /// If we have only one column of values, and haven’t already assigned `.headerType1`, look for the text `Amount Per Serving` and then manually set `.headerType1` as `.perServing` if found.
+    func findMissingHeaderType1() {
+        guard !observations.hasTwoColumnsOfValues, !observations.contains(attribute: .headerType1) else {
+            return
+        }
+        for recognizedText in recognizedTexts {
+            if recognizedText.string.matchesRegex(Attribute.Regex.amountPerServing),
+               let observation = Observation(headerType: .perServing,
+                                             for: .headerType1,
+                                             recognizedText: recognizedText)
+            {
+                observations.append(observation)
+            }
+        }
     }
     
     func findMissedServingAmount() {

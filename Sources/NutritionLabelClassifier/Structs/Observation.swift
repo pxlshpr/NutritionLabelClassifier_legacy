@@ -30,7 +30,7 @@ extension Observation {
             )
         } else if let string = servingArtefact.string {
             self.stringText = StringText(
-                string: string,
+                string: string.cleanedUnitString,
                 textId: servingArtefact.textId,
                 attributeTextId: attributeText.textId
             )

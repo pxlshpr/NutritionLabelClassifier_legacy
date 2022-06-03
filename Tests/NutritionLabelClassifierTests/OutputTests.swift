@@ -9,7 +9,7 @@ import Zip
 let RunTests = true
 let RunLegacyTests = true
 
-let CurrentTestCase = UUID(uuidString: "BD53EFF6-2AF9-4FCA-8865-67CCB4BA9B69")!
+let CurrentTestCase = UUID(uuidString: "713A721E-A470-4DA8-B44E-E939FEF9777A")!
 
 let SingledOutTestCaseId: UUID? = nil
 //let SingledOutTestCaseId: UUID? = CurrentTestCase
@@ -88,8 +88,7 @@ final class OutputTests: XCTestCase {
         print(dataFrameWithTextIdsRemoved(from: dataFrame))
         
         try compareOutputs()
-        
-        print("✅ Passed")
+        print("✅ Passed: \(id)")
     }
     
     func compareOutputs() throws {

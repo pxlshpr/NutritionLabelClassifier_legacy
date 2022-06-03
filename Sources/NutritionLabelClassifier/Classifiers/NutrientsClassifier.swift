@@ -293,9 +293,20 @@ class NutrientsClassifier: Classifier {
         for artefact in recognizedText.getNutrientArtefacts(for: observation.attributeText.attribute, observationBeingExtracted: observation, extractedObservations: observations) {
             if let value = artefact.value {
                 
-                /// **Heuristic** If the value is missing its unit and the attribute has a default unit, assign it to it
                 var unit = value.unit
                 var value = value
+                
+                /// **Heuristic** If the value is missing its unit, the observation is for `.energy` *and* the observed text matches "Calories", assign `.kcal` for the unit
+                if unit == nil,
+                   observation.attribute == .energy,
+                   let attributeString = recognizedTexts.first(where: { $0.id == observation.attributeText.textId})?.string,
+                   attributeString.matchesRegex(Attribute.Regex.calories)
+                {
+                    value.unit = .kcal
+                    unit = .kcal
+                }
+                
+                /// **Heuristic** If the value is *still* missing its unit and the attribute has a default unit, assign it to it
                 if unit == nil {
                     guard let defaultUnit = observation.attributeText.attribute.defaultUnit else {
                         continue
