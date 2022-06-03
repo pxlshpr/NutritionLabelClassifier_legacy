@@ -21,6 +21,8 @@ extension NutritionUnit: CustomStringConvertible {
             return "oz"
         case .ml:
             return "ml"
+        case .tbsp:
+            return "tbsp"
         }
     }
 }
@@ -35,6 +37,7 @@ public enum NutritionUnit: Int, CaseIterable {
     case g
     case oz
     case ml
+    case tbsp
 
     init?(string: String) {
         for unit in Self.allCases {
@@ -75,6 +78,8 @@ public enum NutritionUnit: Int, CaseIterable {
             return "^cup(s|)$"
         case .ml:
             return "^ml$"
+        case .tbsp:
+            return "^(tbsp|tablespoon(s|))$"
         }
     }
     
@@ -98,6 +103,8 @@ public enum NutritionUnit: Int, CaseIterable {
             return ["cup", "cups"]
         case .ml:
             return ["ml", "mL"]
+        case .tbsp:
+            return ["tbsp", "tablespoon", "tablespoons"]
         }
     }
     
