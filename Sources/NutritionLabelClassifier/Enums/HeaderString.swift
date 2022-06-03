@@ -39,8 +39,8 @@ struct Rx {
 }
 extension HeaderString {
     struct Regex {
-        static let per100 = #"^((serve |)per |)100[ ]*(?:g|ml)$"#
-        static let perServing = #"^(?=^.*(amount|)[ ]*(per |\/)serv(ing|e).*$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+        static let per100 = #"^((serve |)(per|pour) |)100[ ]*(?:g|ml)$"#
+        static let perServing = #"^(?=^.*(amount|)[ ]*((per|par) |\/)(serv(ing|e)|portion).*$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         
         static let perServingWithSize = #"^(?=^.*(?:per )([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         /// Alternative for cases like `⅕ of a pot (100g)`

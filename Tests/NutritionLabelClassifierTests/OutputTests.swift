@@ -11,12 +11,12 @@ let RunLegacyTests = true
 
 let CurrentTestCase = UUID(uuidString: "21AB8151-540A-41A9-BAB2-8674FD3A46E7")!
 
-//let SingledOutTestCaseId: UUID? = nil
-let SingledOutTestCaseId: UUID? = CurrentTestCase
+let SingledOutTestCaseId: UUID? = nil
+//let SingledOutTestCaseId: UUID? = CurrentTestCase
 //let SingledOutTestCaseId: UUID? = UUID(uuidString: "6BAD0EB1-8BED-4DD9-8FD8-C9861A267A3D")
 
-let IgnoredTests: [UUID] = []
-//let IgnoredTests: [UUID] = [CurrentTestCase]
+//let IgnoredTests: [UUID] = []
+let IgnoredTests: [UUID] = [CurrentTestCase]
 //let IgnoredTests: [UUID] = [UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")!]
 
 final class OutputTests: XCTestCase {
