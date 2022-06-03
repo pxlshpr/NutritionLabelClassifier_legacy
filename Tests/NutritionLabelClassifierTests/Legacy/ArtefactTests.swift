@@ -4,7 +4,7 @@ import VisionSugar
 
 @testable import NutritionLabelClassifier
 
-final class FeatureTests: XCTestCase {
+final class ArtefactTests: XCTestCase {
 
     func testArtefacts() throws {
         guard SingledOutTestCaseId == nil else { return }

@@ -23,9 +23,9 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [NutrientArtefact
     ("Sugars 9g", [aa(.sugar), av(9, .g)]),
     ("Total Sugars 14g", [aa(.sugar), av(14, .g)]),
     ("2% Sugars 18g", [av(2, .p), aa(.sugar), av(18, .g)]),
-    
+
     //TODO: Handle edge case of "Includes" by reading value before it}
-    ("Includes 12g Added Sugars 24%", [ap(.includes), av(12, .g), aa(.sugar), av(24, .p)]),
+    ("Includes 12g Added Sugars 24%", [ap(.includes), av(12, .g), aa(.addedSugar), av(24, .p)]),
 
     ("Dietary Fibre", [aa(.dietaryFibre)]),
 

@@ -37,6 +37,7 @@ public enum Attribute: String, CaseIterable {
     case dietaryFibre
     case gluten
     case sugar
+    case addedSugar
     case starch
     
     case fat
@@ -150,7 +151,7 @@ public enum Attribute: String, CaseIterable {
         switch self {
         case .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol:
             return .fat
-        case .dietaryFibre, .gluten, .sugar, .starch:
+        case .dietaryFibre, .gluten, .sugar, .addedSugar, .starch:
             return .carbohydrate
         case .sodium:
             return .salt
@@ -197,7 +198,7 @@ public enum Attribute: String, CaseIterable {
             return [ .kj, .kcal]
         case .protein, .carbohydrate, .fat, .salt:
             return [.g]
-        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .gluten, .starch:
+        case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .addedSugar, .gluten, .starch:
             return [.g, .mg, .mcg]
         case .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
             return [.mg, .mcg, .p, .g]
@@ -275,7 +276,9 @@ public enum Attribute: String, CaseIterable {
         case .sodium:
             return #"sodium"#
         case .sugar:
-            return #"(sugar|sucres|zucker|zuccheri)"#
+            return Regex.sugar
+        case .addedSugar:
+            return Regex.addedSugar
         case .calcium:
             return #"calcium"#
         case .iron:
@@ -336,12 +339,17 @@ public enum Attribute: String, CaseIterable {
     struct Regex {
         static let amountPerServing = #"amount per serving"#
         static let calories = #"calories"#
+        
+        static let sugar = #"^(?=^.*(sugar|sucres|zucker|zuccheri).*$)(?!^.*\#(addedSugar).*$).*$"#
+        static let addedSugar = #"added sugar(s|)"#
+        
         static let fat = #"^(?=^.*(fa(t|i)|fett|grassi).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
         static let saturatedFat = #"^.*(saturated|of which saturates|saturi).*$"#
         static let transFat = #"^.*trans.*$"#
         static let monounsaturatedFat = #"^.*mono(-|)unsaturat.*$"#
         static let polyunsaturatedFat = #"^.*poly(-|)unsaturat.*$"#
         static let cholesterol = #"cholesterol"#
+        
         static func vitamin(_ letter: String) -> String {
             #"vit(amin[ ]+|\.[ ]*|[ ]+)\#(letter)"#
         }
@@ -430,7 +438,9 @@ extension Attribute: CustomStringConvertible {
         case .gluten:
             return "Gluten"
         case .sugar:
-            return "Sugar"
+            return "Total Sugars"
+        case .addedSugar:
+            return "Added Sugars"
         case .starch:
             return "Starch"
         case .fat:
