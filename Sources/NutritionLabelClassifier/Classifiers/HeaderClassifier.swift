@@ -92,14 +92,15 @@ class HeaderClassifier: Classifier {
                       let headerTypeObservation = Observation(
                         headerType: .perServing,
                         for: headerAttribute,
+                        attributeTextId: Array(texts)[1].id,
                         recognizedText: firstText
                       )
                 else {
                     continue
                 }
-                
                 observations.append(headerTypeObservation)
-                processHeaderServing(serving, for: firstText)
+                
+                processHeaderServing(serving, for: firstText, attributeTextId: Array(texts)[1].id)
                 didExtractHeader1 = true
             }
         }
@@ -175,26 +176,26 @@ class HeaderClassifier: Classifier {
         }
     }
     
-    func processHeaderServing(_ serving: HeaderText.Serving, for recognizedText: RecognizedText) {
-        if let amount = serving.amount, let observation = Observation(double: amount, attribute: .headerServingAmount, recognizedText: recognizedText) {
+    func processHeaderServing(_ serving: HeaderText.Serving, for recognizedText: RecognizedText, attributeTextId: UUID? = nil) {
+        if let amount = serving.amount, let observation = Observation(double: amount, attribute: .headerServingAmount, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
-        if let unit = serving.unit, let observation = Observation(unit: unit, attribute: .headerServingUnit, recognizedText: recognizedText) {
+        if let unit = serving.unit, let observation = Observation(unit: unit, attribute: .headerServingUnit, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
-        if let string = serving.unitName, let observation = Observation(string: string, attribute: .headerServingUnitSize, recognizedText: recognizedText) {
+        if let string = serving.unitName, let observation = Observation(string: string, attribute: .headerServingUnitSize, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
         guard let equivalentSize = serving.equivalentSize else {
             return
         }
-        if let observation = Observation(double: equivalentSize.amount, attribute: .headerServingEquivalentAmount, recognizedText: recognizedText) {
+        if let observation = Observation(double: equivalentSize.amount, attribute: .headerServingEquivalentAmount, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
-        if let unit = equivalentSize.unit, let observation = Observation(unit: unit, attribute: .headerServingEquivalentUnit, recognizedText: recognizedText) {
+        if let unit = equivalentSize.unit, let observation = Observation(unit: unit, attribute: .headerServingEquivalentUnit, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
-        if let string = equivalentSize.unitName, let observation = Observation(string: string, attribute: .headerServingEquivalentUnitSize, recognizedText: recognizedText) {
+        if let string = equivalentSize.unitName, let observation = Observation(string: string, attribute: .headerServingEquivalentUnitSize, attributeTextId: attributeTextId, recognizedText: recognizedText) {
             observations.appendIfValid(observation)
         }
     }
