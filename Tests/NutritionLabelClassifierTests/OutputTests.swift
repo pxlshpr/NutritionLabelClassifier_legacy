@@ -6,7 +6,7 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-public let ClassifierVersion = "0.0.118"
+public let ClassifierVersion = "0.0.119"
 
 let RunTests = true
 let RunLegacyTests = true
