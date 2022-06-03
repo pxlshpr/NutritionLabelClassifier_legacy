@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/VisionSugar",
       "state" : {
-        "revision" : "513fe9cc1c5ddc333ecc1bf016bcdc332481de98",
-        "version" : "0.0.38"
+        "revision" : "972a1d2d85ea41e86f9b9d78c410a5aaac43681d",
+        "version" : "0.0.40"
       }
     },
     {
