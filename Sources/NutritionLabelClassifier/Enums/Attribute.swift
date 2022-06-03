@@ -350,9 +350,16 @@ public enum Attribute: String, CaseIterable {
 
 extension String {
     var cleanedAttributeString: String {
-        trimmingWhitespaces
+        var cleaned = trimmingWhitespaces
             .lowercased()
-            .replacingOccurrences(of: "serving5", with: "servings") /// For cases where Vision misreads this (especially in fast recognition mode)
+
+        /// Fix Vision misreads
+        cleaned = cleaned.replacingOccurrences(of: "serving5", with: "servings")
+        if cleaned.hasPrefix("i container") {
+            cleaned = cleaned.replacingFirstOccurrence(of: "i container", with: "1 container")
+        }
+        
+        return cleaned
     }
 }
 

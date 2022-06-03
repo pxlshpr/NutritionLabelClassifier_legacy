@@ -43,9 +43,9 @@ class ServingClassifier: Classifier {
                 /// **NOTE:** We're currently not looking for inline texts, as its not needed so far, and uncommenting the following block results in failed tests which we need to look into first
 //                let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
 //                for column in inlineTextColumns {
-//                    
+//
 //                    guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else { continue }
-//                    
+//
 //                    extractObservations(
 //                        of: inlineText,
 //                        startingWithAttributeText: observation.attributeText
@@ -73,9 +73,10 @@ class ServingClassifier: Classifier {
     }
     
     func extractObservations(of recognizedText: RecognizedText, startingWithAttributeText startingAttributeText: AttributeText? = nil) {
-        
-        let textId = recognizedText.id
+
         let artefacts = recognizedText.servingArtefacts
+
+        let textId = recognizedText.id
         var observations: [Observation] = []
         var extractingAttributes: [AttributeText] = [startingAttributeText].compactMap { $0 }
 

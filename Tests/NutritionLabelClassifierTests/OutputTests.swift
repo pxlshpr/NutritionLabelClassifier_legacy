@@ -9,7 +9,7 @@ import Zip
 let RunTests = true
 let RunLegacyTests = true
 
-let CurrentTestCase = UUID(uuidString: "7A7E14B8-EFA8-4140-987F-65439B83D99A")!
+let CurrentTestCase = UUID(uuidString: "40E7C0B9-E9CC-4FA7-93A3-B3623FAB23FF")!
 
 let SingledOutTestCaseId: UUID? = nil
 //let SingledOutTestCaseId: UUID? = CurrentTestCase
