@@ -163,11 +163,8 @@ extension DataFrame {
     }
     
     var serving: Output.Serving? {
-        guard let doubleText = doubleTextForAttribute(.servingAmount) else {
-            return nil
-        }
-        return Output.Serving(
-            amountText: DoubleText(doubleText),
+        Output.Serving(
+            amountText: doubleTextForAttribute(.servingAmount),
             unitText: unitTextForAttribute(.servingUnit),
             unitNameText: stringTextForAttribute(.servingUnitSize),
             equivalentSize: equivalentSize,
