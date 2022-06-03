@@ -93,10 +93,6 @@ extension Output.Serving {
             }
         }
         
-        guard let amountText = amountText else {
-            return nil
-        }
-        
         if let amountText = identifiableEquivalentAmount,
             (identifiableEquivalentUnit != nil || unitNameText != nil) {
             equivalentSize = EquivalentSize(
@@ -111,6 +107,10 @@ extension Output.Serving {
                 nameText: identifiablePerContainerName)
         }
         
+        let allFieldsAreEmpty = amountText == nil && unitText == nil && unitNameText == nil && equivalentSize == nil && perContainer == nil
+        if allFieldsAreEmpty {
+            return nil
+        }
         self.init(
             amountText: amountText,
             unitText: unitText,
