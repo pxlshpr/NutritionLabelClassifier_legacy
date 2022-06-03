@@ -358,6 +358,7 @@ extension String {
         if cleaned.hasPrefix("i container") {
             cleaned = cleaned.replacingFirstOccurrence(of: "i container", with: "1 container")
         }
+        cleaned = cleaned.replacingOccurrences(of: "l tbsp", with: "1 tbsp")
         
         return cleaned
     }
