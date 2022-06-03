@@ -43,6 +43,15 @@ public enum NutritionUnit: Int, CaseIterable {
         return nil
     }
     
+    var isAllowedInHeader: Bool {
+        switch self {
+        case .kcal, .mcg, .mg, .kj, .p:
+            return false
+        default:
+            return true
+        }
+    }
+    
     var regex: String? {
         switch self {
         case .g:
@@ -73,7 +82,7 @@ public enum NutritionUnit: Int, CaseIterable {
         case .mg:
             return ["mg", "mq"]
         case .kj:
-            return ["kj", "kilojules"]
+            return ["kj", "kJ", "kilojules"]
         case .mcg:
             return ["mcg", "ug"]
         case .kcal:

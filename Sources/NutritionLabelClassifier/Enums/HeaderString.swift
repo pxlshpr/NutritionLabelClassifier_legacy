@@ -10,27 +10,45 @@ public enum HeaderString {
     init?(string: String) {
         if string.matchesRegex(Regex.per100) {
             self = .per100g
-        } else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize) {
+        }
+        else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize) {
             self = .perServing(serving: size)
-        } else if let size = string.firstCapturedGroup(using: Regex.perServingAndPer100g) {
+        }
+//        else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize2) {
+//            self = .perServing(serving: size)
+//        }
+        else if let size = string.firstCapturedGroup(using: Regex.perServingAndPer100g) {
             self = .perServingAnd100g(serving: size)
-        } else if let size = string.firstCapturedGroup(using: Regex.per100gAndPerServing) {
+        }
+        else if let size = string.firstCapturedGroup(using: Regex.per100gAndPerServing) {
             self = .per100gAndPerServing(serving: size)
-        } else if string.matchesRegex(Regex.perServing) {
+        }
+        else if string.matchesRegex(Regex.perServing) {
             self = .perServing(serving: nil)
-        } else {
+        }
+        else {
             return nil
         }
     }
 }
 
+struct Rx {
+    static let fractions = "½⅓¼⅕⅙⅐⅛⅑⅒⅔⅖¾⅗⅜⅘⅚⅞"
+    static let numerals = "0-9"
+    static let numbers = "\(numerals)\(fractions)"
+}
 extension HeaderString {
     struct Regex {
         static let per100 = #"^((serve |)per |)100[ ]*g$"#
         static let perServing = #"^(?=^.*(amount|)[ ]*(per |\/)serv(ing|e).*$)(?!^.*100[ ]*g.*$).*$"#
-        static let perServingWithSize = #"^(?=^.*(?:per )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
+        
+        static let perServingWithSize = #"^(?=^.*(?:per )([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*g.*$).*$"#
+        /// Alternative for cases like `⅕ of a pot (100g)`
+//        static let perServingWithSize2 = #"^([\#(Rx.numbers)]+)(?: of a|)[ ]*([^\#(Rx.numbers)]+)([\#(Rx.numbers)]+)[ ]?([^\#(Rx.numbers) \)]+)"#
+        static let perServingWithSize2 = #"(^[0-9⅕]+(?: of a|)[ ]*[^0-9⅕]+[0-9⅕]+[ ]?[^0-9⅕ \)]+)"#
+        
         static let per100gAndPerServing = #"(?:.*per 100[ ]*g[ ])(?:per[ ])?(.*)"#
-        static let perServingAndPer100g = #"^.*(?:(?:per|)[ ]+([0-9]+g).*per 100[ ]*g).*$"#
+        static let perServingAndPer100g = #"^.*(?:(?:per|)[ ]+([\#(Rx.numbers)]+g).*per 100[ ]*g).*$"#
         
         /// Deprecated patterns
 //        static let per100 = #"^(per |)100[ ]*g$"#

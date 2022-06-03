@@ -44,13 +44,18 @@ class EdgeCasesClassifier: Classifier {
     func findMissedServingAmount() {
         /// If we haven't got a serving amount yet
         guard !observations.contains(attribute: .servingAmount),
-              !observations.contains(attribute: .servingUnit) else {
+              !observations.contains(attribute: .servingUnit),
+              !observations.contains(attribute: .headerServingAmount),
+              !observations.contains(attribute: .headerServingUnit)
+        else {
             return
         }
         
         /// Look for a `Value` within brackets such as `(170g)` (that hasn't been used already) and assign that.
         for recognizedText in recognizedTexts {
-            let groups = recognizedText.string.capturedGroups(using: #"\(([0-9]*)[ ]*g\)"#)
+            let regex = #"\(([0-9]*)[ ]*g\)"#
+//            let regex = #"([0-9]*)[ ]*g"#
+            let groups = recognizedText.string.capturedGroups(using: regex)
             if groups.count == 2,
                let amount = Double(groups[1]),
                let amountObservation = Observation(
