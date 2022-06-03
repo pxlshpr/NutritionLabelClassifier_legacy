@@ -25,7 +25,7 @@ extension NutritionLabelClassifier {
     
     static func columnHeadersFromColumnSpanningHeader(_ string: String) -> (header1: HeaderString?, header2: HeaderString?) {
         if let rightColumn = string.firstCapturedGroup(using: Regex.twoColumnHeadersWithPer100OnLeft) {
-            return (.per100g, .perServing(serving: rightColumn))
+            return (.per100, .perServing(serving: rightColumn))
         }
         return (nil, nil)
     }

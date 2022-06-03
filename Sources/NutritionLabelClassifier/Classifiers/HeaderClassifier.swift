@@ -122,38 +122,62 @@ class HeaderClassifier: Classifier {
             return true
         }
         switch headerString {
-        case .per100g:
-            guard let observation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
+        case .per100:
+            guard let observation = Observation(
+                headerType: HeaderType(per100String: recognizedText.string),
+                for: headerAttribute,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(observation)
             extractedFirstHeader()
         case .perServing:
-            guard let observation = Observation(headerType: .perServing,for: headerAttribute, recognizedText: recognizedText) else {
+            guard let observation = Observation(
+                headerType: .perServing,
+                for: headerAttribute,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(observation)
             extractedFirstHeader()
-        case .per100gAndPerServing:
-            guard let firstObservation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
+        case .per100AndPerServing:
+            guard let firstObservation = Observation(
+                headerType: HeaderType(per100String: recognizedText.string),
+                for: headerAttribute,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(firstObservation)
             extractedFirstHeader()
             
-            guard headerNumber == 1, let secondObservation = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+            guard headerNumber == 1, let secondObservation = Observation(
+                headerType: .perServing,
+                for: .headerType2,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(secondObservation)
             didExtractHeader2 = true
-        case .perServingAnd100g:
-            guard let firstObservation = Observation(headerType: .per100g,for: headerAttribute, recognizedText: recognizedText) else {
+        case .perServingAnd100:
+            guard let firstObservation = Observation(
+                headerType: HeaderType(per100String: recognizedText.string),
+                for: headerAttribute,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(firstObservation)
             extractedFirstHeader()
 
-            guard headerNumber == 1, let secondObservation = Observation(headerType: .perServing, for: .headerType2, recognizedText: recognizedText) else {
+            guard headerNumber == 1, let secondObservation = Observation(
+                headerType: .perServing,
+                for: .headerType2,
+                recognizedText: recognizedText) else
+            {
                 return true
             }
             observations.appendIfValid(secondObservation)
@@ -161,7 +185,7 @@ class HeaderClassifier: Classifier {
         }
         
         switch headerString {
-        case .perServing(let string), .per100gAndPerServing(let string), .perServingAnd100g(let string):
+        case .perServing(let string), .per100AndPerServing(let string), .perServingAnd100(let string):
             guard let string = string, let serving = HeaderText.Serving(string: string) else {
                 return false
             }

@@ -6,6 +6,7 @@ extension Observation {
         guard attribute == .headerType1 || attribute == .headerType2 else {
             return nil
         }
+        
         self.init(
             attributeText: AttributeText(
                 attribute: attribute,

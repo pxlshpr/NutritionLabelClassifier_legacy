@@ -8,11 +8,11 @@ final class HeaderStringTests: XCTestCase {
 
     let testCases: [(input: String, header: HeaderString?)] = [
         /// per100g
-        ("Per 100 g", .per100g),
-        ("Per 100g", .per100g),
-        ("100g", .per100g),
-        ("Per 100g", .per100g),
-        ("SERVE PER 100g", .per100g),
+        ("Per 100 g", .per100),
+        ("Per 100g", .per100),
+        ("100g", .per100),
+        ("Per 100g", .per100),
+        ("SERVE PER 100g", .per100),
 
         /// perServing(nil)
         ("Per serving", .perServing(serving: nil)),
@@ -29,11 +29,11 @@ final class HeaderStringTests: XCTestCase {
         ("Per 1 pot", .perServing(serving: "1 pot")),
 
         /// perServingAnd100g
-        ("INFORMATION Per 120g Per 100g", .perServingAnd100g(serving: "120g")),
+        ("INFORMATION Per 120g Per 100g", .perServingAnd100(serving: "120g")),
         
         /// per100gAndPerServing
-        ("PER 100g 74g (2 tubes)", .per100gAndPerServing(serving: "74g (2 tubes)")),
-        ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100gAndPerServing(serving: "serving (125 g)")),
+        ("PER 100g 74g (2 tubes)", .per100AndPerServing(serving: "74g (2 tubes)")),
+        ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100AndPerServing(serving: "serving (125 g)")),
     ]
     
     func testColumnHeaders() throws {
