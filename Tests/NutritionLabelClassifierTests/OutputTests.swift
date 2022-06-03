@@ -6,10 +6,13 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunLegacyTests = true
+let RunLegacyTests = false
 
-//let SingledOutTestCaseId: UUID? = UUID(uuidString: "C132B648-8974-457A-8EE6-824688D901EA")
-let SingledOutTestCaseId: UUID? = nil
+//let SingledOutTestCaseId: UUID? = nil
+let SingledOutTestCaseId: UUID? = UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")
+
+let IgnoredTests: [UUID] = []
+//let IgnoredTests: [UUID] = [UUID(uuidString: "0DEA4407-48DF-4A16-8488-0EB967CB13ED")!]
 
 final class OutputTests: XCTestCase {
 
@@ -33,8 +36,14 @@ final class OutputTests: XCTestCase {
         for testCaseId in testCaseIds {
             if let singledOutTestCaseId = SingledOutTestCaseId {
                 guard testCaseId == singledOutTestCaseId else {
+                    print("↪️ Ignoring Test Case: \(testCaseId) as its not singled-out")
                     continue
                 }
+            }
+            
+            if IgnoredTests.contains(testCaseId) {
+                print("↪️ Ignoring Test Case: \(testCaseId)")
+                continue
             }
             
             try runTestsForTestCase(withId: testCaseId)

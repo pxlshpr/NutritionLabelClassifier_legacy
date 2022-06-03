@@ -3,6 +3,7 @@ import TabularData
 
 @testable import NutritionLabelClassifier
 
+//TODO: Remove this
 final class NutritionLabelColumnHeaderTests: XCTestCase {
 
     let testCases: [(input: String, header: ColumnHeaderText?)] = [
@@ -36,7 +37,7 @@ final class NutritionLabelColumnHeaderTests: XCTestCase {
         ("Nutritional Values (Typical) Per 100 g Per serving (125 g)", .per100gAndPerServing(serving: "serving (125 g)")),
     ]
     
-    func testColumnHeaders() throws {
+    func _testColumnHeaders() throws {
         for testCase in testCases {
             XCTAssertEqual(ColumnHeaderText(string: testCase.input), testCase.header)
         }

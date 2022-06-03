@@ -1,5 +1,6 @@
 import Foundation
 
+//TODO: Rename this, particularly to remove the `Text` suffix
 public enum ColumnHeaderText {
     case per100g
     case perServing(serving: String?)
@@ -27,9 +28,12 @@ extension ColumnHeaderText {
     struct Regex {
         static let per100 = #"^(per |)100[ ]*g$"#
         static let perServing = #"^(?=^.*(amount|)[ ]*(per |\/)serv(ing|e).*$)(?!^.*100[ ]*g.*$).*$"#
-        static let perServingWithSize = #"^(?=^.*(?:per |serving size[:]* )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
+        static let perServingWithSize = #"^(?=^.*(?:per )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
         static let per100gAndPerServing = #"(?:.*per 100[ ]*g[ ])(?:per[ ])?(.*)"#
         static let perServingAndPer100g = #"^.*(?:(?:per|)[ ]+([0-9]+g).*per 100[ ]*g).*$"#
+        
+        /// Deprecated patterns
+//        static let perServingWithSize = #"^(?=^.*(?:per |serving size[:]* )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
    }
 }
 

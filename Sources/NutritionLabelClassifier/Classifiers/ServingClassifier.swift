@@ -24,7 +24,6 @@ class ServingClassifier: Classifier {
             guard recognizedText.string.containsServingAttribute else {
                 continue
             }
-            print("🥄 Processing: \(recognizedText)")
             
             extractObservations(of: recognizedText)
             

@@ -107,7 +107,6 @@ extension RecognizedText {
                 break
             }
         }
-        print("\"\(originalString)\" ➡️ \(array.description)")
         return array
     }
 }
