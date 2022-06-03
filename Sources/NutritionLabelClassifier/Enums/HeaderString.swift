@@ -50,14 +50,14 @@ extension HeaderString {
 #"^(?=^.*(amount|)[ ]*((per|par) |\/)(serv(ing|e)|portion).*$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         
         static let perServingWithSize =
-#"^(?=^.*(?:per )([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+#"^(?=^.*(?:(?:per|par) )([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         
         /// Alternative for cases like `⅕ of a pot (100g)`
         static let perServingWithSize2 =
 #"(^[0-9⅕]+(?: of a|)[ ]*[^0-9⅕]+[0-9⅕]+[ ]?[^0-9⅕ \)]+)"#
         
         static let per100gAndPerServing =
-#"(?:.*per 100[ ]*(?:g|ml)[ ])(?:per[ ])?(.*)"#
+#"(?:.*(?:per|pour) 100[ ]*(?:g|ml)[ ])(?:per[ ])?(.*)"#
         
         static let perServingAndPer100g =
 #"^.*(?:(?:(?:per|par)|)[ ]+(.+(?:g|ml|)).*(?:per|pour) 100[ ]*(?:g|ml)).*$"#
