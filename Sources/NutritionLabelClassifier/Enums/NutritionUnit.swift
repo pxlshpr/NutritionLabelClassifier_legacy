@@ -17,6 +17,8 @@ extension NutritionUnit: CustomStringConvertible {
             return "g"
         case .cup:
             return "cup"
+        case .oz:
+            return "oz"
         }
     }
 }
@@ -29,6 +31,7 @@ public enum NutritionUnit: Int, CaseIterable {
     case kj
     case p
     case g
+    case oz
 
     init?(string: String) {
         for unit in Self.allCases {
@@ -44,6 +47,8 @@ public enum NutritionUnit: Int, CaseIterable {
         switch self {
         case .g:
             return "^g$"
+        case .oz:
+            return "^oz$"
         case .mg:
             return "^(mg|mq)$"
         case .kj:
@@ -63,6 +68,8 @@ public enum NutritionUnit: Int, CaseIterable {
         switch self {
         case .g:
             return ["g", "c"]
+        case .oz:
+            return ["oz"]
         case .mg:
             return ["mg", "mq"]
         case .kj:
