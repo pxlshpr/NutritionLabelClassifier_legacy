@@ -164,7 +164,7 @@ class HeaderClassifier: Classifier {
             didExtractHeader2 = true
         case .perServingAnd100:
             guard let firstObservation = Observation(
-                headerType: HeaderType(per100String: recognizedText.string),
+                headerType: .perServing,
                 for: headerAttribute,
                 recognizedText: recognizedText) else
             {
@@ -174,7 +174,7 @@ class HeaderClassifier: Classifier {
             extractedFirstHeader()
 
             guard headerNumber == 1, let secondObservation = Observation(
-                headerType: .perServing,
+                headerType: HeaderType(per100String: recognizedText.string),
                 for: .headerType2,
                 recognizedText: recognizedText) else
             {
