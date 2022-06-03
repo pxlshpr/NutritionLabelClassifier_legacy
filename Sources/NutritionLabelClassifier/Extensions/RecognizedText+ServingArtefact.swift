@@ -35,7 +35,7 @@ extension RecognizedText {
         getServingArtefacts()
     }
     
-    func getServingArtefacts(for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [ServingArtefact] {
+    func getServingArtefacts() -> [ServingArtefact] {
         var arrays: [[ServingArtefact]] = []
         for candidate in candidates {
             arrays.append(servingArtefacts(for: candidate))

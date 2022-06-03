@@ -134,7 +134,7 @@ extension Array where Element == RecognizedText {
     
     //MARK: - Legacy
 
-    func filterSameColumn(as recognizedText: RecognizedText, preceding: Bool = false) -> [RecognizedText] {
+    func filterSameColumn(as recognizedText: RecognizedText, preceding: Bool = false, removingOverlappingTexts: Bool = true) -> [RecognizedText] {
         var column: [RecognizedText] = []
         var discarded: [RecognizedText] = []
         let candidates = filter {
@@ -144,7 +144,6 @@ extension Array where Element == RecognizedText {
             $0.rect.minY < $1.rect.minY
         }
 
-        /// Deal with multiple recognizedTexts we may have grabbed from the same row due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
         for candidate in candidates {
 
             guard !discarded.contains(candidate) else {
@@ -158,27 +157,30 @@ extension Array where Element == RecognizedText {
                 continue
             }
             
-            var closest = first
-            for rowElement in row {
-                /// first normalize the y values of both rects, `rowElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same y values (`origin.y` and `size.height`)
-                let yNormalizedRect = rowElement.rect.rectWithYValues(of: recognizedText.rect)
-                let closestYNormalizedRect = closest.rect.rectWithYValues(of: recognizedText.rect)
+            /// Deal with multiple recognizedTexts we may have grabbed from the same row due to them both overlapping with `recognizedText` by choosing the one that intersects with it the most
+            if removingOverlappingTexts {
+                var closest = first
+                for rowElement in row {
+                    /// first normalize the y values of both rects, `rowElement`, `closest` to `recognizedText` in new temporary variables, by assigning both the same y values (`origin.y` and `size.height`)
+                    let yNormalizedRect = rowElement.rect.rectWithYValues(of: recognizedText.rect)
+                    let closestYNormalizedRect = closest.rect.rectWithYValues(of: recognizedText.rect)
 
-                let intersection = yNormalizedRect.intersection(recognizedText.rect)
-                let closestIntersection = closestYNormalizedRect.intersection(recognizedText.rect)
+                    let intersection = yNormalizedRect.intersection(recognizedText.rect)
+                    let closestIntersection = closestYNormalizedRect.intersection(recognizedText.rect)
 
-                let intersectionRatio = intersection.width / rowElement.rect.width
-                let closestIntersectionRatio = closestIntersection.width / closest.rect.width
+                    let intersectionRatio = intersection.width / rowElement.rect.width
+                    let closestIntersectionRatio = closestIntersection.width / closest.rect.width
 
-                if intersectionRatio > closestIntersectionRatio {
-                    closest = rowElement
+                    if intersectionRatio > closestIntersectionRatio {
+                        closest = rowElement
+                    }
+                    
+                    discarded.append(rowElement)
                 }
-                
-                discarded.append(rowElement)
+                column.append(closest)
+            } else {
+                column = candidates
             }
-            
-            column.append(closest)
-            
         }
         
         return column
