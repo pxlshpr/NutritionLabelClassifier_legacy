@@ -53,6 +53,7 @@ extension RecognizedText {
 
             /// Otherwise, get the string component up to and including the next numeral
             } else if let substring = string.substringUpToFirstNumeral {
+                
                 /// Check if it matches any prepositions or attributes (currently picks prepositions over attributes for the entire substring)
                 if let attribute = Attribute(fromString: substring) {
                     let artefact = NutrientArtefact(attribute: attribute, textId: id)

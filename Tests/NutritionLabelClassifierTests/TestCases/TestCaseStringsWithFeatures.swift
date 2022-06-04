@@ -72,6 +72,8 @@ let testCasesStringsWithFeatures: [(input: String, features: [Feature])] = [
     ("Calcium", []),
     ("Calcium (% RDA) 128 mg (16%)", [f(.calcium, 128, .mg)]),
 
+    ("Vitamin B6 0%", [f(.vitaminB6, 0, .p)]),
+    
     //MARK: - Multiples
     ("I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%",
      [f(.saturatedFat, 0, .g), f(.carbohydrate, 15, .g)]),

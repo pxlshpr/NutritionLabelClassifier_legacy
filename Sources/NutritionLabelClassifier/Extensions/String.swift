@@ -101,6 +101,16 @@ extension String {
         } else {
             substring = nil
         }
+        
+        /// **Heuristic** for when we may have cut out a Vitamin such as `Vitamin B6`
+        if let substring = substring {
+            let remainder = self.replacingFirstOccurrence(of: substring, with: "")
+            /// Matches B6
+            if substring.matchesRegex("vitamin b$"), remainder.matchesRegex("^6( |$)") {
+                return "\(substring)6"
+            }
+        }
+        
         return substring?.trimmingWhitespaces
     }
     

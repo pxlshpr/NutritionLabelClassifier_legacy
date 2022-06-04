@@ -3,6 +3,8 @@ import XCTest
 @testable import NutritionLabelClassifier
 
 let testCasesStringsWithArtefacts: [(input: String, artefacts: [NutrientArtefact])] = [
+    ("Vitamin B6", [aa(.vitaminB6)]),
+
     ("ENERGY", [aa(.energy)]),
     ("Energy", [aa(.energy)]),
     ("Energy 116kcal 96kcal", [aa(.energy), av(116, .kcal), av(96, .kcal)]),
@@ -71,7 +73,7 @@ let testCasesStringsWithArtefacts: [(input: String, artefacts: [NutrientArtefact
     ("CALCIUM", [aa(.calcium)]),
     ("Calcium", [aa(.calcium)]),
     ("Calcium (% RDA) 128 mg (16%)", [aa(.calcium), av(128, .mg), av(16, .p)]),
-
+    
     //MARK: - Multiples
     ("I Container (150g) Saturated Fat 0g 0% Total Carbohydrate 15g 5%",
      [av(150, .g), aa(.saturatedFat), av(0, .g), av(0, .p), aa(.carbohydrate), av(15, .g), av(5, .p)]),
