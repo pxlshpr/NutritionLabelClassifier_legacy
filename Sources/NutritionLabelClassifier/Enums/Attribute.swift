@@ -52,10 +52,13 @@ public enum Attribute: String, CaseIterable {
     case calcium
     case iron
     case potassium
+    case cobalamin
+    case magnesium
     
     case vitaminA
     case vitaminC
     case vitaminD
+    case vitaminB6
     
     
     public var conflictingAttributes: [Attribute] {
@@ -200,7 +203,7 @@ public enum Attribute: String, CaseIterable {
             return [.g]
         case .dietaryFibre, .saturatedFat, .polyunsaturatedFat, .monounsaturatedFat, .transFat, .cholesterol, .sugar, .addedSugar, .gluten, .starch:
             return [.g, .mg, .mcg]
-        case .sodium, .calcium, .iron, .potassium, .vitaminA, .vitaminC, .vitaminD:
+        case .sodium, .calcium, .iron, .potassium, .magnesium, .cobalamin, .vitaminA, .vitaminC, .vitaminD, .vitaminB6:
             return [.mg, .mcg, .p, .g]
         case .servingAmount:
             return [.cup, .g, .mcg, .mg]
@@ -285,13 +288,19 @@ public enum Attribute: String, CaseIterable {
             return #"(^| )iron"#
         case .potassium:
             return #"potas"#
+        case .magnesium:
+            return #"magnesium"#
             
+        case .cobalamin: /// Vitamin B12
+            return #"cobalamin"#
         case .vitaminA:
             return Regex.vitamin("a")
         case .vitaminC:
             return Regex.vitamin("c")
         case .vitaminD:
             return Regex.vitamin("d")
+        case .vitaminB6:
+            return Regex.vitamin("b6")
 
         default:
             return nil
@@ -463,6 +472,10 @@ extension Attribute: CustomStringConvertible {
             return "Calcium"
         case .iron:
             return "Iron"
+        case .magnesium:
+            return "Magnesium"
+        case .cobalamin:
+            return "Cobalamin"
         case .potassium:
             return "Potassium"
         case .vitaminA:
@@ -471,6 +484,8 @@ extension Attribute: CustomStringConvertible {
             return "Vitamin C"
         case .vitaminD:
             return "Vitamin D"
+        case .vitaminB6:
+            return "Vitamin B6"
         }
     }
 }
