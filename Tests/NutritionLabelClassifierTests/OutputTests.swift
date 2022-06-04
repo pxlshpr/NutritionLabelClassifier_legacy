@@ -6,10 +6,10 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-let RunTests = false
-let RunLegacyTests = false
+let RunTests = true
+let RunLegacyTests = true
 
-let CurrentTestCase = UUID(uuidString: "4527F77A-3514-4EAB-9DC1-214D10BBE9BA")!
+let CurrentTestCase = UUID(uuidString: "180F6D30-B077-4787-BE2C-22D3C4FC00E3")!
 
 let SingledOutTestCaseId: UUID? = nil
 //let SingledOutTestCaseId: UUID? = CurrentTestCase

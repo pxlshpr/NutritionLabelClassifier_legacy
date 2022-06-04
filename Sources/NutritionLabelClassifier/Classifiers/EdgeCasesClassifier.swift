@@ -1,6 +1,26 @@
 import Foundation
 import VisionSugar
 
+extension HeaderType {
+    init?(string: String) {
+        if string.matchesRegex(Attribute.Regex.amountPerServing) {
+            self = .perServing
+            return
+        }
+        
+        if string.matchesRegex(Attribute.Regex.amountPer100g) {
+            self = .per100g
+            return
+        }
+        
+        if string.matchesRegex(Attribute.Regex.amountPer100ml) {
+            self = .per100ml
+            return
+        }
+        return nil
+    }
+}
+
 class EdgeCasesClassifier: Classifier {
     let recognizedTexts: [RecognizedText]
     var observations: [Observation]
@@ -31,8 +51,8 @@ class EdgeCasesClassifier: Classifier {
             return
         }
         for recognizedText in recognizedTexts {
-            if recognizedText.string.matchesRegex(Attribute.Regex.amountPerServing),
-               let observation = Observation(headerType: .perServing,
+            if let headerType = HeaderType(string: recognizedText.string),
+               let observation = Observation(headerType: headerType,
                                              for: .headerType1,
                                              recognizedText: recognizedText)
             {

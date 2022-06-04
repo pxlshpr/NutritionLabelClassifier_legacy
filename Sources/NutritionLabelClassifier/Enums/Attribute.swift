@@ -347,6 +347,9 @@ public enum Attribute: String, CaseIterable {
     
     struct Regex {
         static let amountPerServing = #"amount per serving"#
+        static let amountPer100g = #"amount per 100[ ]*g"#
+        static let amountPer100ml = #"amount per 100[ ]*ml"#
+
         static let calories = #"calories"#
         
         static let sugar = #"^(?=^.*(sugar|sucres|zucker|zuccheri).*$)(?!^.*\#(addedSugar).*$).*$"#
