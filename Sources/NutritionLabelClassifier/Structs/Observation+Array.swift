@@ -42,7 +42,9 @@ extension Array where Element == Observation {
 extension Array where Element == Observation {
     
     func contains(attribute: Attribute) -> Bool {
-        contains(where: { $0.attributeText.attribute == attribute })
+        contains(where: {
+            $0.attributeText.attribute == attribute
+        })
     }
 
     func containsConflictingAttribute(to attribute: Attribute) -> Bool {
@@ -61,6 +63,21 @@ extension Array where Element == Observation {
         if !containsAttribute && !containsConflictingAttribute {
             append(observation)
         }
+    }
+}
+
+extension Observation {
+    var hasZeroValues: Bool {
+        if let value1 = value1 {
+            if let value2 = value2 {
+                return value1.amount == 0 && value2.amount == 0
+            } else {
+                return value1.amount == 0
+            }
+        } else if let value2 = value2 {
+            return value2.amount == 0
+        }
+        return false
     }
 }
 

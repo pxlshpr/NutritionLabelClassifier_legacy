@@ -232,6 +232,19 @@ class NutrientsClassifier: Classifier {
             }
         }
         
+//        if let observationBeingExtracted = observationBeingExtracted,
+//           observationBeingExtracted.value1 == nil,
+//           observationBeingExtracted.value2 == nil
+//        {
+//            
+//            let emptyValueText = ValueText(value: Value(amount: 0, unit: .g), textId: defaultUUID)
+//            let emptyObservation = Observation(
+//                attributeText: observationBeingExtracted.attributeText,
+//                valueText1: emptyValueText,
+//                valueText2: emptyValueText)
+//            self.observations.appendIfValid(emptyObservation)
+//        }
+        
         if let attributeBeingExtracted = attributeTextBeingExtracted {
             if let value1BeingExtracted = value1BeingExtracted {
                 pendingObservations = observations

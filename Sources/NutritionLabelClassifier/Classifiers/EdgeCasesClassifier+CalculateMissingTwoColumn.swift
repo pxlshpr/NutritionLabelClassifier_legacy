@@ -67,8 +67,26 @@ extension EdgeCasesClassifier {
          - for e.g. one is `.per100g` and the other is `.perServing` with a `.headerServingUnit` of `g` (do the same for `ml`)
      */
     var ratioUsingHeaders: Double? {
-        return 4.0
-//        return nil
+        guard let type1 = observations.forAttribute(.headerType1)?.headerType,
+              let type2 = observations.forAttribute(.headerType2)?.headerType,
+              let servingAmount = observations.forAttribute(.headerServingAmount)?.double,
+              let servingUnit = observations.forAttribute(.headerServingUnit)?.unit
+        else {
+            return nil
+        }
+        
+        switch (type1, type2) {
+        case (.per100g, .perServing):
+            return nil
+        case (.per100ml, .perServing):
+            return nil
+        case (.perServing, .per100g):
+            return nil
+        case (.perServing, .per100ml):
+            return nil
+        default:
+            return nil
+        }
     }
     
     /**
@@ -82,4 +100,21 @@ extension EdgeCasesClassifier {
         return nil
     }
     
+}
+
+extension Observation {
+
+    var unit: NutritionUnit? {
+        guard let string = string else {
+            return nil
+        }
+        return NutritionUnit(string: string)
+    }
+
+    var headerType: HeaderType? {
+        guard let string = string else {
+            return nil
+        }
+        return HeaderType(string: string)
+    }
 }
