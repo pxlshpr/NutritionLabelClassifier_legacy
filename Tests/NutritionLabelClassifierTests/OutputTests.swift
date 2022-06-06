@@ -11,7 +11,7 @@ let RunLegacyTests = true
 
 //let ClassifierTestCases = 18...18
 let ClassifierTestCases = 1...23
-let ClassifierTestCasesToIgnore: [Int] = [18] // TODO: bring back when header is working for it
+let ClassifierTestCasesToIgnore: [Int] = []
 
 
 //let CurrentTestCase = UUID(uuidString: "C05EDF6E-BB82-49FB-B745-1B8984987762")!

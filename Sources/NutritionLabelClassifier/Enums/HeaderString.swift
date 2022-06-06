@@ -14,6 +14,9 @@ public enum HeaderString {
         else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize) {
             self = .perServing(serving: size)
         }
+        else if string.matchesRegex(Regex.perServingWithSize3) {
+            self = .perServing(serving: string)
+        }
 //        else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize2) {
 //            self = .perServing(serving: size)
 //        }
@@ -51,7 +54,12 @@ extension HeaderString {
 //#"^(?=^.*(?:amount|)[ ]*(?:(?:per|par|por) |\/)(?:serv(?:ing|e)|portion|porção)[ ]*(.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         
         static let perServingWithSize =
+//#"^(?=^(?:.*(?:(?:per|par|por) )(?:(?:(?:serv(?:ing|e)|portion|porção) )|)([\#(Rx.numbers)]+.*)|[\#(Rx.numbers)]+[ ]*(g)[^\#(Rx.numbers)]*[\#(Rx.numbers)]+[^\#(Rx.numbers)]+)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
 #"^(?=^.*(?:(?:per|par|por) )(?:(?:(?:serv(?:ing|e)|portion|porção) )|)([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+
+        /// Matches headers like `80 g = 1 Wrap`
+        static let perServingWithSize3 =
+#"^([\#(Rx.numbers)]+[ ]*(?:g)[^\#(Rx.numbers)]*[\#(Rx.numbers)]+[^\#(Rx.numbers)]+)$"#
 
         /// Alternative for cases like `⅕ of a pot (100g)`
         static let perServingWithSize2 =
