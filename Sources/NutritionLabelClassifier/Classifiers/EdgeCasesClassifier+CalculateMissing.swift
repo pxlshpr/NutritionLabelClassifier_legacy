@@ -32,10 +32,17 @@ extension EdgeCasesClassifier {
         
         let kcal = (carbsValue.amount * KcalsPerGramOfCarb) + (fatValue.amount * KcalsPerGramOfFat) + (proteinValue.amount * KcalsPerGramOfProtein)
         
-        let attributeText = AttributeText(attribute: .energy, textId: defaultUUID)
+        let uuid: UUID
+        if let recognizedText = recognizedTexts.first(where: { $0.string == kcal.clean }) {
+            uuid = recognizedText.id
+        } else {
+            uuid = defaultUUID
+        }
+
+        let attributeText = AttributeText(attribute: .energy, textId: uuid)
         let observation = Observation(
             attributeText: attributeText,
-            valueText1: ValueText(value: Value(amount: kcal, unit: .kcal), textId: defaultUUID),
+            valueText1: ValueText(value: Value(amount: kcal, unit: .kcal), textId: uuid),
             valueText2: nil, doubleText: nil, stringText: nil
         )
         observations.append(observation)
@@ -63,10 +70,17 @@ extension EdgeCasesClassifier {
         var amount = (kcal - (fatValue.amount * KcalsPerGramOfFat) - (proteinValue.amount * KcalsPerGramOfProtein)) / KcalsPerGramOfCarb
         amount = amount.rounded(toPlaces: 4)
         
-        let attributeText = AttributeText(attribute: .carbohydrate, textId: defaultUUID)
+        let uuid: UUID
+        if let recognizedText = recognizedTexts.first(where: { $0.string == amount.clean }) {
+            uuid = recognizedText.id
+        } else {
+            uuid = defaultUUID
+        }
+
+        let attributeText = AttributeText(attribute: .carbohydrate, textId: uuid)
         let observation = Observation(
             attributeText: attributeText,
-            valueText1: ValueText(value: Value(amount: amount, unit: .g), textId: defaultUUID),
+            valueText1: ValueText(value: Value(amount: amount, unit: .g), textId: uuid),
             valueText2: nil, doubleText: nil, stringText: nil
         )
         observations.append(observation)
@@ -93,10 +107,17 @@ extension EdgeCasesClassifier {
         var amount = (kcal - (carbValue.amount * KcalsPerGramOfCarb) - (proteinValue.amount * KcalsPerGramOfProtein)) / KcalsPerGramOfFat
         amount = amount.rounded(toPlaces: 4)
 
-        let attributeText = AttributeText(attribute: .fat, textId: defaultUUID)
+        let uuid: UUID
+        if let recognizedText = recognizedTexts.first(where: { $0.string == amount.clean }) {
+            uuid = recognizedText.id
+        } else {
+            uuid = defaultUUID
+        }
+
+        let attributeText = AttributeText(attribute: .fat, textId: uuid)
         let observation = Observation(
             attributeText: attributeText,
-            valueText1: ValueText(value: Value(amount: amount, unit: .g), textId: defaultUUID),
+            valueText1: ValueText(value: Value(amount: amount, unit: .g), textId: uuid),
             valueText2: nil, doubleText: nil, stringText: nil
         )
         observations.append(observation)
@@ -129,7 +150,6 @@ extension EdgeCasesClassifier {
         } else {
             uuid = defaultUUID
         }
-
 
         let attributeText = AttributeText(attribute: .protein, textId: uuid)
         let observation = Observation(
