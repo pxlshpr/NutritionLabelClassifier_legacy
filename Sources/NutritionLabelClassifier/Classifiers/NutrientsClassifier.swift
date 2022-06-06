@@ -84,7 +84,7 @@ class NutrientsClassifier: Classifier {
             }
         }
         
-        checkPostExtractionHeuristics()
+//        checkPostExtractionHeuristics()
         
         return observations
     }
