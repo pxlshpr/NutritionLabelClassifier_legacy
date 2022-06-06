@@ -247,13 +247,13 @@ public enum Attribute: String, CaseIterable {
         case .nutritionFacts:
             return #"Nutrition Facts"#
         case .energy:
-            return #"^.*(energy|calories|energie).*$"#
+            return #"^.*(energy|calories|energie|kcal).*$"#
             
         case .protein:
             return #"(protein|proteine)"#
             
         case .carbohydrate:
-            return #"(carb|glucides).*"#
+            return #".*(carb|glucides|hydrate).*"#
         case .dietaryFibre:
             return #"(dietary |)fib(re|er)"#
         case .gluten:

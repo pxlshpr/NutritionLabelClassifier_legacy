@@ -332,14 +332,28 @@ class NutrientsClassifier: Classifier {
                     unit = .kcal
                 }
                 
-                /// **Heuristic** If the value is *still* missing its unit and the attribute has a default unit, assign it to it
+                /// If the value is *still* missing its unit
                 if unit == nil {
-                    guard let defaultUnit = observation.attributeText.attribute.defaultUnit else {
-                        continue
+                    
+                    /// **Heuristic** If the attribute is `.energy`, and the label contained `kcal` in it, use that as the default value
+                    if observation.attribute == .energy,
+                       let attributeString = recognizedTexts.first(where: { $0.id == observation.attributeText.textId })?.string,
+                       attributeString.matchesRegex(#"kcal"#)
+                    {
+                        value = Value(amount: value.amount, unit: .kcal)
+                        unit = .kcal
                     }
-                    value = Value(amount: value.amount, unit: defaultUnit)
-                    unit = defaultUnit
+                    else {
+
+                        /// **Heuristic** If the attribute has a default unit, assign it to it
+                        guard let defaultUnit = observation.attributeText.attribute.defaultUnit else {
+                            continue
+                        }
+                        value = Value(amount: value.amount, unit: defaultUnit)
+                        unit = defaultUnit
+                    }
                 }
+                
                 guard let unit = unit else { continue }
                 
                 if let value1 = observation.valueText1 {
