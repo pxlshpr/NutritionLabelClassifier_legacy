@@ -6,10 +6,6 @@ import Zip
 
 @testable import NutritionLabelClassifier
 
-//let ClassifierTestCases = 5...5
-let ClassifierTestCases = 1...23
-let ClassifierTestCasesToIgnore: [Int] = []
-
 final class NutritionLabelClassifierTests: XCTestCase {
     
     func testClassifier() throws {

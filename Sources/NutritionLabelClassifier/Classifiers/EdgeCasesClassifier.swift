@@ -154,7 +154,9 @@ class EdgeCasesClassifier: Classifier {
 
     /// If more than half of value2 is empty, clear it all, assuming we have erraneous reads
     func clearErraneousValue2Extractions() {
-        if observations.percentageOfNilValue2 > 0.5 {
+        if observations.percentageOfNilValue2 > 0.5
+            || !observations.contains(attribute: .headerType2)
+        {
             observations = observations.clearingValue2
         }
     }

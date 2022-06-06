@@ -19,13 +19,15 @@ extension Array where Element == Observation {
     }
     
     var percentageOfNilValue2: Double {
+        var numberOfNonNilValue1s = 0.0
         var numberOfNilValue2s = 0.0
-        for observation in self {
+        for observation in self.filter({ $0.valueText1 != nil }) {
             if observation.valueText2 == nil {
                 numberOfNilValue2s += 1
             }
+            numberOfNonNilValue1s += 1
         }
-        return numberOfNilValue2s / Double(count)
+        return numberOfNilValue2s / numberOfNonNilValue1s
     }
     
     var clearingValue2: [Observation] {
