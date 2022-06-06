@@ -33,7 +33,6 @@ extension EdgeCasesClassifier {
             guard observation.hasOneValueMissing else {
                 continue
             }
-            print("🔥 Do it for: \(observation.attribute)")
             
             if let value1 = observation.value1?.amount {
                 let value2 = value1 / ratio
@@ -76,14 +75,19 @@ extension EdgeCasesClassifier {
         }
         
         switch (type1, type2) {
-        case (.per100g, .perServing):
-            return nil
-        case (.per100ml, .perServing):
-            return nil
-        case (.perServing, .per100g):
-            return nil
-        case (.perServing, .per100ml):
-            return nil
+        case (.per100g, .perServing), (.perServing, .per100g):
+            guard servingUnit == .g else { return nil }
+        case (.per100ml, .perServing), (.perServing, .per100ml):
+            guard servingUnit == .ml else { return nil }
+        default:
+            break
+        }
+        
+        switch (type1, type2) {
+        case (.per100g, .perServing), (.per100ml, .perServing):
+            return 100.0/servingAmount
+        case (.perServing, .per100g) , (.perServing, .per100ml):
+            return servingAmount/100.0
         default:
             return nil
         }
@@ -97,6 +101,21 @@ extension EdgeCasesClassifier {
          2. We could take this one step further, filter out these ‘valid’ values and calculate the average of their actual (double) values.
      */
     var ratioUsingValues: Double? {
+        var ratios: [Int] = []
+        for observation in observations {
+            guard let value1 = observation.value1?.amount,
+                  let value2 = observation.value2?.amount
+            else {
+                continue
+            }
+            
+            let ratio = value1/value2
+            guard ratio > 0 else {
+                continue
+            }
+            ratios.append(Int(ratio.rounded()))
+        }
+        //TODO: Return Mode of array of ratios
         return nil
     }
     
@@ -115,6 +134,6 @@ extension Observation {
         guard let string = string else {
             return nil
         }
-        return HeaderType(string: string)
+        return HeaderType(rawValue: string)
     }
 }

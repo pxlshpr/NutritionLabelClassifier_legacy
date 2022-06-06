@@ -17,8 +17,8 @@ let ClassifierTestCasesToIgnore: [Int] = [18] // TODO: bring back when header is
 //let CurrentTestCase = UUID(uuidString: "C05EDF6E-BB82-49FB-B745-1B8984987762")!
 let CurrentTestCase = UUID(uuidString: "991D390B-B741-4821-8DAD-B0F967CE9D3B")!
 
-//let SingledOutTestCaseId: UUID? = nil
-let SingledOutTestCaseId: UUID? = CurrentTestCase
+let SingledOutTestCaseId: UUID? = nil
+//let SingledOutTestCaseId: UUID? = CurrentTestCase
 //let SingledOutTestCaseId: UUID? = UUID(uuidString: "6BAD0EB1-8BED-4DD9-8FD8-C9861A267A3D")
 
 let IgnoredTests: [UUID] = []
