@@ -1,6 +1,14 @@
 import Foundation
 import VisionSugar
 
+let defaultUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+
+extension Array where Element == Observation {
+    func value1(for attribute: Attribute) -> Value? {
+        first(where: { $0.attribute == attribute })?.value1
+    }
+}
+
 class EdgeCasesClassifier: Classifier {
     let recognizedTexts: [RecognizedText]
     var observations: [Observation]
@@ -22,6 +30,7 @@ class EdgeCasesClassifier: Classifier {
     func getObservations() -> [Observation] {
         findMissedServingAmount()
         findMissingHeaderType1()
+        calculateMissingMacroOrEnergyInSingleColumnOfValues()
         return observations
     }
     

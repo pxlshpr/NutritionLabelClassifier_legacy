@@ -63,7 +63,10 @@ extension RecognizedText {
 
                     let artefact = ServingArtefact(attribute: attribute, textId: id)
                     
-                    /// If this was the `.servingsPerContainerAmount` attribute, and we have a unit-less value before it—use that as the amount by inserting the attribute artefact before it—otherwise append it here in hopes that we extract it further down the line.
+                    /// If this was the `.servingsPerContainerAmount` attribute,
+                    ///     and we have a unit-less value before it
+                    /// —use that as the amount by inserting the attribute artefact before it
+                    /// —otherwise append it here in hopes that we extract it further down the line.
                     if attribute == .servingsPerContainerAmount,
                        let previousArtefact = previousArtefact,
                        previousArtefact.double != nil,

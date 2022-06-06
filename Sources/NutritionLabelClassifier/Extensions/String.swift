@@ -59,7 +59,7 @@ extension String {
     
     var unitSubstringAtStart: String? {
         let units = NutritionUnit.allUnits.map{$0}.joined(separator: "|")
-        let regex = #"^(\#(units))(?: |\(|\)|$)"#
+        let regex = #"^(\#(units))(?: |\(|\)|;|$)"#
         let groups = trimmingWhitespaces.capturedGroups(using: regex, allowCapturingEntireString: true)
         let substring: String?
         if groups.count > 1 {

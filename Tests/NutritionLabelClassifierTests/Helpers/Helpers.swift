@@ -4,8 +4,6 @@ import VisionSugar
 
 @testable import NutritionLabelClassifier
 
-let defaultUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-
 let testCasesForColumnSpanningEnergy: [(input: String, kcal: [Double], kj: [Double])] = [
     ("Brennwert Energi 735 kJ (177 kcal) 412 kJ (99 kcal)", [177, 99], [735, 412]),
     ("384kJ/91kcal 284kJ/67 kcal", [91, 67], [384, 284]),
