@@ -128,6 +128,25 @@ class EdgeCasesClassifier: Classifier {
                 //TODO: Implement fallback (see above case)
             }
         }
+        
+        for observation in observations {
+            if let parentAttribute = observation.attribute.parentAttribute,
+               let parent = observations.first(where: { $0.attribute == parentAttribute })
+            {
+                if observation.hasLargerValue1Than(parent) == true {
+                    pickAnotherCandidateForValue1Of(
+                        observation,
+                        lessThanOrEqualTo: parent.value1!.amount)
+                }
+                
+                if observation.hasLargerValue2Than(parent) == true {
+                    pickAnotherCandidateForValue2Of(
+                        observation,
+                        lessThanOrEqualTo: parent.value1!.amount)
+                    print("🔥 \(observation.value2!.amount) > \(parent.value2!.amount)")
+                }
+            }
+        }
     }
 
     /// If more than half of value2 is empty, clear it all, assuming we have erraneous reads
@@ -147,5 +166,122 @@ class EdgeCasesClassifier: Classifier {
                 }
             }
         }
+    }
+    
+    //TODO: Modularize both of these
+    func pickAnotherCandidateForValue1Of(_ observation: Observation, lessThanOrEqualTo parentAmount: Double) {
+        guard let id = observation.valueText1?.textId,
+              let recognizedText = recognizedTexts.withId(id),
+              let validValue = recognizedText.value(lessThanOrEqualTo: parentAmount)
+        else {
+            return
+        }
+        
+        let newValue = Value(amount: validValue.amount, unit: observation.attribute.defaultUnit)
+        observations.modifyObservation(observation, withValue1: newValue)
+    }
+    func pickAnotherCandidateForValue2Of(_ observation: Observation, lessThanOrEqualTo parentAmount: Double) {
+        guard let id = observation.valueText2?.textId,
+              let recognizedText = recognizedTexts.withId(id),
+              let validValue = recognizedText.value(lessThanOrEqualTo: parentAmount)
+        else {
+            return
+        }
+        
+        let newValue = Value(amount: validValue.amount, unit: observation.attribute.defaultUnit)
+        observations.modifyObservation(observation, withValue2: newValue)
+    }
+}
+
+extension RecognizedText {
+    func value(lessThanOrEqualTo ceilingAmount: Double) -> Value? {
+        for candidate in candidates {
+            let artefacts = self.nutrientArtefacts(for: candidate)
+            
+            //TODO: Handle strings with multiple attributes/values in them
+            for artefact in artefacts {
+                if let value = artefact.value, value.amount <= ceilingAmount {
+                    return value
+                }
+            }
+        }
+        return nil
+    }
+}
+
+extension Array where Element == RecognizedText {
+    func withId(_ id: UUID) -> RecognizedText? {
+        first(where: { $0.id == id })
+    }
+}
+
+extension Array where Element == Observation {
+    
+    //TODO: Modularize both of these
+    mutating func modifyObservation(_ observation: Observation, withValue1 newValue1: Value) {
+        guard let index = self.firstIndex(where: { $0.attribute == observation.attribute }) else { return }
+        let newObservation = Observation(
+            attributeText: observation.attributeText,
+            valueText1: ValueText(value: newValue1,
+                                  textId: observation.valueText1?.textId ?? defaultUUID),
+            valueText2: observation.valueText2,
+            doubleText: nil, stringText: nil)
+        self[index] = newObservation
+    }
+    mutating func modifyObservation(_ observation: Observation, withValue2 newValue2: Value) {
+        guard let index = self.firstIndex(where: { $0.attribute == observation.attribute }) else { return }
+        let newObservation = Observation(
+            attributeText: observation.attributeText,
+            valueText1: observation.valueText1,
+            valueText2: ValueText(value: newValue2,
+                                  textId: observation.valueText2?.textId ?? defaultUUID),
+            doubleText: nil, stringText: nil)
+        self[index] = newObservation
+    }
+}
+
+extension Observation {
+    
+    func hasLargerValue1Than(_ observation: Observation) -> Bool? {
+        if let value1 = value1 {
+            
+            guard let otherValue1 = observation.value1,
+                    otherValue1.unit == value1.unit
+            else { return nil }
+            
+            if value1.amount > otherValue1.amount {
+                return true
+            }
+        } else {
+            guard observation.value1 == nil else { return nil }
+        }
+        return false
+    }
+    
+    func hasLargerValue2Than(_ observation: Observation) -> Bool? {
+        if let value2 = value2 {
+            
+            guard let otherValue2 = observation.value2,
+                  otherValue2.unit == value2.unit
+            else { return nil }
+            
+            if value2.amount > otherValue2.amount {
+                return true
+            }
+        } else {
+            guard observation.value2 == nil else { return nil }
+        }
+        return false
+    }
+    
+    /// Returns `true` if the values are greater than observations
+    /// Also returns `nil` if the values don't match in number (ie. both don't have either 1 or 2 values)
+    func hasLargerValuesThan(_ observation: Observation) -> Bool? {
+        guard let hasLargerValue1 = hasLargerValue1Than(observation),
+              let hasLargerValue2 = hasLargerValue2Than(observation)
+        else {
+            return nil
+        }
+        return hasLargerValue1 && hasLargerValue2
     }
 }

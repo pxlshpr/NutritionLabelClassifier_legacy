@@ -63,10 +63,11 @@ class NutrientsClassifier: Classifier {
                     guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else { continue }
                     
                     let result = extractNutrientObservation(&observationBeingExtracted, from: inlineText)
+                    
                     /// If we did extract a value, and the `recognizedText` had a single `Value` artefact—add it to the discarded pile so it doesn't get selected as= an inline text again
                     if result.didExtract,
-                       inlineText.nutrientArtefacts.count >= 1,
-                       let _ = inlineText.nutrientArtefacts.first?.value
+                       inlineText.getNutrientArtefacts(extractedObservations: observations).count >= 1,
+                       let _ = inlineText.getNutrientArtefacts(extractedObservations: observations).first?.value
                     {
                         discarded.append(inlineText)
                     }
@@ -106,7 +107,7 @@ class NutrientsClassifier: Classifier {
     
     private func extractObservations(of recognizedText: RecognizedText) {
         
-        let artefacts = recognizedText.nutrientArtefacts
+        let artefacts = recognizedText.getNutrientArtefacts(extractedObservations: observations)
         let id = recognizedText.id
 
         var observations: [Observation] = []
@@ -280,7 +281,7 @@ class NutrientsClassifier: Classifier {
         var inlineValueCount = 0
         for column in inlineTextColumns {
             guard let inlineText = pickInlineText(fromColumn: column, for: attribute) else { continue }
-            if inlineText.nutrientArtefacts.contains(where: { $0.value != nil }) {
+            if inlineText.getNutrientArtefacts(extractedObservations: observations).contains(where: { $0.value != nil }) {
                 inlineValueCount += 1
             }
         }
@@ -297,7 +298,7 @@ class NutrientsClassifier: Classifier {
         
         /// **Heuristic** Remove any texts that contain no artefacts before returning the closest one, if we have more than 1 in a column (see Test Case 22 for how `Alimentaires` and `1.5 g` fall in the same column, with the former overlapping with `Protein` more, and thus `1.5 g` getting ignored
         var column = column.filter {
-            $0.nutrientArtefacts.count > 0
+            $0.getNutrientArtefacts(extractedObservations: observations).count > 0
 //            Value(fromString: $0.string) != nil
         }
         

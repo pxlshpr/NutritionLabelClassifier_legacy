@@ -355,7 +355,7 @@ public enum Attribute: String, CaseIterable {
         static let sugar = #"^(?=^.*(sugar|sucres|zucker|zuccheri).*$)(?!^.*\#(addedSugar).*$).*$"#
         static let addedSugar = #"added sugar(s|)"#
         
-        static let fat = #"^(?=^.*(fa(t|i)|fett|grassi).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
+        static let fat = #"^(?=^.*(fa(t|i)|fett|grassi|lípidos).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
         static let saturatedFat = #"^.*(saturated|of which saturates|saturi).*$"#
         static let transFat = #"^.*trans.*$"#
         static let monounsaturatedFat = #"^.*mono(-|)unsaturat.*$"#

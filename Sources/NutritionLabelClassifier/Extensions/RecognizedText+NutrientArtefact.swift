@@ -2,9 +2,9 @@ import Foundation
 import VisionSugar
 
 extension RecognizedText {
-    var nutrientArtefacts: [NutrientArtefact] {
-        getNutrientArtefacts()
-    }
+//    var nutrientArtefacts: [NutrientArtefact] {
+//        getNutrientArtefacts()
+//    }
     
     func getNutrientArtefacts(for attribute: Attribute? = nil, observationBeingExtracted: Observation? = nil, extractedObservations: [Observation] = []) -> [NutrientArtefact] {
         var arrays: [[NutrientArtefact]] = []
