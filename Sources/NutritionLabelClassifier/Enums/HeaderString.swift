@@ -47,11 +47,12 @@ extension HeaderString {
 #"^((serve |)(per|pour) |)100[ ]*(?:g|ml)$"#
         
         static let perServing =
-#"^(?=^.*(amount|)[ ]*((per|par) |\/)(serv(ing|e)|portion).*$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+#"^(?=^.*(amount|)[ ]*((per|par|por) |\/)(serv(ing|e)|portion|porção).*$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+//#"^(?=^.*(?:amount|)[ ]*(?:(?:per|par|por) |\/)(?:serv(?:ing|e)|portion|porção)[ ]*(.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
         
         static let perServingWithSize =
-#"^(?=^.*(?:(?:per|par) )([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
-        
+#"^(?=^.*(?:(?:per|par|por) )(?:(?:(?:serv(?:ing|e)|portion|porção) )|)([\#(Rx.numbers)]+.*)$)(?!^.*100[ ]*(?:g|ml).*$).*$"#
+
         /// Alternative for cases like `⅕ of a pot (100g)`
         static let perServingWithSize2 =
 #"(^[0-9⅕]+(?: of a|)[ ]*[^0-9⅕]+[0-9⅕]+[ ]?[^0-9⅕ \)]+)"#
@@ -64,9 +65,10 @@ extension HeaderString {
         
         /// Deprecated patterns
 //        static let per100 = #"^(per |)100[ ]*g$"#
+        
 //        static let perServingWithSize = #"^(?=^.*(?:per |serving size[:]* )([0-9]+.*)$)(?!^.*100[ ]*g.*$).*$"#
-        //        static let perServingWithSize2 = #"^([\#(Rx.numbers)]+)(?: of a|)[ ]*([^\#(Rx.numbers)]+)([\#(Rx.numbers)]+)[ ]?([^\#(Rx.numbers) \)]+)"#
-
+        
+//        static let perServingWithSize2 = #"^([\#(Rx.numbers)]+)(?: of a|)[ ]*([^\#(Rx.numbers)]+)([\#(Rx.numbers)]+)[ ]?([^\#(Rx.numbers) \)]+)"#
    }
 }
 

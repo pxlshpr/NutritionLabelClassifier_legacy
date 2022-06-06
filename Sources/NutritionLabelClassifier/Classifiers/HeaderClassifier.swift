@@ -321,8 +321,14 @@ extension HeaderText.Serving {
 
 extension String {
     var cleanedUnitString: String {
-        let str = hasSuffix(" (") ? replacingOccurrences(of: " (", with: "") : self
-        return str.trimmingWhitespaces
+        var string = self
+        if string.hasSuffix(" (") {
+            string = string.replacingLastOccurrence(of: " (", with: "")
+        }
+        if string.hasSuffix(")") {
+            string = string.replacingLastOccurrence(of: ")", with: "")
+        }
+        return string.trimmingWhitespaces
     }
 }
 

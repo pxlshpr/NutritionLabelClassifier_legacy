@@ -34,13 +34,17 @@ class EdgeCasesClassifier: Classifier {
 
         findMissedServingAmount()
         findMissingHeaderType1()
+        
         calculateMissingMacroOrEnergyInSingleColumnOfValues()
+        
+        calculateMissingValuesUsingRatioInTwoColumn()
+        correctMacroOrEnergyUsingRatioInTwoColumn()
         
         clearErraneousValue2Extractions()
 
         return observations
     }
-    
+        
     /// If we have only one column of values, and haven’t already assigned `.headerType1`, look for the text `Amount Per Serving` and then manually set `.headerType1` as `.perServing` if found.
     func findMissingHeaderType1() {
         guard !observations.hasTwoColumnsOfValues, !observations.contains(attribute: .headerType1) else {
@@ -143,7 +147,6 @@ class EdgeCasesClassifier: Classifier {
                     pickAnotherCandidateForValue2Of(
                         observation,
                         lessThanOrEqualTo: parent.value1!.amount)
-                    print("🔥 \(observation.value2!.amount) > \(parent.value2!.amount)")
                 }
             }
         }
@@ -238,6 +241,21 @@ extension Array where Element == Observation {
             doubleText: nil, stringText: nil)
         self[index] = newObservation
     }
+    
+    //TODO: Modularize both of these
+    mutating func modifyObservation(_ observation: Observation, withValue1Amount newAmount: Double) {
+        modifyObservation(
+            observation,
+            withValue1: Value(amount: newAmount, unit: observation.value2?.unit)
+        )
+    }
+    mutating func modifyObservation(_ observation: Observation, withValue2Amount newAmount: Double) {
+        modifyObservation(
+            observation,
+            withValue2: Value(amount: newAmount, unit: observation.value1?.unit)
+        )
+    }
+
 }
 
 extension Observation {

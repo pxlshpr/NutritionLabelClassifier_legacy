@@ -94,7 +94,7 @@ extension Output.Serving {
         }
         
         if let amountText = identifiableEquivalentAmount,
-            (identifiableEquivalentUnit != nil || unitNameText != nil) {
+            (identifiableEquivalentUnit != nil || identifiableEquivalentUnitSizeName != nil) {
             equivalentSize = EquivalentSize(
                 amountText: amountText,
                 unitText: identifiableEquivalentUnit,

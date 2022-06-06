@@ -232,7 +232,7 @@ public enum Attribute: String, CaseIterable {
         case .servingUnit, .servingUnitSize:
             return [.servingEquivalentAmount]
         case .servingEquivalentAmount:
-            return [.servingEquivalentUnit, .servingUnitSize]
+            return [.servingEquivalentUnit, .servingEquivalentUnitSize]
         default:
             return nil
         }
@@ -243,7 +243,7 @@ public enum Attribute: String, CaseIterable {
         case .servingsPerContainerAmount:
             return #"(?:servings |serving5 |)per (container|package|tub|pot)"#
         case .servingAmount:
-            return #"serving size"#
+            return #"(serving size|dose de referência)"#
         case .nutritionFacts:
             return #"Nutrition Facts"#
         case .energy:
@@ -356,7 +356,7 @@ public enum Attribute: String, CaseIterable {
         static let addedSugar = #"added sugar(s|)"#
         
         static let fat = #"^(?=^.*(fa(t|i)|fett|grassi|lípidos).*$)(?!\#(saturatedFat))(?!\#(transFat))(?!\#(polyunsaturatedFat))(?!\#(monounsaturatedFat)).*$"#
-        static let saturatedFat = #"^.*(saturated|of which saturates|saturi).*$"#
+        static let saturatedFat = #"^.*(saturated|of which saturates|saturi|saturados).*$"#
         static let transFat = #"^.*trans.*$"#
         static let monounsaturatedFat = #"^.*mono(-|)unsaturat.*$"#
         static let polyunsaturatedFat = #"^.*poly(-|)unsaturat.*$"#
