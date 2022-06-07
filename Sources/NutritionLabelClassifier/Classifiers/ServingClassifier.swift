@@ -3,19 +3,31 @@ import VisionSugar
 class ServingClassifier: Classifier {
     
     let recognizedTexts: [RecognizedText]
+    let arrayOfRecognizedTexts: [[RecognizedText]]
     var observations: [Observation]
 
     var pendingObservations: [Observation] = []
     var observationBeingExtracted: Observation? = nil
     var discarded: [RecognizedText] = []
 
-    init(recognizedTexts: [RecognizedText], observations: [Observation]) {
+    init(recognizedTexts: [RecognizedText], arrayOfRecognizedTexts: [[RecognizedText]] = [], observations: [Observation]) {
         self.recognizedTexts = recognizedTexts
         self.observations = observations
+        self.arrayOfRecognizedTexts = arrayOfRecognizedTexts
+    }
+
+    static func observations(from recognizedTexts: [RecognizedText],
+                             priorObservations observations: [Observation]) -> [Observation] {
+        Self.observations(from: recognizedTexts, arrayOfRecognizedTexts: [], priorObservations: observations)
     }
     
-    static func observations(from recognizedTexts: [RecognizedText], priorObservations observations: [Observation]) -> [Observation] {
-        ServingClassifier(recognizedTexts: recognizedTexts, observations: observations).getObservations()
+    static func observations(from recognizedTexts: [RecognizedText],
+                             arrayOfRecognizedTexts: [[RecognizedText]],
+                             priorObservations observations: [Observation]) -> [Observation] {
+        ServingClassifier(
+            recognizedTexts: recognizedTexts,
+            arrayOfRecognizedTexts: arrayOfRecognizedTexts,
+            observations: observations).getObservations()
     }
 
     //MARK: - Helpers
@@ -53,27 +65,37 @@ class ServingClassifier: Classifier {
     }
     
     func extractInlineObservations(of recognizedText: RecognizedText, for observation: Observation) -> Bool {
-        /// **NOTE:** We're currently not looking for inline texts, as its not needed so far, and uncommenting the following block results in failed tests which we need to look into first
-        let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
-        for column in inlineTextColumns {
+        
+        //TODO: Handle array of recognized texts
+        /// **Copy across what we're doing here, of:**
+        /// - Going through the entire `arrayOfRecognizedTexts` to find matching observations, and not just the array that was passed in
+        /// - Make sure we're doing this in other classifiers as well
+        /// - See if we can run each classifier once, feeding it the array of recognized texts, and
+        ///     - Check if the tests succeed, and if so
+        ///     - If this is any faster, by measuring how long it takes
+        
+        for recognizedTexts in arrayOfRecognizedTexts {
+            let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
+            for column in inlineTextColumns {
 
-            guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else {
-                continue
-            }
+                guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else {
+                    continue
+                }
 
-            guard recognizedText.isNotTooFarFrom(inlineText) else {
-                continue
-            }
-            
-            extractObservations(
-                of: inlineText,
-                startingWithAttributeText: observation.attributeText
-            )
-            for observation in pendingObservations {
-                observations.appendIfValid(observation)
-            }
-            if pendingObservations.count > 0 {
-                return true
+                guard recognizedText.isNotTooFarFrom(inlineText) else {
+                    continue
+                }
+                
+                extractObservations(
+                    of: inlineText,
+                    startingWithAttributeText: observation.attributeText
+                )
+                for observation in pendingObservations {
+                    observations.appendIfValid(observation)
+                }
+                if pendingObservations.count > 0 {
+                    return true
+                }
             }
         }
         return false

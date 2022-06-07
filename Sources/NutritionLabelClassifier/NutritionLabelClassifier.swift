@@ -41,8 +41,10 @@ public class NutritionLabelClassifier {
         for recognizedTexts in arrayOfRecognizedTexts {
             observations = NutrientsClassifier.observations(from: recognizedTexts,
                                                             priorObservations: observations)
-            observations = ServingClassifier.observations(from: recognizedTexts,
-                                                          priorObservations: observations)
+            observations = ServingClassifier.observations(
+                from: recognizedTexts,
+                arrayOfRecognizedTexts: arrayOfRecognizedTexts,
+                priorObservations: observations)
             observations = HeaderClassifier.observations(from: recognizedTexts,
                                                           priorObservations: observations)
             observations = EdgeCasesClassifier.observations(from: recognizedTexts,
