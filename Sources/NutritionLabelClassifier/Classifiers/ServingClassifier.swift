@@ -82,7 +82,8 @@ class ServingClassifier: Classifier {
     func extractInColumnObservations(of recognizedText: RecognizedText, for observation: Observation) -> Bool {
         /// If we've still not found any resulting attributes, look in the next text directly below it
         guard let nextLineText = recognizedTexts.filterSameColumn(as: recognizedText, removingOverlappingTexts: false).first,
-            nextLineText.string != "Per 100g"
+            nextLineText.string != "Per 100g",
+            !nextLineText.string.matchesRegex("^calories")
         else {
             return false
         }

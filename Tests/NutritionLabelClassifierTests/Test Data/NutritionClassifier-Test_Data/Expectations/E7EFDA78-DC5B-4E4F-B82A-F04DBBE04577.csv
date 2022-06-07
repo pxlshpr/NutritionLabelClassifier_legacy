@@ -1,0 +1,15 @@
+attributeString,value1String,value2String,double,string
+energy,1258.0 kJ,1006.0 kJ,,
+fat,6.2 g,5.0 g,,
+carbohydrate,49.0 g,39.0 g,,
+sugar,1.5 g,1.2 g,,
+dietaryFibre,9.3 g,7.4 g,,
+protein,7.1 g,5.7 g,,
+salt,1.0 g,0.8 g,,
+saturatedFat,3.1 g,2.5 g,,
+headerType1,,,,per100g
+headerType2,,,,perServing
+headerServingAmount,,,80,
+headerServingUnit,,,,g
+headerServingEquivalentAmount,,,1,
+headerServingEquivalentUnitSize,,,,Wrap

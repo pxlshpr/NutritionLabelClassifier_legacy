@@ -1,0 +1,23 @@
+attributeString,value1String,value2String,double,string
+energy,10.0 kcal,,,
+fat,0.0 g,,,
+saturatedFat,0.0 g,,,
+transFat,0.0 g,,,
+cholesterol,0.0 mg,,,
+sodium,1590.0 mg,,,
+carbohydrate,1.0 g,,,
+dietaryFibre,0.0 g,,,
+sugar,1.0 g,,,
+protein,1.0 g,,,
+vitaminD,0.0 mcg,,,
+calcium,5.0 mg,,,
+iron,0.1 mg,,,
+potassium,40.0 mg,,,
+servingAmount,,,1,
+servingUnit,,,,tbsp
+servingEquivalentAmount,,,15,
+servingEquivalentUnit,,,,ml
+headerType1,,,,perServing
+addedSugar,1.0 g,,,
+servingsPerContainerAmount,,,47,
+servingsPerContainerName,,,,container
