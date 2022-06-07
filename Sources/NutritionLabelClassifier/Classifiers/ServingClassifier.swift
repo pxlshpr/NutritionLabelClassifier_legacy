@@ -40,36 +40,63 @@ class ServingClassifier: Classifier {
                     continue
                 }
 
-                /// **NOTE:** We're currently not looking for inline texts, as its not needed so far, and uncommenting the following block results in failed tests which we need to look into first
-//                let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
-//                for column in inlineTextColumns {
-//
-//                    guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else { continue }
-//
-//                    extractObservations(
-//                        of: inlineText,
-//                        startingWithAttributeText: observation.attributeText
-//                    )
-//                    for observation in pendingObservations {
-//                        observations.appendIfValid(observation)
-//                    }
-//                }
+                let didExtractInColumn = extractInColumnObservations(
+                    of: recognizedText,
+                    for: observation)
                 
-                /// If we've still not found any resulting attributes, look in the next text directly below it
-                guard let nextLineText = recognizedTexts.filterSameColumn(as: recognizedText, removingOverlappingTexts: false).first,
-                    nextLineText.string != "Per 100g"
-                else {
-                    continue
-                }
-                extractObservations(
-                    of: nextLineText,
-                    startingWithAttributeText: observation.attributeText)
-                for observation in pendingObservations {
-                    observations.appendIfValid(observation)
+                if !didExtractInColumn {
+                    let _ = extractInlineObservations(of: recognizedText, for: observation)
                 }
             }
         }
         return observations
+    }
+    
+    func extractInlineObservations(of recognizedText: RecognizedText, for observation: Observation) -> Bool {
+        /// **NOTE:** We're currently not looking for inline texts, as its not needed so far, and uncommenting the following block results in failed tests which we need to look into first
+        let inlineTextColumns = recognizedTexts.inlineTextColumns(as: recognizedText, ignoring: discarded)
+        for column in inlineTextColumns {
+
+            guard let inlineText = pickInlineText(fromColumn: column, for: observation.attributeText.attribute) else {
+                continue
+            }
+
+            guard recognizedText.isNotTooFarFrom(inlineText) else {
+                continue
+            }
+            
+            extractObservations(
+                of: inlineText,
+                startingWithAttributeText: observation.attributeText
+            )
+            for observation in pendingObservations {
+                observations.appendIfValid(observation)
+            }
+            if pendingObservations.count > 0 {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func extractInColumnObservations(of recognizedText: RecognizedText, for observation: Observation) -> Bool {
+        /// If we've still not found any resulting attributes, look in the next text directly below it
+        guard let nextLineText = recognizedTexts.filterSameColumn(as: recognizedText, removingOverlappingTexts: false).first,
+            nextLineText.string != "Per 100g"
+        else {
+            return false
+        }
+        extractObservations(
+            of: nextLineText,
+            startingWithAttributeText: observation.attributeText)
+        
+        guard pendingObservations.count > 0 else {
+            return false
+        }
+        for observation in pendingObservations {
+            observations.appendIfValid(observation)
+        }
+        return true
     }
     
     func extractObservations(of recognizedText: RecognizedText, startingWithAttributeText startingAttributeText: AttributeText? = nil) {
@@ -121,5 +148,21 @@ class ServingClassifier: Classifier {
         
         /// As the defaul fall-back, return the first text (ie. the one closest to the observation we're extracted)
         return column.first
+    }
+}
+
+extension RecognizedText {
+    //TODO: Build on this, as we're currently naively checking the horizontal distance
+    func isNotTooFarFrom(_ recognizedText: RecognizedText) -> Bool {
+        let HorizontalThreshold = 0.3
+        let horizontalDistance = recognizedText.boundingBox.minX - boundingBox.maxX
+        
+        /// Make sure the `RecognizedText` we're checking is to the right of this
+        guard horizontalDistance > 0 else {
+            return false
+        }
+        
+        /// Returns true if the distance between them is less than the `HorizontalThreshold` value which is in terms of the bounding box. So a value of `0.3` would mean that it's considered "not too far" if it's less than 30% of the width of the bounding box.
+        return horizontalDistance < HorizontalThreshold
     }
 }

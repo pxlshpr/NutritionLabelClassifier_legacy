@@ -74,7 +74,7 @@ class EdgeCasesClassifier: Classifier {
         /// Look for a `Value` within brackets such as `(170g)` (that hasn't been used already) and assign that.
         for recognizedText in recognizedTexts {
             let regex = #"\(([0-9]*)[ ]*g\)"#
-//            let regex = #"([0-9]*)[ ]*g"#
+//            let regex = #"([0-9]*)g"#
             let groups = recognizedText.string.capturedGroups(using: regex)
             if groups.count == 2,
                let amount = Double(groups[1]),
@@ -222,6 +222,10 @@ extension Array where Element == RecognizedText {
 
 extension Array where Element == Observation {
     
+    func containsObservationWithTextId(_ id: UUID) -> Bool {
+        contains(where: { $0.containsTextId(id) })
+    }
+    
     //TODO: Modularize both of these
     mutating func modifyObservation(_ observation: Observation, withValue1 newValue1: Value) {
         guard let index = self.firstIndex(where: { $0.attribute == observation.attribute }) else { return }
@@ -261,6 +265,19 @@ extension Array where Element == Observation {
 }
 
 extension Observation {
+    
+    var textIds: [UUID] {
+        [attributeText.textId,
+         valueText1?.textId,
+         valueText2?.textId,
+         doubleText?.textId,
+         stringText?.textId]
+            .compactMap { $0 }
+    }
+    
+    func containsTextId(_ id: UUID) -> Bool {
+        textIds.contains(id)
+    }
     
     func hasLargerValue1Than(_ observation: Observation) -> Bool? {
         if let value1 = value1 {
