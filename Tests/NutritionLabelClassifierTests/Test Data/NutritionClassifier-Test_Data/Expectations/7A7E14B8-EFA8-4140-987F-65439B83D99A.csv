@@ -1,0 +1,22 @@
+attributeString,value1String,value2String,double,string
+fat,0.0 g,,,
+potassium,170.0 mg,,,
+saturatedFat,0.0 g,,,
+carbohydrate,19.0 g,,,
+transFat,0.0 g,,,
+dietaryFibre,0.0 g,,,
+energy,120.0 kcal,,,
+cholesterol,5.0 mg,,,
+sugar,18.0 g,,,
+sodium,50.0 mg,,,
+protein,12.0 g,,,
+vitaminA,0.0 %,,,
+vitaminC,0.0 %,,,
+calcium,15.0 %,,,
+iron,0.0 %,,,
+vitaminD,15.0 %,,,
+headerType1,,,,perServing
+servingAmount,,,1,
+servingUnitSize,,,,container
+servingEquivalentAmount,,,150,
+servingEquivalentUnit,,,,g

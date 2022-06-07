@@ -1,0 +1,16 @@
+attributeString,value1String,value2String,double,string
+energy,746.0 kJ,497.0 kJ,,
+protein,5.7 g,3.8 g,,
+gluten,0.0 mg,0.0 mg,,
+fat,9.5 g,6.3 g,,
+saturatedFat,6.2 g,4.1 g,,
+carbohydrate,17.4 g,11.6 g,,
+sugar,17.1 g,11.4 g,,
+sodium,59.0 mg,39.0 mg,,
+calcium,213.0 mg,142.0 mg,,
+servingsPerContainerAmount,,,1,
+servingsPerContainerName,,,,tub
+headerType1,,,,perServing
+headerType2,,,,per100g
+servingAmount,,,150,
+servingUnit,,,,g

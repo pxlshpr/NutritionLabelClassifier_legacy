@@ -1,0 +1,16 @@
+attributeString,value1String,value2String,double,string
+servingAmount,,,25,
+servingUnit,,,,g
+servingEquivalentAmount,,,11,
+headerType1,,,,per100g
+headerType2,,,,perServing
+servingEquivalentUnitSize,,,,goldbears
+headerServingAmount,,,25,
+headerServingUnit,,,,g
+energy,1404.0 kj,351.0 kj,,
+protein,6.8 g,1.7 g,,
+carbohydrate,75.0 g,19.0 g,,
+sugar,47.3 g,11.8 g,,
+fat,0.1 g,0.025 g,,
+saturatedFat,0.1 g,0.025 g,,
+sodium,20.0 mg,5.0 mg,,

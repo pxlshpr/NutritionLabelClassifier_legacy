@@ -1,0 +1,23 @@
+attributeString,value1String,value2String,double,string
+fat,17.0 g,,,
+saturatedFat,13.0 g,,,
+transFat,0.0 g,,,
+cholesterol,5.0 mg,,,
+sodium,25.0 mg,,,
+carbohydrate,16.0 g,,,
+dietaryFibre,0.0 g,,,
+sugar,14.0 g,,,
+addedSugar,12.0 g,,,
+protein,2.0 g,,,
+vitaminD,0.0 mcg,,,
+calcium,58.0 mg,,,
+iron,0.0 mg,,,
+potassium,60.0 mg,,,
+servingAmount,,,3,
+servingEquivalentAmount,,,36,
+servingEquivalentUnit,,,,g
+servingUnitSize,,,,balls
+energy,220.0 kcal,,,
+headerType1,,,,perServing
+servingsPerContainerAmount,,,40,
+servingsPerContainerName,,,,container

@@ -1,0 +1,20 @@
+attributeString,value1String,value2String,double,string
+fat,0.0 g,,,
+carbohydrate,20.0 g,,,
+saturatedFat,0.0 g,,,
+dietaryFibre,1.0 g,,,
+transFat,0.0 g,,,
+sugar,19.0 g,,,
+cholesterol,0.0 mg,,,
+protein,14.0 g,,,
+sodium,65.0 mg,,,
+vitaminA,0.0 %,,,
+vitaminC,2.0 %,,,
+calcium,20.0 %,,,
+iron,0.0 %,,,
+headerType1,,,,perServing
+energy,140.0 kcal,,,
+servingAmount,,,170,
+servingUnit,,,,g
+servingsPerContainerAmount,,,1,
+servingsPerContainerName,,,,container

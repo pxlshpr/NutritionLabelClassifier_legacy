@@ -264,9 +264,12 @@ extension HeaderText.Serving {
         let groups = string.capturedGroups(using: regex)
         
         if groups.count == 3 {
-            /// if we have the first group, this indicates that we got the serving unit without an amount, so assume it to be a `1`
-            /// e.g. **serving (125 g)**
-            if !groups[0].isEmpty {
+            
+            /// ** Heuristic ** If the first match contains `serving`, ignore it and assign the next two array elements as the serving amount and unit
+            if !groups[0].isEmpty && !groups[0].contains("serving") {
+                
+                /// if we have the first group, this indicates that we got the serving unit without an amount, so assume it to be a `1`
+                /// e.g. **bowl (125 g)**
                 self.init(amount: 1,
                           unitString: groups[0],
                           equivalentSize: EquivalentSize(

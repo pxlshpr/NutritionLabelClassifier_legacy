@@ -17,18 +17,15 @@ public enum HeaderString {
         else if string.matchesRegex(Regex.perServingWithSize3) {
             self = .perServing(serving: string)
         }
-//        else if let size = string.firstCapturedGroup(using: Regex.perServingWithSize2) {
-//            self = .perServing(serving: size)
-//        }
+        else if let size = string.firstCapturedGroup(using: Regex.per100gAndPerServing) {
+            self = .per100AndPerServing(serving: size)
+        }
         else if let size = string.firstCapturedGroup(using: Regex.perServingAndPer100g) {
             if size.matchesRegex(#"(serv(ing|e)|portion)"#) {
                 self = .perServingAnd100(serving: nil)
             } else {
                 self = .perServingAnd100(serving: size)
             }
-        }
-        else if let size = string.firstCapturedGroup(using: Regex.per100gAndPerServing) {
-            self = .per100AndPerServing(serving: size)
         }
         else if string.matchesRegex(Regex.perServing) {
             self = .perServing(serving: nil)
