@@ -13,10 +13,10 @@ let RunLegacyTests = true
 let ClassifierTestCases = 1...23
 let ClassifierTestCasesToIgnore: [Int] = []
 
-let CurrentTestCase = UUID(uuidString: "6C225FA4-44FF-45D7-B723-3AF4DD1D4E40")!
+let CurrentTestCase = UUID(uuidString: "EDAA3E38-55CC-4202-8128-91A04883AB33")!
 
-let SingledOutTestCaseId: UUID? = nil
-//let SingledOutTestCaseId: UUID? = CurrentTestCase
+//let SingledOutTestCaseId: UUID? = nil
+let SingledOutTestCaseId: UUID? = CurrentTestCase
 //let SingledOutTestCaseId: UUID? = UUID(uuidString: "6BAD0EB1-8BED-4DD9-8FD8-C9861A267A3D")
 
 let IgnoredTests: [UUID] = []

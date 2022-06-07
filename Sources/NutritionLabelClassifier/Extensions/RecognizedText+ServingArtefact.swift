@@ -96,6 +96,20 @@ extension RecognizedText {
                 break
             }
         }
+        
+        /// ** Heuristic ** When we have someting like `Per Pot 116 calories`, fail the extraction by returning an empty array
+        for index in array.indices {
+            let artefact = array[index]
+            /// If we've hit the `.servingsPerContainerAmount`, check if the artefact after the next one (which would be the actual amount `Value`) is an energy unit
+            let indexAfterNext = index + 2
+            if artefact.attribute == .servingsPerContainerAmount,
+               indexAfterNext < array.count,
+               (array[indexAfterNext].unit == .kcal || array[indexAfterNext].unit ==  .kj)
+            {
+                return []
+            }
+        }
+        
         return array
     }
 }
