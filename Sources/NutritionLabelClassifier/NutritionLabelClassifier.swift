@@ -2,7 +2,7 @@ import Foundation
 import VisionSugar
 import TabularData
 
-public let NutritionLabelClassifierVersion = "0.0.143"
+public let NutritionLabelClassifierVersion = "0.0.148"
 
 //TODO: Rename this to
 /// `NutritionLabelRecognizer`
