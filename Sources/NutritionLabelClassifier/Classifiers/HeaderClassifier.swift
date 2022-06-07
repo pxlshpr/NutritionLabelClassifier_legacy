@@ -72,7 +72,9 @@ class HeaderClassifier: Classifier {
                     break
                 }
             }
-            if didExtractHeader1 || didExtractHeader2 { break }
+            if didExtractHeader1 || didExtractHeader2 {
+                break
+            }
         }
         
         /// If we hadn't extracted a header, try to find a header by merging the two rows at the top
@@ -121,6 +123,7 @@ class HeaderClassifier: Classifier {
         guard let headerString = HeaderString(string: recognizedText.string) else {
             return true
         }
+        
         switch headerString {
         case .per100:
             guard let observation = Observation(

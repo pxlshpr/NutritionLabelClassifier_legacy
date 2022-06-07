@@ -37,6 +37,15 @@ public enum HeaderString {
             return nil
         }
     }
+    
+    var serving: String? {
+        switch self {
+        case .perServing(let serving), .per100AndPerServing(let serving), .perServingAnd100(let serving):
+            return serving
+        default:
+            return nil
+        }
+    }
 }
 
 struct Rx {
